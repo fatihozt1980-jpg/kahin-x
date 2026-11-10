@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sarı uyarı üçgeni ve ünlem: uyarlanabilir simgenin ön katmanı (108dp tuval, güvenli alan ortadaki 66dp) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:pathData="M54,27L81,76H27Z"
+        android:fillColor="#F5B301" android:strokeColor="#F5B301"
+        android:strokeWidth="4" android:strokeLineJoin="round" />
+    <path android:pathData="M54,45V61"
+        android:strokeColor="#15201C" android:strokeWidth="6" android:strokeLineCap="round" />
+    <path android:pathData="M54,69m-3.5,0a3.5,3.5 0,1 1,7 0a3.5,3.5 0,1 1,-7 0"
+        android:fillColor="#15201C" />
+</vector>

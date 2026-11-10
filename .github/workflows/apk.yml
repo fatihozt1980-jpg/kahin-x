@@ -1,0 +1,35 @@
+name: Afet Rehberi APK derle
+on:
+  push:
+    branches: [afet-rehberi]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Derle
+        run: gradle --no-daemon assembleRelease
+      - name: APK adını düzelt
+        run: cp app/build/outputs/apk/release/app-release.apk afet-rehberi.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: afet-rehberi-apk
+          path: afet-rehberi.apk
+      - name: İndirme sayfasına koy
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: afet-rehberi-son
+          target_commitish: afet-rehberi
+          name: Afet Hayatta Kalma Rehberi (son sürüm)
+          body: Telefona indirip kur. İnternetsiz çalışır. Yeni sürüm eskisinin üstüne kurulur; acil kartın ve çanta listen silinmez.
+          files: afet-rehberi.apk
+          make_latest: false

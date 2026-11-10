@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Afet Hayatta Kalma Rehberi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Düzen: güvenlik levhası dili. Sarı uyarı bandı, tek sütun telefon, geniş ekranda kart ızgarası. */
+  --bg:#EEF0EC; --surface:#FFFFFF; --ink:#15201C; --muted:#55615C; --line:#CCD3CE;
+  --signal:#F5B301; --tint:#D8DED9; --danger:#C8321F; --safe:#1E7A4C; --water:#3E7FB5;
+  --on-signal:#15201C;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101614; --surface:#1A2320; --ink:#EDF1EE; --muted:#9DAAA4; --line:#2E3A35;
+    --signal:#FFC21A; --tint:#2B3632; --danger:#F0624D; --safe:#4CC38A; --water:#5A9FD6;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101614; --surface:#1A2320; --ink:#EDF1EE; --muted:#9DAAA4; --line:#2E3A35;
+  --signal:#FFC21A; --tint:#2B3632; --danger:#F0624D; --safe:#4CC38A; --water:#5A9FD6;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.05;margin:0;text-wrap:balance;letter-spacing:.01em}
+button{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+.stripe{height:10px;background:repeating-linear-gradient(-45deg,var(--signal) 0 14px,#15201C 14px 28px)}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+.head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 0}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .mark{width:40px;height:40px;flex:none}
+.brand h1{font-size:28px;text-transform:uppercase}
+.brand p{margin:0;font-size:13px;color:var(--muted)}
+.sos{display:inline-flex;align-items:center;gap:8px;background:var(--danger);color:#fff;text-decoration:none;font-family:var(--display);font-weight:700;font-size:22px;padding:6px 14px;border-radius:6px}
+.sos small{font-family:var(--body);font-weight:500;font-size:12px}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:0}
+nav.tabs a{flex:none;text-decoration:none;font-weight:600;font-size:14px;padding:10px 14px;border-bottom:3px solid transparent;color:var(--muted)}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--signal)}
+nav.tabs{scrollbar-width:thin}
+main{padding:20px 0 56px}
+.search{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
+.lead{color:var(--muted);margin:10px 0 18px;max-width:65ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{display:flex;gap:12px;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;text-decoration:none;color:inherit}
+.card:hover{border-color:var(--ink)}
+.card .pic{width:96px;flex:none}
+.card h3{font-size:22px;text-transform:uppercase}
+.card p{margin:4px 0 0;font-size:13.5px;color:var(--muted);line-height:1.4}
+.pic svg,.hero svg{display:block;width:100%;height:auto;border-radius:8px;background:var(--tint)}
+.s{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.a{fill:var(--signal)} .m{fill:var(--surface)} .w{fill:var(--water)} .r{fill:var(--danger)} .k{fill:var(--ink)} .g{fill:var(--safe)}
+.back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:600;font-size:14px;color:var(--muted);margin-bottom:12px}
+.detail{display:grid;gap:16px}
+@media(min-width:760px){.detail{grid-template-columns:300px 1fr;align-items:start}}
+.detail h2{font-size:44px;text-transform:uppercase}
+.rule{background:var(--signal);color:var(--on-signal);border-radius:10px;padding:14px 16px;font-weight:600;font-size:17px;line-height:1.35}
+.rule b{display:block;font-family:var(--display);font-size:14px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.box h3{font-size:20px;text-transform:uppercase;margin-bottom:8px}
+.box ul{margin:0;padding-left:20px;display:grid;gap:7px}
+.box li{max-width:65ch}
+.box.no{border-left:6px solid var(--danger)}
+.box.sign{border-left:6px solid var(--signal)}
+.box.do{border-left:6px solid var(--safe)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:88px;padding:10px 8px;border:1.5px solid var(--line);background:var(--surface);border-radius:8px;font-weight:600;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.step svg{width:72px;height:72px}
+.step b{display:block;font-family:var(--display);font-size:20px;text-transform:uppercase}
+.step span{font-size:13px;color:var(--muted)}
+.stack{display:grid;gap:12px}
+h2.sec{font-size:32px;text-transform:uppercase;margin:8px 0 4px}
+.progress{height:10px;background:var(--tint);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--safe);width:0}
+.check{display:grid;gap:2px;margin:0;padding:0;list-style:none}
+.check label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;cursor:pointer}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--safe);flex:none}
+.check input:checked+span{color:var(--muted);text-decoration:line-through}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.btn{border:1.5px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 12px;font-weight:600;cursor:pointer}
+.nums{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.num{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none}
+.num b{display:block;font-family:var(--display);font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.num.main{border-color:var(--danger);border-width:2px}
+.num.main b{color:var(--danger)}
+.num span{font-size:14px;color:var(--muted)}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.three div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+.three b{font-family:var(--display);font-size:34px;display:block;line-height:1}
+.three span{font-size:13.5px;color:var(--muted)}
+.src{font-size:14px}
+.src li{margin-bottom:6px}
+.note{font-size:13px;color:var(--muted);max-width:70ch}
+.rope{fill:none;stroke-linejoin:round}
+.cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:8px;align-content:start}
+.item h3{font-size:22px;text-transform:uppercase}
+.item p{margin:0;font-size:14.5px}
+.item ol,.item ul{margin:0;padding-left:20px;display:grid;gap:5px;font-size:14.5px}
+.item.ok{border-left:6px solid var(--safe)} .item.bad{border-left:6px solid var(--danger)}
+.item .meta{font-size:13px;color:var(--muted)}
+.mini svg{display:block;width:100%;height:auto;border-radius:8px;background:var(--tint)}
+.fa svg{display:block;width:84px;height:84px;border-radius:8px;background:var(--tint)}
+.illu,.plant,.knot{--surface:#FFFFFF;--ink:#1C2521;--muted:#5E6863;--danger:#C8321F;--safe:#1E7A4C;--tint:#D8DED9;--signal:#F5B301;--water:#3E7FB5}
+.illu .m{fill:url(#gWall)} .illu .g{fill:url(#gGreen)} .illu .w{fill:url(#gWater)} .illu .r{fill:url(#gFire)} .illu .a{fill:url(#gAmber)} .illu .k{fill:url(#gRock)}
+.plant .s{stroke:#3E5B2B} .plant .g{fill:url(#gLeaf)} .plant .k{fill:url(#gBerryK)} .plant .r{fill:url(#gBerryR)} .plant .a{fill:url(#gYellow)} .plant .m{fill:#FCFCF6}
+.quick{background:var(--surface);border:2px solid var(--danger);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.quick h2{font-size:22px;text-transform:uppercase;margin-bottom:8px}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.q{display:block;text-decoration:none;font-weight:600;padding:10px 12px;border-radius:8px;background:var(--danger);color:#fff}
+.hits{display:grid;gap:8px}
+.hit{display:grid;gap:2px;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.hit:hover{border-color:var(--ink)}
+.hit .sec2{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.hit .snip{font-size:14px;color:var(--muted)}
+mark{background:var(--signal);color:#15201C;border-radius:2px;padding:0 1px}
+.flash{outline:3px solid var(--signal);outline-offset:3px}
+#res{margin-top:16px}
+.sos-ov{position:fixed;inset:0;z-index:99;background:#000;display:flex;align-items:flex-end;justify-content:center;padding-bottom:40px;cursor:pointer}
+.sos-ov.on{background:#fff}
+.sos-ov span{color:#888;font-weight:600;font-size:14px;background:rgba(0,0,0,.4);padding:6px 10px;border-radius:6px}
+.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.fl{display:grid;gap:4px;font-weight:600;font-size:14px}
+.fl input{padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-weight:400}
+#kf{display:grid;gap:10px}
+.kart{background:var(--surface);border:3px solid var(--danger);border-radius:12px;overflow:hidden;max-width:520px}
+.kh{background:var(--danger);color:#fff;font-family:var(--display);font-size:24px;letter-spacing:.04em;padding:8px 14px}
+.kr{display:grid;gap:1px;padding:8px 14px;border-top:1px solid var(--line)}
+.kr span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.kr b{font-size:17px}
+.seg button[aria-pressed="true"]{background:var(--danger);border-color:var(--danger);color:#fff}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:18px 0 32px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86BFE5"/><stop offset="1" stop-color="#E6F1F7"/></linearGradient>
+<linearGradient id="skyStorm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A5663"/><stop offset="1" stop-color="#A3AEB6"/></linearGradient>
+<linearGradient id="skyFire" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9542B"/><stop offset=".55" stop-color="#EE9A55"/><stop offset="1" stop-color="#F7D9A4"/></linearGradient>
+<linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#29304C"/><stop offset="1" stop-color="#C77C5C"/></linearGradient>
+<linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#121A2E"/><stop offset="1" stop-color="#3A4766"/></linearGradient>
+<linearGradient id="skySnow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#AFC4D4"/><stop offset="1" stop-color="#F4F7FA"/></linearGradient>
+<linearGradient id="skyDust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4AC84"/><stop offset="1" stop-color="#F2E8D4"/></linearGradient>
+<linearGradient id="skyHot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F28E3F"/><stop offset="1" stop-color="#FCE4B2"/></linearGradient>
+<linearGradient id="skyHaze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9DAB8E"/><stop offset="1" stop-color="#E6EAD9"/></linearGradient>
+<linearGradient id="skyClinic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D3E2EA"/><stop offset="1" stop-color="#F7FAFB"/></linearGradient>
+<linearGradient id="skyAsh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#352E2D"/><stop offset="1" stop-color="#9A7663"/></linearGradient>
+<linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E8F4F"/><stop offset=".25" stop-color="#8A7356"/><stop offset="1" stop-color="#5A4833"/></linearGradient>
+<linearGradient id="gWall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFDF7"/><stop offset="1" stop-color="#CFC7B8"/></linearGradient>
+<linearGradient id="gGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#74B85E"/><stop offset="1" stop-color="#2B6630"/></linearGradient>
+<linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6CB4E2"/><stop offset="1" stop-color="#1B5585"/></linearGradient>
+<linearGradient id="gFire" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D3301A"/><stop offset=".6" stop-color="#F26B1D"/><stop offset="1" stop-color="#FFC93C"/></linearGradient>
+<linearGradient id="gAmber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFDE73"/><stop offset="1" stop-color="#DB9400"/></linearGradient>
+<linearGradient id="gRock" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A7075"/><stop offset="1" stop-color="#25282B"/></linearGradient>
+<linearGradient id="gLeaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86C76A"/><stop offset="1" stop-color="#346F2E"/></linearGradient>
+<linearGradient id="gPlantBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3F7EF"/><stop offset=".78" stop-color="#DCE7D3"/><stop offset=".78" stop-color="#B9A586"/><stop offset="1" stop-color="#93805F"/></linearGradient>
+<linearGradient id="gKnotBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3EEE4"/><stop offset="1" stop-color="#D9CFBD"/></linearGradient>
+<linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CD9B62"/><stop offset="1" stop-color="#83592F"/></linearGradient>
+<radialGradient id="gBerryK" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#7B6A8C"/><stop offset=".35" stop-color="#2A2033"/><stop offset="1" stop-color="#0E0A12"/></radialGradient>
+<radialGradient id="gBerryR" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#FFB199"/><stop offset=".4" stop-color="#E0391E"/><stop offset="1" stop-color="#8C1408"/></radialGradient>
+<radialGradient id="gYellow" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#FFF3A6"/><stop offset="1" stop-color="#E8A100"/></radialGradient>
+<filter id="sh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="1.3" stdDeviation="1.1" flood-color="#000" flood-opacity=".3"/></filter>
+</defs></svg>
+<div class="stripe" aria-hidden="true"></div>
+<header class="top">
+  <div class="wrap">
+    <div class="head">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 38 35H2z" fill="var(--signal)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/><path d="M20 14v11" stroke="#15201C" stroke-width="3.5" stroke-linecap="round"/><circle cx="20" cy="30" r="2" fill="#15201C"/></svg>
+        <div><h1>Afet Hayatta Kalma Rehberi</h1><p>16 afet, ilk yardım, psikolojik destek, tarifler, bitkiler, barınak, düğümler</p></div>
+      </div>
+      <a class="sos" href="tel:112" aria-label="Acil çağrı 112">112 <small>Acil Çağrı</small></a>
+    </div>
+    <nav class="tabs" aria-label="Bölümler">
+      <a href="#afetler" data-tab="afetler">Afetler</a>
+      <a href="#araclar" data-tab="araclar">Araçlar</a>
+      <a href="#canta" data-tab="canta">Afet Çantası</a>
+      <a href="#ilkyardim" data-tab="ilkyardim">İlk Yardım</a>
+      <a href="#yemek" data-tab="yemek">Yemek</a>
+      <a href="#bitkiler" data-tab="bitkiler">Bitkiler</a>
+      <a href="#yapim" data-tab="yapim">Barınak ve Yapım</a>
+      <a href="#dugumler" data-tab="dugumler">Düğümler</a>
+      <a href="#pratik" data-tab="pratik">Pratik Bilgiler</a>
+      <a href="#psikoloji" data-tab="psikoloji">Psikolojik Destek</a>
+      <a href="#ozel" data-tab="ozel">Özel İhtiyaçlar</a>
+      <a href="#numaralar" data-tab="numaralar">Numaralar ve Kaynaklar</a>
+    </nav>
+  </div>
+</header>
+<main><div class="wrap" id="app"></div></main>
+<footer><div class="wrap"><p class="note">Afet Hayatta Kalma Rehberi · sürüm 1.0 · Kasım 2026. Bu rehber genel bilgilendirme içindir. Afet anında AFAD, itfaiye ve sağlık ekiplerinin talimatı her zaman önce gelir. İçerik AFAD, Meteoroloji Genel Müdürlüğü, Ready.gov (FEMA) ve Kızılhaç/Kızılay Federasyonu (IFRC) yayınlarına dayanır.</p></div></footer>
+
+<script>
+/* ---------- Çizimler (120x80) ---------- */
+var ILL = {
+deprem:'<rect class="m" x="24" y="18" width="30" height="50"/><path class="s" d="M24 18h30v50H24z"/><path class="s" d="M40 18l-5 14 8 8-6 13 4 15"/><rect class="a" x="29" y="24" width="6" height="7"/><rect class="a" x="44" y="46" width="6" height="7"/><g transform="rotate(7 80 68)"><rect class="m" x="68" y="32" width="24" height="36"/><path class="s" d="M68 32h24v36H68z"/><rect class="a" x="73" y="38" width="5" height="6"/><rect class="a" x="82" y="38" width="5" height="6"/><rect class="a" x="73" y="50" width="5" height="6"/></g><path class="s" d="M6 68h108"/><path class="s" style="stroke:var(--danger)" d="M8 76l7-5 7 5 7-5 7 5 7-5 7 5 7-5 7 5 7-5 7 5 7-5 7 5 7-5 7 5"/>',
+sel:'<path class="m" d="M38 40l22-18 22 18v34H38z"/><path class="s" d="M38 40v30M82 40v30M33 43l27-23 27 23"/><rect class="a" x="54" y="42" width="12" height="10"/><path class="w" d="M0 58q10-8 20 0t20 0 20 0 20 0 20 0 20 0v22H0z"/><path class="s" style="stroke:var(--surface)" d="M10 70q6-4 12 0M52 72q6-4 12 0M92 69q6-4 12 0"/><path class="s" d="M96 12l-3 8M106 14l-3 8M88 22l-3 8M101 26l-3 8"/>',
+'orman-yangini':'<path class="g" d="M10 62l14-36 14 36z"/><path class="s" d="M24 62v10"/><path class="g" d="M36 64l12-30 12 30z"/><path class="s" d="M48 64v8M4 72h112"/><path class="r" d="M86 72c-15 0-20-15-10-28 2 8 8 5 6-5 13 8 20 20 15 28-2 3-6 5-11 5z"/><path class="a" d="M86 72c-6 0-9-7-4-14 3 4 8 7 7 11-1 2-2 3-3 3z"/><path class="s" style="stroke:var(--muted)" d="M70 30q6-6 0-12M84 22q6-6 0-12M98 30q6-6 0-12"/>',
+'bina-yangini':'<rect class="m" x="34" y="22" width="40" height="50"/><path class="s" d="M34 22h40v50H34zM4 72h112"/><rect class="k" x="40" y="28" width="9" height="9"/><rect class="k" x="59" y="28" width="9" height="9"/><rect class="k" x="40" y="44" width="9" height="9"/><rect class="g" x="50" y="58" width="9" height="14"/><path class="r" d="M66 56c-8 0-10-8-5-15 1 4 4 3 3-3 7 4 10 11 8 15-1 2-3 3-6 3z"/><path class="a" d="M66 56c-3 0-4-4-2-7 2 2 4 3 3 5z"/><path class="s" style="stroke:var(--muted)" d="M70 34c8-4 4-10 12-12s6-8 14-8"/>',
+tsunami:'<path class="w" d="M0 80V46C12 22 44 10 66 26c10 8 8 22-6 22 7-9-2-18-13-12C34 44 30 62 40 80z"/><path class="s" style="stroke:var(--surface)" d="M14 50c6-12 18-20 30-20"/><path class="m" d="M84 60l11-9 11 9v14H84z"/><path class="s" d="M84 60v14h22V60M81 62l14-12 14 12M60 74h56"/><path class="s" style="stroke:var(--safe)" d="M100 40V22m0 0l-6 6m6-6l6 6"/>',
+heyelan:'<path class="m" d="M0 80L78 12h42v68z"/><path class="s" d="M0 80L78 12h38"/><circle class="k" cx="46" cy="50" r="6"/><circle class="k" cx="30" cy="66" r="4"/><circle class="a" cx="60" cy="42" r="4"/><path class="s" d="M56 28l-10 9M40 44l-8 8"/><path class="g" d="M88 12l6-14 6 14z"/><path class="s" style="stroke:var(--danger)" d="M70 30l10 6-4 8 10 6"/>',
+cig:'<path class="k" d="M0 80L52 10l22 30 14-12 32 52z"/><path class="m" d="M52 10l10 14-8 5-8-4-6 6z"/><path class="m" d="M20 78c-10-2-10-16 0-17 0-10 14-12 18-4 8-4 16 4 12 11 6 3 4 10-2 10z"/><path class="s" d="M20 78c-10-2-10-16 0-17 0-10 14-12 18-4 8-4 16 4 12 11"/><path class="s" style="stroke:var(--surface)" d="M56 34l-10 12M66 44l-8 10"/>',
+firtina:'<path class="m" d="M22 26c-10 0-10-14 0-14 2-10 18-10 20-1 10-3 16 9 8 15z"/><path class="s" d="M22 26c-10 0-10-14 0-14 2-10 18-10 20-1 10-3 16 9 8 15z"/><path class="k" d="M58 14h54l-8 10H66z"/><path class="k" d="M68 28h34l-6 10H74z"/><path class="k" d="M76 42h18l-4 10h-8z"/><path class="k" d="M82 56h8l-2 10h-3z"/><path class="s" d="M4 72h112M10 44h30M6 54h22M16 64h16"/>',
+yildirim:'<path class="m" d="M28 36c-14 0-14-18 0-18 2-14 24-14 28-2 14-4 22 12 12 20z"/><path class="s" d="M28 36c-14 0-14-18 0-18 2-14 24-14 28-2 14-4 22 12 12 20z"/><path class="a" d="M52 30L38 54h10l-6 22 22-28H52l8-18z"/><path class="s" d="M52 30L38 54h10l-6 22 22-28H52l8-18z"/><path class="g" d="M92 70l8-22 8 22z"/><path class="s" d="M100 70v6M84 76h32"/>',
+sicak:'<circle class="a" cx="40" cy="38" r="16"/><path class="s" d="M40 10v6M40 60v6M12 38h6M62 38h6M20 18l4 4M56 54l4 4M20 58l4-4M56 22l4-4"/><rect class="m" x="86" y="10" width="10" height="44" rx="5"/><path class="s" d="M86 15a5 5 0 0110 0v36a9 9 0 11-10 0z"/><circle class="r" cx="91" cy="60" r="6"/><rect class="r" x="89" y="24" width="4" height="34"/>',
+kis:'<path class="s" d="M36 10v44M17 21l38 22M17 43l38-22M36 18l-5-5M36 18l5-5M36 46l-5 5M36 46l5 5"/><path class="m" d="M0 80V68q20-10 40 0t40-2 40 2v12z"/><path class="k" d="M70 58l6-12h22l8 12h6v10H68V58z"/><rect class="a" x="79" y="49" width="8" height="8"/><rect class="a" x="90" y="49" width="7" height="8"/><circle class="m" cx="78" cy="68" r="4"/><circle class="m" cx="102" cy="68" r="4"/>',
+nukleer:'<circle class="a" cx="60" cy="40" r="34"/><circle cx="60" cy="40" r="15" fill="none" stroke="#15201C" stroke-width="18" stroke-dasharray="15.7 15.7" transform="rotate(-30 60 40)"/><circle cx="60" cy="40" r="9" fill="var(--signal)"/><circle cx="60" cy="40" r="5" fill="#15201C"/><circle cx="60" cy="40" r="34" fill="none" stroke="#15201C" stroke-width="2.5"/>',
+kimyasal:'<rect class="a" x="22" y="26" width="34" height="46" rx="4"/><path class="s" d="M22 30a4 4 0 014-4h26a4 4 0 014 4v38a4 4 0 01-4 4H26a4 4 0 01-4-4zM22 40h34M22 58h34"/><path class="k" d="M39 44l6 10H33z"/><path class="g" d="M56 66c8 0 8 10 18 8s14 2 20-2 14 2 22 0v8H50z"/><path class="m" d="M76 40c-8 0-8-12 0-12 2-8 14-8 16 0 8-2 12 8 6 12z"/><path class="s" style="stroke:var(--muted)" d="M76 40c-8 0-8-12 0-12 2-8 14-8 16 0 8-2 12 8 6 12zM78 50q4 4 0 8M90 48q4 4 0 8"/>',
+salgin:'<circle class="g" cx="46" cy="40" r="18"/><path class="s" d="M46 14v8M46 58v8M20 40h8M64 40h8M28 22l5 5M59 53l5 5M28 58l5-5M59 27l5-5"/><circle class="k" cx="46" cy="12" r="3"/><circle class="k" cx="46" cy="68" r="3"/><circle class="k" cx="18" cy="40" r="3"/><circle class="k" cx="74" cy="40" r="3"/><circle class="m" cx="40" cy="36" r="4"/><circle class="m" cx="52" cy="46" r="3"/><path class="m" d="M84 32h24v12c0 8-6 12-12 12s-12-4-12-12z"/><path class="s" d="M84 32h24v12c0 8-6 12-12 12s-12-4-12-12zM88 40h16M88 46h16M84 34l-6-4M108 34l6-4"/>',
+volkan:'<path class="k" d="M6 76l34-44h28l42 44z"/><path class="r" d="M40 32h28l-4 8-6-3-4 10-5-9-5 4z"/><path class="r" d="M52 44l-4 30h6z"/><path class="m" d="M44 24c-10 0-10-12-2-13 2-9 16-9 18-1 10-3 14 9 6 14z"/><path class="s" style="stroke:var(--muted)" d="M44 24c-10 0-10-12-2-13 2-9 16-9 18-1 10-3 14 9 6 14z"/><circle class="a" cx="30" cy="28" r="3"/><circle class="a" cx="84" cy="24" r="3"/><circle class="a" cx="76" cy="40" r="2"/>',
+kesinti:'<path class="m" d="M46 12a20 20 0 0112 36v8H34v-8a20 20 0 0112-36z"/><path class="s" d="M46 12a20 20 0 0112 36v8H34v-8a20 20 0 0112-36zM36 62h20M40 68h12"/><path class="s" style="stroke:var(--danger);stroke-width:4" d="M22 10l50 60"/><rect class="a" x="86" y="30" width="18" height="38" rx="3"/><path class="s" d="M86 33a3 3 0 013-3h12a3 3 0 013 3v32a3 3 0 01-3 3H89a3 3 0 01-3-3zM92 26h6"/><path class="k" d="M97 38l-6 12h5l-2 10 7-13h-5z"/>',
+canta:'<rect class="a" x="34" y="24" width="52" height="50" rx="10"/><path class="s" d="M34 34a10 10 0 0110-10h32a10 10 0 0110 10v30a10 10 0 01-10 10H44a10 10 0 01-10-10zM48 24v-6a6 6 0 016-6h12a6 6 0 016 6v6"/><rect class="m" x="44" y="46" width="32" height="20" rx="4"/><path class="s" d="M44 50a4 4 0 014-4h24a4 4 0 014 4v12a4 4 0 01-4 4H48a4 4 0 01-4-4z"/><path class="r" d="M57 50h6v5h5v6h-5v5h-6v-5h-5v-6h5z"/>'
+};
+var SKY={deprem:'skyDust',sel:'skyStorm','orman-yangini':'skyFire','bina-yangini':'skyDusk',tsunami:'skyDay',heyelan:'skyStorm',cig:'skySnow',firtina:'skyStorm',yildirim:'skyNight',sicak:'skyHot',kis:'skySnow',nukleer:'skyHaze',kimyasal:'skyHaze',salgin:'skyClinic',volkan:'skyAsh',kesinti:'skyNight',canta:'skyDay'};
+var STARS='<g fill="#fff" opacity=".7"><circle cx="8" cy="8" r=".7"/><circle cx="22" cy="5" r=".5"/><circle cx="104" cy="7" r=".7"/><circle cx="114" cy="16" r=".5"/><circle cx="76" cy="5" r=".5"/><circle cx="12" cy="22" r=".5"/></g>';
+function ill(id){var sk=SKY[id]||'skyDay';return '<svg class="illu" viewBox="0 0 120 80" role="img" aria-label="'+(NAMES[id]||'')+' çizimi"><rect width="120" height="80" fill="url(#'+sk+')"/>'+(sk==='skyNight'?STARS:'')+'<g filter="url(#sh)">'+(ILL[id]||'')+'</g></svg>';}
+
+/* küçük adım piktogramları (72x72) */
+var PIC = {
+cok:'<svg viewBox="0 0 72 72"><path class="s" d="M10 62h52"/><circle class="k" cx="36" cy="26" r="7"/><path class="s" style="stroke-width:5" d="M36 34l-6 14 10 4-2 10M30 48l-10 6v8M36 38l10 8"/><path class="s" style="stroke:var(--danger)" d="M56 14v14m0 0l-5-5m5 5l5-5"/></svg>',
+kapan:'<svg viewBox="0 0 72 72"><path class="s" d="M10 62h52"/><path class="k" d="M12 22h48v6H12z"/><path class="s" style="stroke-width:4" d="M16 28v34M56 28v34"/><circle class="k" cx="38" cy="42" r="6"/><path class="s" style="stroke-width:5" d="M34 48l-8 6 2 8M34 50l10 4 2 8M32 44l4-8 8 2"/></svg>',
+tutun:'<svg viewBox="0 0 72 72"><path class="s" d="M10 62h52"/><path class="k" d="M12 22h48v6H12z"/><path class="s" style="stroke-width:4" d="M16 28v34M56 28v34"/><circle class="k" cx="36" cy="42" r="6"/><path class="s" style="stroke-width:5" d="M33 48l-7 6 2 8M35 50l9 4 2 8M38 40l16-2"/><circle class="a" cx="56" cy="38" r="4"/></svg>',
+gir:'<svg viewBox="0 0 72 72"><path class="m" d="M30 14h30v48H30z"/><path class="s" d="M30 14h30v48H30zM10 62h52"/><rect class="k" x="38" y="38" width="12" height="24"/><path class="s" style="stroke:var(--safe);stroke-width:4" d="M8 46h18m0 0l-6-6m6 6l-6 6"/></svg>',
+kal:'<svg viewBox="0 0 72 72"><path class="m" d="M12 14h48v48H12z"/><path class="s" d="M12 14h48v48H12z"/><circle class="k" cx="36" cy="34" r="6"/><path class="k" d="M26 56c0-8 4-13 10-13s10 5 10 13z"/><text x="36" y="26" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="700" font-size="11" fill="var(--danger)">24 saat</text></svg>',
+dinle:'<svg viewBox="0 0 72 72"><rect class="a" x="12" y="30" width="48" height="28" rx="4"/><path class="s" d="M12 34a4 4 0 014-4h40a4 4 0 014 4v20a4 4 0 01-4 4H16a4 4 0 01-4-4zM20 30l28-16"/><circle class="k" cx="26" cy="44" r="7"/><path class="s" d="M40 40h14M40 46h14M40 52h8"/></svg>',
+dur:'<svg viewBox="0 0 72 72"><path class="s" d="M10 62h52"/><circle class="k" cx="36" cy="16" r="6"/><path class="s" style="stroke-width:5" d="M36 24v20M36 44l-6 18M36 44l6 18M24 30h24"/><path class="r" d="M50 44c-5 0-6-5-3-9 1 2 3 2 2-2 4 2 6 6 5 9-1 1-2 2-4 2z"/></svg>',
+yat:'<svg viewBox="0 0 72 72"><path class="s" d="M8 60h56"/><circle class="k" cx="18" cy="50" r="6"/><path class="s" style="stroke-width:5" d="M26 52h24l12 4M34 52l-4-8"/><path class="s" style="stroke:var(--danger)" d="M40 20v18m0 0l-5-5m5 5l5-5"/></svg>',
+yuvarlan:'<svg viewBox="0 0 72 72"><path class="s" d="M8 60h56"/><circle class="k" cx="20" cy="50" r="6"/><path class="s" style="stroke-width:5" d="M28 52h22l10 4"/><path class="s" style="stroke:var(--safe)" d="M18 28a20 14 0 0136 0m0 0l-7-2m7 2l2-7"/></svg>'
+};
+
+/* ---------- Veri ---------- */
+var D = [
+{id:'deprem',ad:'Deprem',anahtar:'sarsıntı artçı enkaz zelzele',
+ kural:'Çök, Kapan, Tutun. Sarsıntı bitene kadar koşma; balkon, merdiven ve asansörden uzak dur.',
+ adimlar:[['cok','Çök','Dizlerinin üstüne çök'],['kapan','Kapan','Sağlam masanın altına ya da yanına gir, başını ve boynunu koru'],['tutun','Tutun','Sabit bir yere tutun, sarsıntı bitene kadar bekle']],
+ once:['Dolap, kitaplık, şofben gibi devrilebilecek eşyaları duvara sabitle; yatak başına ağır eşya asma.','Elektrik şalteri ile gaz ve su vanalarının yerini evdeki herkes öğrensin.','Aile afet planı yap: evin dışında bir buluşma noktası ve il dışından bir irtibat kişisi belirle.','En yakın acil toplanma alanını e-Devlet\'teki “Acil Toplanma Alanı Sorgulama” hizmetinden öğren.','Binanın dayanıklılığını kontrol ettir, zorunlu deprem sigortasını (DASK) yaptır.','Evde Çök-Kapan-Tutun tatbikatı yap; afet çantanı kapıya yakın tut.'],
+ an:['İçerideysen: sağlam bir masanın altına ya da yanına geç, Çök-Kapan-Tutun yap.','Camlardan, pencerelerden, avizeden ve devrilebilecek eşyalardan uzaklaş.','Merdivene ya da çıkışa koşma; balkona çıkma, balkondan atlama; asansöre binme.','Masa yoksa başını kollarınla, yastık ya da kitapla koru.','Tekerlekli sandalyedeysen tekerlekleri kilitle, başını ve boynunu koru.','Dışarıdaysan: binalardan, direklerden, tellerden ve ağaçlardan uzak açık alana geç.','Araçtaysan: sağa yanaş, dur. Köprü, üst geçit ve tünelden uzak dur.','Kıyıdaysan: sarsıntı biter bitmez denizden uzaklaş, yükseğe çık.'],
+ sonra:['Önce kendi güvenliğinden emin ol, sonra çevrendekilere bak.','Gaz ve su vanasını, elektrik şalterini kapat. Kibrit, çakmak yakma; elektrik düğmesine dokunma.','Sarsıntı bitince merdivenle çık, toplanma alanına git.','Hasarlı binaya girme; artçı sarsıntılar hasarlı yapıyı yıkabilir.','Telefon hatlarını meşgul etme: kısa mesaj ve internet üzerinden haberleş.','Yolları ambulans ve kurtarma araçları için boş bırak.'],
+ ekstra:{baslik:'Enkaz altında kalırsan',liste:['Sakin kal, nefesini kontrol et, enerjini idareli kullan.','Ağzını ve burnunu bez ya da giysiyle kapat; toz yutma.','Rastgele bağırma. Ses duyduğunda bağır; onun dışında düdük çal ya da boruya, duvara sert bir cisimle vur.','Kibrit, çakmak yakma: gaz kaçağı olabilir.','Hareket edebiliyorsan kol ve bacaklarını oynatarak kan dolaşımını sürdür.']},
+ yapma:['Sarsıntı sürerken merdivene ve çıkışa koşma.','Balkona çıkma, pencereden atlama.','Asansör kullanma.','Sarsıntıdan sonra hasarlı binaya eşya almak için girme.']},
+
+{id:'sel',ad:'Sel ve Su Baskını',anahtar:'taşkın yağmur dere su',
+ kural:'Hemen yükseğe çık. Akan suya yürüyerek ya da araçla asla girme.',
+ isaret:['Meteorolojiden kuvvetli yağış ya da ani sel uyarısı.','Dere suyunun hızla bulanması, yükselmesi; uğultu sesi.','Rögarlardan suyun geri taşması.'],
+ once:['Oturduğun yerin sel riskini öğren; dere yatağına, taşkın alanına yerleşme.','Değerli eşya ve belgeleri üst kata, yüksek raflara taşı.','Çatı oluklarını ve bina önündeki ızgaraları temiz tut.','Tahliye yolunu ve gidilecek yüksek noktayı önceden belirle.','Bodrum katlarda uyuma; uyarı varken aracı alt geçitlere park etme.'],
+ an:['Bodrumdan ve alçak kattan çık, yüksek kata ya da yüksek araziye geç.','Sel suyunda yürüme: hızla akan 15-20 cm derinliğindeki su bir insanı devirebilir.','Araçla suya girme. Araç suda kalırsa aracı bırak, yükseğe çık.','Köprü, dere kenarı, alt geçit ve menfezlerden uzak dur.','Güvenliyse elektrik şalterini kapat; ıslakken ve suyun içindeyken elektrikli cihaza dokunma.','Mahsur kaldıysan üst kata ya da çatıya çık, 112\'yi ara, görünür bir işaret ver.'],
+ sonra:['“Geri dönün” uyarısı gelmeden evine dönme.','Sel suyu kanalizasyonla kirlenmiş olabilir: temas etme, çocukları oynatma.','Şebeke suyu için yetkililer onay verene kadar şişe suyu iç ya da suyu kaynat.','Elektrik ve gaz tesisatı kontrol edilmeden açma.','Hasarı fotoğrafla; kopmuş elektrik tellerinden uzak dur.','Özel ilgiye ihtiyacı olan komşularına yardım et.'],
+ yapma:['Akan suyu yürüyerek ya da araçla geçmeye çalışma.','Sel sularını izlemek için köprüye, dere kenarına gitme.','Islak elle ya da suyun içinde elektrikli cihaza dokunma.']},
+
+{id:'orman-yangini',ad:'Orman Yangını',anahtar:'yangın duman tahliye orman',
+ kural:'Tahliye çağrısını bekletme, hemen çık. Yangın rüzgâr yönünde ve yokuş yukarı hızlı ilerler.',
+ once:['Ev çevresinde en az 10 metrelik alanı kuru ot, dal ve yanıcı malzemeden temizle.','Çatı ve oluklardaki kuru yaprakları temizle; bahçe hortumunu hazır tut.','İki farklı tahliye yolu belirle; aracı çıkış yönüne bakacak şekilde park et.','Yangın mevsiminde ormanlık alanda ateş yakma, izmarit ve cam şişe bırakma.'],
+ an:['Duman ya da alev görürsen 112\'yi ara; orman yangını ihbarı da 112\'den yapılır (eski 177 hattı 112\'ye bağlandı). Yeri ve büyüklüğü tarif et.','Tahliye istenirse hemen çık; eşya toplamak için oyalanma.','Kaçarken yokuş aşağı ve rüzgâra dik yönde ilerle; vadilerin içine, sırtların üstüne çıkma.','Yanmış alan, tarla, geniş yol, su kenarı gibi bitkisiz açıklıklara yönel.','Araçtaysan: camları ve havalandırmayı kapat, farları yak, dumanın içinde yavaş ilerle.','Etrafın sarıldıysa: bitkisiz bir alanda yere yat, yüzünü kapat, sentetik olmayan giysiyle vücudunu ört.','Dumana karşı ağız ve burnunu ıslak bezle ya da N95 maskeyle kapat.','Evde kalmak zorundaysan: kapı ve pencereleri kapat, perdeleri indir, gazı kapat, küvet ve kovaları suyla doldur.'],
+ sonra:['Yetkililer izin vermeden bölgeye dönme.','Sıcak küllere, için için yanan kütük ve köklere dikkat et; zemin çökebilir.','Duman günlerce sürebilir: kapalı alanda kal, pencereleri kapalı tut.','Yangın bölgesine araçla gidip söndürme ekiplerinin yolunu kapatma.'],
+ yapma:['Yangını izlemek ya da görüntü almak için bölgeye gitme.','Yokuş yukarı kaçma.','Tahliye yolunu araçla kapatma.']},
+
+{id:'bina-yangini',ad:'Bina Yangını',anahtar:'ev yangın duman söndürücü tüp',
+ kural:'Dumanın altında eğilerek çık, kapıları arkandan kapat, asansöre binme.',
+ adimlar:[['dur','Dur','Giysin tutuşursa koşma'],['yat','Yat','Yere yat, yüzünü ellerinle kapat'],['yuvarlan','Yuvarlan','Alev sönene kadar yuvarlan']],
+ once:['Her kata duman dedektörü tak, ayda bir test et.','Mutfakta ve çıkışa yakın yerde yangın söndürme tüpü bulundur.','Her odadan iki kaçış yolu belirle; ailece tahliye tatbikatı yap.','Prizlere aşırı yük bindirme; ocağı açık bırakıp uzaklaşma.'],
+ an:['Bağırarak herkesi uyar, binayı boşalt, dışarıdan 112\'yi ara.','Yangın küçükse ve kaçış yolun açıksa tüple müdahale et: pimi çek, alevin dibine tut, sık, süpür.','Kapıyı açmadan önce elinin tersiyle yokla. Sıcaksa açma, başka çıkış kullan.','Dumanlı yerden eğilerek ya da sürünerek geç; ağız ve burnunu ıslak bezle kapat.','Çıkarken kapıları arkandan kapat: yangının yayılmasını yavaşlatır.','Asansör kullanma, merdivenden in.','Odada mahsur kaldıysan: kapıyı kapat, altını ıslak bezle tıka, pencereden işaret ver, 112\'ye yerini bildir.','Tavadaki yağ tutuşursa su dökme; ocağı kapat, kapak ya da ıslak bezle üstünü ört.'],
+ sonra:['İtfaiye izin vermeden binaya girme.','Duman soluduysan belirti olmasa da sağlık kontrolünden geç.','Yanıkları en az 10-20 dakika serin akan suyla soğut; buz, diş macunu, yoğurt sürme.'],
+ yapma:['Eşya almak için yanan binaya geri dönme.','Asansöre binme.','Yağ ve elektrik yangınına su dökme.']},
+
+{id:'tsunami',ad:'Tsunami',anahtar:'dalga deniz kıyı deprem',
+ kural:'Kıyıdayken uzun ya da güçlü deprem hissedersen uyarı bekleme: yürüyerek hemen yükseğe çık.',
+ isaret:['Ayakta durmayı zorlaştıran ya da uzun süren deprem.','Denizin aniden çekilmesi ya da hızla yükselmesi.','Denizden gelen tren ya da uçak sesine benzer uğultu.'],
+ once:['Kıyıda yaşıyor ya da tatil yapıyorsan yüksek noktaya giden yolu öğren.','Yürüyerek ulaşabileceğin bir toplanma noktası belirle.'],
+ an:['Önce depremde Çök-Kapan-Tutun yap; sarsıntı bitince hemen harekete geç.','Olabildiğince yükseğe ve kıyıdan olabildiğince içeriye git.','Trafik kilitlenir: mümkünse yürüyerek ya da koşarak git.','Yükseğe çıkamıyorsan sağlam betonarme bir binanın üst katlarına çık.','Açık denizde teknedeysen derin suya açıl; limandaysan tekneyi bırak, karaya çık.','Dere ve nehir ağızlarından uzak dur; dalga buralardan içeri yürür.'],
+ sonra:['Tsunami tek dalga değildir; dalgalar saatlerce sürebilir, ilk dalga en büyüğü olmayabilir.','Yetkililer “güvenli” demeden kıyıya dönme.','Sel sonrası kurallar burada da geçerli: kirli su, hasarlı bina ve kopuk tellerden uzak dur.'],
+ yapma:['Çekilen denizi izlemeye, fotoğraf çekmeye gitme.','İlk dalgadan sonra kıyıya inme.']},
+
+{id:'heyelan',ad:'Heyelan',anahtar:'toprak kayması çamur akması kaya düşmesi',
+ kural:'Akışın yolundan çık: yana doğru, sağlam ve yüksek zemine kaç.',
+ isaret:['Zeminde, yolda ya da duvarlarda yeni çatlakların oluşması, genişlemesi.','Kapı ve pencerelerin aniden sıkışmaya başlaması.','Eğilen ağaçlar, direkler, çitler.','Dere suyunun aniden bulanması ya da azalması.','Yamaçtan gelen çatırtı, gürleme sesi.'],
+ once:['Dik yamaç dibine, dere yatağına ve eski heyelan alanına yapı yapma.','Yamaçtaki ağaçları kesme; yüzey suyunu yamaçtan uzaklaştıracak drenaj yaptır.','Kuvvetli yağışta belirtileri izle; şüphe varsa bölgeyi boşalt, yetkililere haber ver.'],
+ an:['Dışarıdaysan: akış yönüne dik şekilde, yana doğru en yakın yüksek noktaya koş.','Kaçamıyorsan: top gibi kıvrıl, başını kollarınla koru.','İçerideysen ve çıkamıyorsan: yamaca en uzak odada sağlam bir eşyanın altına gir.','Araçtaysan: çöken yol, kaya ve çamur akıntısına dikkat et; köprü ve menfezleri geçmeden kontrol et.'],
+ sonra:['Kayan alandan uzak dur: ikinci bir heyelan gelebilir.','Heyelan dere yatağını tıkayabilir; ardından sel riski vardır.','Hasarlı gaz, elektrik ve su hatlarını yetkililere bildir.','Mahsur kalan varsa yerini kurtarma ekiplerine tarif et; kayan alana girme.'],
+ yapma:['Akışın önünde aşağı doğru kaçma.','Heyelan alanına merak için girme.']},
+
+{id:'cig',ad:'Çığ',anahtar:'kar dağ kayak',
+ kural:'Yana doğru kaç. Karın içinde yüzme hareketi yap, durmadan önce yüzünün önünde hava boşluğu aç.',
+ once:['Dağa çıkmadan önce meteoroloji ve çığ uyarılarına bak.','Yoğun kar yağışından sonraki ilk güneşli gün ve rüzgârla kar birikmiş yamaçlar özellikle risklidir.','Riskli yamacı tek tek ve aralıklı geçin; çığ vericisi, sonda ve kürek taşıyın.','Kornişlerin (kar saçağı) altından geçme.'],
+ an:['Çığın daha yavaş ve sığ olduğu kenarına doğru, yana kaç.','Bir ağaca, kayaya tutunmaya çalış.','Karın içine girdiysen yüzme hareketiyle yüzeyde kalmaya çalış; ağzını sıkıca kapat.','Sırt çantanı çıkarma: yüzeyde kalma şansını artırır.','Çığ durmadan hemen önce bir elini yüzünün önüne (ağız ve burnu kapatacak şekilde), diğer elini başının üstüne, yüzeye doğru uzat.','Durunca başını sağa sola çevirerek nefes boşluğunu genişlet.'],
+ sonra:['Kar altındaysan: sakin ol, yavaş nefes al, enerjini koru. Yüzeye yakın olduğunu hissedersen bağır.','Arkadaşın gömüldüyse: son görüldüğü noktayı işaretle, 112\'yi ara, hemen aramaya başla.','İlk 15-18 dakika kritik: bu süreden sonra hayatta kalma şansı hızla düşer.','İkinci çığ ihtimaline karşı bir kişi yamacı gözlesin.'],
+ yapma:['Çığın önünde yokuş aşağı düz kaçma.','Uyarı varken kapalı pistin dışına çıkma.']},
+
+{id:'firtina',ad:'Fırtına ve Hortum',anahtar:'rüzgar kasırga hortum tayfun',
+ kural:'Camlardan uzak, binanın en alt katındaki penceresiz iç odaya geç.',
+ once:['Balkon ve çatıdaki saksı, anten, tente gibi uçabilecek eşyaları sabitle ya da içeri al.','Telefonu ve powerbank\'i şarj et; el feneri ve pilli radyoyu hazırla.','Aracı ağaç, direk ve reklam panolarının altına park etme.','Meteoroloji uyarılarını takip et.'],
+ an:['İçeride kal; pencere ve cam kapılardan uzak dur, perdeleri kapat.','Hortumda: bodruma ya da en alt kattaki penceresiz iç odaya (koridor, banyo) geç, başını ve boynunu koru.','Dışarıdaysan: ağaç, elektrik direği, tabela, iskele ve çatı kenarlarından uzaklaş; sağlam bir binaya gir.','Açık arazide hortuma yakalandıysan: çukur bir yere yüzüstü yat, başını kollarınla koru.','Araçtaysan: hortumdan araçla kaçmaya çalışma; sağlam binaya sığın. Üst geçit altına sığınma.','Kıyıdaysan: dalgakıran ve iskeleden uzak dur.'],
+ sonra:['Kopmuş elektrik tellerine ve bunlara değen su birikintilerine yaklaşma.','Hasarlı çatı, ağaç ve duvarlardan uzak dur.','Gaz kokusu alırsan vanayı kapat, binayı boşalt, 187\'yi ara.'],
+ yapma:['Fırtınayı izlemek için balkona, sahile çıkma.','Üst geçit ya da köprü altına sığınma.']},
+
+{id:'yildirim',ad:'Yıldırım',anahtar:'şimşek gök gürültüsü oraj',
+ kural:'Gök gürlüyorsa içeri gir. 30/30 kuralı: şimşekle gök gürültüsü arası 30 saniyeden kısaysa sığın, son gürültüden 30 dakika sonra çık.',
+ isaret:['Saçların diken diken olması, ciltte karıncalanma.','Yakındaki metal eşyalardan vızıltı sesi.','Bu belirtiler yıldırımın düşmek üzere olduğunu gösterir: hemen çömel.'],
+ once:['Açık hava etkinliğinden önce hava tahminine bak.','Yaklaşan fırtınayı görünce beklemeden sığınak ara.'],
+ an:['Kapalı bir binaya ya da camları kapalı, metal tavanlı bir araca gir.','Tek başına duran yüksek ağaçlardan, direklerden, kulelerden uzak dur.','Sudan çık; tekneden, iskeleden, havuzdan uzaklaş.','Metal çit, elektrik hattı gibi iletkenlerden uzak dur.','Grup hâlindeyseniz aranızı açın.','Sığınak yoksa: ayaklarını bitiştirerek çömel, başını eğ, kulaklarını kapat. Yere boylu boyunca yatma.','İçerideyken: musluk, duş, kablolu telefon ve prize takılı cihaz kullanma.'],
+ sonra:['Yıldırım çarpan kişi elektrik yükü taşımaz; dokunmak güvenlidir.','Hemen 112\'yi ara. Nefes almıyorsa kalp masajına başla.','Son gök gürültüsünden 30 dakika geçmeden dışarı çıkma.'],
+ yapma:['Ağaç altına sığınma.','Açık alanda yere uzanma.','Şemsiye, olta, metal sopa gibi uzun cisimleri havaya kaldırma.']},
+
+{id:'sicak',ad:'Aşırı Sıcak',anahtar:'sıcak dalgası güneş çarpması',
+ kural:'Su iç, gölgede kal, öğle saatlerinde dışarı çıkma. Araçta kimseyi bırakma.',
+ isaret:['Sıcak çarpması: 40°C üstü vücut ısısı, bilinç bulanıklığı, sıcak ve kızarık cilt, hızlı nabız. Bu acil durumdur, 112\'yi ara.','Sıcak bitkinliği: aşırı terleme, soluk ve nemli cilt, baş dönmesi, bulantı, kas krampı.'],
+ once:['Evin en serin odasını belirle; güneş alan camlara perde ya da güneşlik tak.','Yalnız yaşayan yaşlı akraba ve komşular için kontrol planı yap.'],
+ an:['Susamayı beklemeden düzenli su iç; alkol ve çok şekerli içeceklerden kaçın.','11.00-16.00 arasında mümkünse dışarı çıkma, ağır iş yapma.','Açık renkli, bol, pamuklu giysi ve şapka giy; güneş kremi kullan.','Ilık duş al, ense ve bileklere ıslak bez koy.','Park hâlindeki araçta çocuk, yaşlı ya da hayvan bırakma: birkaç dakikada ölümcül sıcaklığa ulaşır.','Yaşlıları, bebekleri ve kronik hastaları günde en az iki kez kontrol et.'],
+ sonra:['Sıcak çarpmasında: 112\'yi ara, kişiyi serin yere al, giysilerini gevşet, ıslak bezle ve yelleyerek soğut.','Bilinci bulanık kişiye ağızdan bir şey verme.','Bitkinlikte: serin yerde dinlendir, yudum yudum su içir; bir saatte düzelmezse sağlık kuruluşuna götür.'],
+ yapma:['Araçta “iki dakikalığına” da olsa kimseyi bırakma.','Sıcak çarpması geçiren kişiyi buzlu suya sokma.']},
+
+{id:'kis',ad:'Kış Fırtınası ve Aşırı Soğuk',anahtar:'kar tipi don hipotermi buzlanma',
+ kural:'Araçta mahsur kalırsan araçta kal. Kat kat giyin, kuru kal, egzozu kardan temizle.',
+ isaret:['Hipotermi: durmayan titreme, peltek konuşma, uyuşukluk, sersemlik. Titremenin kesilmesi kötüye işarettir.','Donma: ciltte beyazlama ya da grileşme, sertlik, his kaybı (parmak, burun, kulak).'],
+ once:['Araçta battaniye, su, atıştırmalık, kürek, zincir, el feneri ve şarj kablosu bulundur.','Depoyu dolu tut; kış lastiği tak.','Evde birkaç günlük yiyecek, su ve ilaç stokla; tesisatı dona karşı yalıt.'],
+ an:['Zorunlu değilsen yola çıkma.','Araçta mahsur kaldıysan: araçta kal, dörtlüleri yak, 112\'yi ara.','Motoru saatte yaklaşık 10 dakika çalıştır; önce egzoz borusundaki karı temizle, camı biraz arala.','Kat kat giyin; başını, ellerini ve ayaklarını kapat. Islanan giysiyi değiştir.','Araçta kollarını ve bacaklarını hareket ettirerek ısın; sırayla uyuyun.','Evde: soba, mangal ve jeneratörü kapalı alanda kullanma. Karbonmonoksit kokusuzdur.'],
+ sonra:['Hipotermide: 112\'yi ara. Kişiyi sarsmadan, nazikçe sıcak yere al (sert hareket kalp ritmini bozabilir). Islak giysileri çıkar, başı dahil kuru battaniyelere sar, önce gövdeyi ısıt.','Bilinci açık ve yutabiliyorsa ılık, şekerli, alkolsüz içecek ver. Bilinci kapalıysa ağızdan hiçbir şey verme.','Donmada: bölgeyi ovma, kar sürme; ılık (sıcak değil) suyla yavaşça ısıt.','Çatıdaki kar yüküne ve saçaklardaki buz sarkıtlarına dikkat et.'],
+ yapma:['Tipide aracı bırakıp yürümeye çalışma.','Kapalı alanda mangal ya da jeneratör yakma.','Donmuş bölgeyi ovma.','Üşüyen kişiye alkol verme, onu birden çok sıcak bir ortama sokma.']},
+
+{id:'nukleer',ad:'Nükleer ve Radyasyon',anahtar:'radyasyon patlama serpinti santral kbrn',
+ kural:'İçeri gir, içeride kal, yayınları dinle. Betonarme binanın bodrumu ya da ortası en güvenli yerdir.',
+ adimlar:[['gir','İçeri gir','En yakın tuğla ya da beton binaya'],['kal','İçeride kal','Aksi söylenmedikçe 24 saat'],['dinle','Dinle','Pilli radyodan resmi talimatı takip et']],
+ once:['Evde ve iş yerinde sığınılacak yeri belirle: bodrum ya da çok katlı binanın orta bölümü.','Pilli ya da kurmalı radyo, şişe su, paketli yiyecek ve ilaç bulundur.'],
+ an:['Parlamaya bakma. Yere yat, yüzünü kapat; şok dalgası saniyeler sonra gelebilir.','Serpinti gelmeden, dakikalar içinde en yakın tuğla ya da beton binaya gir.','Bodruma ya da binanın ortasına geç; dış duvarlardan ve çatıdan uzak dur.','Dışarıda kaldıysan dış giysilerini çıkar, poşete koyup uzağa bırak; açıkta kalan cildi sil ya da yıka.','Duş alabiliyorsan sabun ve şampuanla yıkan; saç kremi kullanma, cildi ovalayıp çizme.','Aile farklı yerlerdeyse herkes bulunduğu binada kalsın; sonra buluşursunuz.','Evcil hayvanları da içeri al.'],
+ sonra:['Aksi söylenmedikçe en az 24 saat içeride kal: radyasyon ilk saatlerde en yüksektir, sonra hızla düşer.','Yalnızca paketli ya da bina içinde duran yiyecek ve içecekleri tüket.','Telefon, internet ve televizyon çalışmayabilir; pilli radyo en güvenilir araçtır.','İyot tabletini yalnızca yetkililer söylerse kullan.','Santral kazasında tahliye ve sığınma kararını AFAD ve yetkililerin duyurusuna göre uygula.'],
+ yapma:['Ailene ulaşmak için serpinti altında dışarı çıkma.','Araçta ya da açık alanda beklemeyi sığınmak sayma.','Dışarıda açıkta kalmış yiyeceği yeme.']},
+
+{id:'kimyasal',ad:'Kimyasal Kaza',anahtar:'gaz sızıntı zehir kbrn amonyak klor tanker',
+ kural:'Rüzgârı arkana alma: rüzgâra dik yönde uzaklaş. Kaçamıyorsan içeri gir, havalandırmayı kapat.',
+ isaret:['Alışılmadık koku, renkli duman ya da bulut.','Gözlerde yanma, öksürük, nefes darlığı, bulantı.','Çevrede ölü kuş ve böcekler, solmuş bitkiler.'],
+ once:['Yakınında sanayi tesisi, depo ya da tanker güzergâhı varsa riskleri öğren.','Evde çamaşır suyu ile tuz ruhunu, amonyaklı temizleyicileri asla karıştırma.','Koli bandı ve naylon örtü bulundur.'],
+ an:['Olay yerinden rüzgâra dik yönde ve mümkünse yükseğe doğru uzaklaş.','Ağız ve burnunu bezle kapat.','Tahliye edemiyorsan içeri gir: kapı ve pencereleri kapat, klima ve havalandırmayı durdur.','Mümkünse üst kattaki iç odaya geç; birçok gaz havadan ağırdır ve alçakta birikir.','Kapı altı ve pencere kenarlarını ıslak havlu ya da bantla kapat.','Cildine ya da gözüne bulaştıysa: giysileri çıkar, en az 15 dakika bol suyla yıka.','112\'yi ara; zehirlenmede 114 Zehir Danışma hattından bilgi al.'],
+ sonra:['Yetkililer güvenli demeden dışarı çıkma, bölgeye dönme.','Bulaşmış giysileri poşete koy, ağzını bağla, yetkililere teslim et.','Açıkta kalmış yiyecek ve suyu tüketme.','Belirtin olmasa da maruz kaldıysan sağlık kontrolünden geç.'],
+ yapma:['Dökülen maddeye dokunma, koklama.','Gaz kokusu varken ateş yakma, elektrik düğmesine basma.','Bodruma sığınma.']},
+
+{id:'salgin',ad:'Salgın Hastalık',anahtar:'pandemi virüs bulaşıcı karantina',
+ kural:'Ellerini yıka, hastayken evde kal, kapalı alanı havalandır, resmi kaynağı takip et.',
+ once:['Aşılarını güncel tut.','Evde iki haftalık temel gıda, su, ilaç ve hijyen malzemesi bulundur.','Düzenli kullandığın ilaçların yedeğini hazır tut.'],
+ an:['Ellerini sabunla en az 20 saniye yıka; su yoksa alkol bazlı el dezenfektanı kullan.','Kalabalık ve kapalı ortamlarda maske tak; ortamı sık sık havalandır.','Öksürürken ve hapşırırken ağzını dirsek içinle ya da mendille kapat.','Belirtin varsa evde kal, ev halkından ayrı odada dur, ortak eşyaları ayır.','Bilgiyi Sağlık Bakanlığı ve Dünya Sağlık Örgütü duyurularından al.','Nefes darlığı, göğüs ağrısı, bilinç bulanıklığı varsa 112\'yi ara.'],
+ sonra:['Hastalık sonrası evi havalandır, sık dokunulan yüzeyleri temizle.','Karantina kurallarına süre bitene kadar uy.','Yalnız yaşayan komşuların ihtiyaçlarını sor.'],
+ yapma:['Doğrulanmamış tedavi ve ilaçları kullanma.','Belirtin varken işe, okula, toplu taşımaya gitme.']},
+
+{id:'volkan',ad:'Volkan Patlaması',anahtar:'yanardağ kül lav',
+ kural:'Tahliye istenirse hemen çık. Kül yağarken içeride kal, ağzını ve gözlerini koru.',
+ once:['Volkanik bölgeye gidiyorsan uyarı seviyesini ve tahliye yollarını öğren.','Toz maskesi (N95) ve koruyucu gözlük bulundur.'],
+ an:['Tahliye emrine hemen uy; rüzgâr altı bölgeden ve vadi tabanlarından uzak dur.','Kül yağıyorsa içeri gir; kapı, pencere ve havalandırmayı kapat.','Dışarıdaysan N95 maske ya da ıslak bez, gözlük, uzun kollu giysi kullan.','Dere yataklarından uzak dur: çamur akıntıları (lahar) vadileri izler ve çok hızlıdır.','Külde araç kullanma; zorunluysa çok yavaş git, motoru küle karşı koru.'],
+ sonra:['Çatıda biriken külü güvenliyse temizle: ıslanan kül çok ağırdır, çatıyı çökertebilir.','Kül temizlerken maske ve gözlük tak; külü hafifçe ıslat.','Külle kirlenmiş suyu içme.'],
+ yapma:['Lav akıntısını ya da patlamayı izlemeye gitme.','Kül yağarken lens takma.']},
+
+{id:'kesinti',ad:'Uzun Elektrik Kesintisi',anahtar:'elektrik kesinti karartma jeneratör',
+ kural:'Mum yerine el feneri kullan. Jeneratörü ve mangalı asla kapalı alanda çalıştırma.',
+ once:['El feneri, yedek pil, dolu powerbank ve pilli radyo bulundur.','Bir miktar nakit para ve birkaç günlük içme suyu ayır.','Elektrikle çalışan tıbbi cihaz kullanıyorsan yedek güç planı yap.'],
+ an:['Buzdolabı ve dondurucunun kapağını açma. Kapak kapalı kalırsa buzdolabı yaklaşık 4 saat, dolu dondurucu 48 saat, yarı dolu dondurucu 24 saat güvenli soğukluğu korur.','Hassas cihazları prizden çek; elektrik geldiğinde ani yüklenme zarar verebilir.','Jeneratörü dışarıda, pencereden ve kapıdan uzakta çalıştır.','Isınmak için ocak, fırın ya da mangal kullanma.','Asansörde mahsur kaldıysan alarm düğmesine bas, kapıyı zorlama.','Trafik ışıkları çalışmıyorsa her kavşakta yavaşla.'],
+ sonra:['Elektrik 4 saatten uzun kesik kaldıysa buzdolabındaki et, balık, yumurta, süt ve artık yemekleri at.','İçinde hâlâ buz kristali olan donmuş gıdayı yeniden dondurabilir ya da pişirebilirsin. Tadına bakarak karar verme; şüphedeysen at.','Şebeke suyunun güvenli olup olmadığını öğren.','Cihazları tek tek ve aralıklı çalıştır.'],
+ yapma:['Kapalı alanda jeneratör, mangal, kamp ocağı yakma.','Mumu yanar hâlde bırakıp uyuma.']}
+];
+var NAMES = {canta:'Afet çantası'}; D.forEach(function(d){NAMES[d.id]=d.ad;});
+var BYID = {}; D.forEach(function(d){BYID[d.id]=d;});
+
+var CANTA = [
+ ['Su ve gıda',['Kişi başı günde en az 2 litre içme suyu (3 günlük)','Konserve, kuru meyve, kuruyemiş, bisküvi, tahin-pekmez gibi dayanıklı gıdalar','Konserve açacağı, çok amaçlı çakı']],
+ ['Işık ve iletişim',['El feneri ve yedek pil','Düdük','Pilli ya da kurmalı radyo','Dolu powerbank ve şarj kablosu','Kâğıda yazılı önemli telefon numaraları']],
+ ['Sağlık ve hijyen',['İlk yardım çantası (gazlı bez, sargı, yara bandı, antiseptik)','Düzenli kullanılan ilaçlar ve reçete fotokopisi','Yedek gözlük','Islak mendil, sabun, el dezenfektanı','Hijyenik ped, tuvalet kâğıdı, çöp poşeti','Toz maskesi (N95)']],
+ ['Giysi ve barınma',['Mevsime uygun yedek giysi, çorap, iç çamaşırı','Yağmurluk','Battaniye ya da termal örtü','Sağlam ayakkabı (yatağın yanında)','İş eldiveni']],
+ ['Belge ve para',['Kimlik, tapu, sigorta, diploma fotokopileri (su geçirmez poşette)','Belgelerin telefonda ve bulutta dijital kopyası','Bir miktar nakit para ve bozukluk','Evin ve aracın yedek anahtarı','Kalem ve not defteri']],
+ ['Özel ihtiyaçlar',['Bebek: mama, bez, biberon, yedek giysi','Yaşlı ve engelli bireyler: yedek cihaz pili, ilaç listesi','Evcil hayvan: mama, su kabı, tasma, aşı karnesi','Çocuk için küçük bir oyuncak ya da kitap']]
+];
+
+var NUMS = [
+ ['112','Acil Çağrı Merkezi','Ambulans, itfaiye, polis, jandarma, AFAD, orman yangını ve sahil güvenlik: hepsi tek numarada',true],
+ ['114','Zehir Danışma','Ulusal Zehir Danışma Merkezi (UZEM)'],
+ ['187','Doğal Gaz Acil','Gaz kokusu ve kaçak ihbarı'],
+ ['186','Elektrik Arıza','Kopmuş tel, arıza ihbarı'],
+ ['185','Su Arıza','Şebeke suyu arızası']
+];
+
+var KAYNAK = [
+ ['AFAD – Afet ve Acil Durum Yönetimi Başkanlığı','https://www.afad.gov.tr/','Deprem, sel, afet çantası ve genel hazırlık'],
+ ['AFAD\'ın deprem anı ve sonrası bilgilendirmesi (derleme)','https://www.ensonhaber.com/gundem/deprem-aninda-ve-sonrasinda-yapilmasi-gerekenler','Çök-Kapan-Tutun, enkaz altında yapılacaklar'],
+ ['TRT Haber – AFAD ve Meteoroloji sel tavsiyeleri','https://www.trthaber.com/haber/turkiye/seller-artiyor-tedbirleri-ogrenmek-hayat-kurtarir-597683.html','15-20 cm su kuralı, sel sonrası'],
+ ['NTV – AFAD\'a göre afet çantası','https://www.ntv.com.tr/turkiye/deprem-cantasinda-bulunmasi-gerekenler,5q-QYo3qLk2MbPP5eU2Cnw','İlk 72 saat ve çanta içeriği'],
+ ['Meteoroloji Genel Müdürlüğü – Yıldırımdan Korunma','https://www.mgm.gov.tr/FILES/genel/brosurler/yildirim.pdf','Yıldırım kuralları'],
+ ['Meteoroloji Genel Müdürlüğü – Çığ broşürü','https://www.mgm.gov.tr/FILES/genel/brosurler/cig.pdf','Çığ anında hava boşluğu, yüzme hareketi'],
+ ['Ready.gov (FEMA) – Tsunami','https://ready.gov/tsunamis','Doğal uyarı işaretleri, tahliye'],
+ ['Ready.gov (FEMA) – Radyasyon acil durumları','https://ready.gov/radiation','İçeri gir, içeride kal, dinle'],
+ ['MEB – Genel İlk Yardım Bilgileri (Sağlık Bakanlığı rehberine göre)','https://ilkyardim.meb.gov.tr/media/w4nb0htr/genel-ilk-yardim-bilgileri.pdf','İlk yardım bölümü'],
+ ['Samsun\'da Yetişen Yenebilir Yabani Otlar ve Meyveler Rehberi','https://oka.gov.tr/assets/upload/dosyalar/162samsun_ot_yemekleri_rehber.pdf','Yenir otlar, baldıran uyarısı'],
+ ['Trail Hiking – acil barınak ve zeminden yalıtım','https://www.trailhiking.com.au/safety/how-to-build-a-survival-shelter/','Yaprak kulübesi, sundurma'],
+ ['Milliyet – Tüm acil numaralar 112\'de birleştirildi (İçişleri Bakanlığı)','https://www.milliyet.com.tr/gundem/icisleri-bakanligi-duyurdu-tum-turkiyede-tek-acil-numaraya-gecildi-6616677','110, 155, 156, 122, 177, 158 numaraları'],
+ ['Resuscitation Council UK – ERC 2025 Temel Yaşam Desteği','https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/adult-basic-life-support-guidelines','Kalp masajı hızı ve derinliği'],
+ ['EPA – İçme suyunun acil dezenfeksiyonu','https://www.epa.gov/ground-water-and-drinking-water/emergency-disinfection-drinking-water','Çamaşır suyu damla miktarı'],
+ ['CDC – Afetten sonra gıda güvenliği','https://www.cdc.gov/food-safety/foods/keep-food-safe-after-emergency.html','Buzdolabı 4 saat, dondurucu 24/48 saat'],
+ ['Rehydration Project – Evde ağızdan sıvı karışımı (DSÖ tarifi)','https://rehydrate.org/solutions/homemade.htm','6 çay kaşığı şeker, yarım çay kaşığı tuz'],
+ ['MEB – Böcek sokmaları ve hayvan ısırıklarında ilk yardım','https://ilkyardim.meb.gov.tr/media/iqwbgnit/boecek-sokmalari-ve-hayvan-isriklarinda-ilk-yardim.pdf','Yılan ısırığı'],
+ ['Habertürk – Hipotermide yapılmaması gerekenler','https://www.haberturk.com/hayati-risk-soguk-havada-o-hastaya-sivi-vermeyin-3325261','Bilinci kapalı hastaya sıvı vermeme'],
+ ['bianet – Depremden sonra psikolojik ilk yardım: Bak, dinle, bağ kur','https://bianet.org/haber/depremden-sonra-psikolojik-ilk-yardim-bak-dinle-bag-kur-233820','Psikolojik destek'],
+ ['MEB – Aileler için yardım kılavuzu (deprem ve çocuklar)','https://aok.meb.gov.tr/meb_iys_dosyalar/2020_02/02161817_aileler_icin_yardim_klavuzu_v2.pdf','Çocukların tepkileri'],
+ ['SBÜ – Evcil hayvanlar için afet planlaması','https://sbu.edu.tr/FileFolder/Dosyalar/38939d71/2023_7/ev-caeacfaa.pdf','Evcil hayvanlar'],
+ ['NTV – AFAD Acil uygulaması','https://www.ntv.com.tr/turkiye/galeri-afad-acil-mobil-uygulamasi-nedir-nasil-indirilir-kullanilir-acil-mobil-uygulamayla-yapabilecekleriniz,fqLNnmjCoUyeXA5AnfrF1A','Uygulama özellikleri'],
+ ['Milli Gazete – e-Devlet toplanma alanı sorgulama','https://www.milligazete.com.tr/afad-toplanma-alani-nasil-ogrenilir-e-devletten-en-yakin-toplanma-alani-sorgulama','En yakın üç toplanma alanı'],
+ ['IFRC – Tsunami kamu bilgilendirme mesajları','https://www.ifrc.org/sites/default/files/2021-06/15-TSUNAMI-HR.pdf','Kızılhaç ve Kızılay Federasyonu']
+];
+
+/* ---------- Görünümler ---------- */
+var app = document.getElementById('app');
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+function li(a){return a.map(function(x){return '<li>'+esc(x)+'</li>';}).join('');}
+
+/* ---------- Psikolojik destek ---------- */
+var PSI = [
+ {ad:'Psikolojik ilk yardım: Bak, Dinle, Bağ kur',l:['Bak: önce güvenliği, acil ihtiyaçları ve çok sarsılmış görünen kişileri gözle. Telaşla ilk gördüğüne atılma.','Dinle: kişinin yanına git, kendini tanıt, neye ihtiyacı olduğunu sor. Konuşmaya zorlamadan, sözünü kesmeden dinle.','Bağ kur: su, yiyecek, barınak ve doğru bilgiye ulaşmasına, ailesine ve yakınlarına kavuşmasına yardım et.','Bunu herkes yapabilir; uzman olmak gerekmez.','Tutamayacağın söz verme. “Daha kötüsü olabilirdi”, “güçlü ol” gibi duyguyu küçümseyen cümleler kurma.']},
+ {ad:'Normal tepkiler',l:['Korku, uykusuzluk, irkilme, olayı sürekli düşünme, öfke, suçluluk, ağlama ya da hiç ağlayamama ilk günlerde sık görülür.','Bunlar olağan dışı bir olaya verilen olağan tepkilerdir ve çoğu insanda haftalar içinde azalır.','Uyku, yemek ve günlük rutini sürdürmek, yakınlarla konuşmak toparlanmayı hızlandırır.','Afet görüntülerini ve sosyal medyayı sınırla; bilgiyi resmi kaynaklardan al.']},
+ {ad:'Ne zaman uzman yardımı gerekir',l:['Belirtiler ilk haftalardan sonra azalmıyor ya da artıyorsa.','Kişi gerçeklikten kopmuş gibiyse ya da olanları hiç hatırlamıyorsa.','Kendine ya da başkasına zarar verme düşüncesi varsa: hemen 112\'yi ara.','Alkol ya da madde kullanımı başladıysa ya da arttıysa.','Aile hekimi, okul rehberlik servisi, Rehberlik ve Araştırma Merkezi (RAM) ya da bir ruh sağlığı uzmanına başvur.']},
+ {ad:'Çocukların tepkileri',l:['Küçük çocuklar: anne babadan ayrılmak istememe, gece korkuları, altını ıslatma, karanlıktan ve yalnız kalmaktan korkma.','Okul çağı: oyunlarda depremi tekrar tekrar canlandırma, dikkat dağınıklığı, karın ve baş ağrısı.','Ergenler: öfke, kavga, yalnız kalma isteği, sevdiği şeylerden zevk almama, alkol ya da madde denemesi.','Bu tepkiler ilk haftalarda beklenir. Giderek artıyorsa uzmana başvur.']},
+ {ad:'Çocukla nasıl konuşulur',l:['Dinle: soru sormasına izin ver, yaşına uygun, kısa ve dürüst cevap ver.','Normalleştir: “Korkman çok normal, ben de korktum” de.','Güven ver: neler yaptığınızı ve onu nasıl koruduğunu anlat.','Rutini koru: uyku, yemek ve oyun saatleri mümkün olduğunca aynı kalsın.','Birlikte oyun oyna, resim çizdir; çocuk duygusunu böyle anlatır.','Afet görüntülerinden ve yetişkin konuşmalarından uzak tut.','Önce kendin toparlan: sakin bir yetişkin, çocuk için en güçlü destektir.']},
+ {ad:'Kayıp ve yas',l:['Çocuğa kaybı açık ve dürüst anlat; “uyudu”, “uzaklara gitti” gibi kafa karıştıran sözler kullanma.','Konuşmaya hazır olmasını bekle, ısrar etme; hazır olduğunda yanında ol.','Yas herkeste farklı yaşanır ve belirli bir süresi yoktur.','Kendi ihtiyaçlarını da duy; desteğe ihtiyacın olduğunda bir yakınından ya da uzmandan yardım iste.']},
+ {ad:'Yardım edenler için',l:['Su, yemek ve uyku ihtiyacını ihmal etme; mümkünse vardiyalı çalış.','Gördüklerini güvendiğin biriyle konuş.','Arama kurtarma ya da yardım çalışmasından sonra uykusuzluk, kabus, sinirlilik olağandır; sürerse destek al.']}
+];
+function viewPsi(){
+  app.innerHTML='<div class="stack"><h2 class="sec">Psikolojik Destek</h2><p class="lead">Afetten sonra yaralar yalnızca bedende değildir. Doğru bir söz ve yanında olmak, ilk günlerde ilaç kadar işe yarar.</p>'+
+  '<div class="cols">'+PSI.map(function(k,i){return '<div class="item">'+(i===0?'<div class="mini">'+psiArt()+'</div>':'')+'<h3>'+esc(k.ad)+'</h3><ul>'+li(k.l)+'</ul></div>';}).join('')+'</div>'+
+  '<p class="note">Bu bölüm profesyonel ruh sağlığı desteğinin yerini tutmaz.</p></div>';
+}
+function psiArt(){
+  return '<svg class="illu" viewBox="0 0 120 80" role="img" aria-label="Biri diğerini dinlerken çizimi"><rect width="120" height="80" fill="url(#skyClinic)"/><rect y="70" width="120" height="10" fill="url(#ground)"/><g filter="url(#sh)">'+
+  '<circle cx="42" cy="26" r="8" fill="#6B4A36"/><path d="M28 70c0-18 6-30 14-30s14 12 14 30z" fill="url(#gWater)"/>'+
+  '<circle cx="78" cy="30" r="8" fill="#8A5A3C"/><path d="M64 70c0-16 6-26 14-26s14 10 14 26z" fill="url(#gAmber)"/>'+
+  '<path d="M54 50q10-4 14 2" fill="none" stroke="#6B4A36" stroke-width="4" stroke-linecap="round"/>'+
+  '<path d="M58 14q4-6 8 0t8 0" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round"/></g></svg>';
+}
+
+/* ---------- Özel ihtiyaçlar ---------- */
+var OZEL = [
+ {ad:'Bebekler ve küçük çocuklar',l:['Çantaya mama, bez, biberon, ilaç, yedek giysi ve sevdiği küçük bir oyuncak ekle.','Çocuğun cebine ya da koluna adınızı ve telefon numaranızı yazdığınız bir kart, bileklik koy.','Okulun ve kreşin afet planını, çocukların nerede toplanacağını öğren.','Çocuğa Çök-Kapan-Tutun\'u oyun gibi öğret ve birlikte tatbikat yap.']},
+ {ad:'Yaşlılar',l:['Kullandığı ilaçların listesi ve en az birkaç günlük yedeği çantada olsun.','Gözlük, işitme cihazı pili, baston ya da yürüteç yedeği bulundur.','Bir komşu ya da akraba, afette yaşlıyı kontrol etmekten sorumlu olsun.','Sıcak ve soğuk havada günde en az iki kez arayıp kontrol et.']},
+ {ad:'Bedensel engelli bireyler',l:['Depremde tekerlekli sandalyenin tekerleklerini kilitle, başını ve boynunu koru.','Protez ve destek ekipmanlarını, önemli belgeleri sel riskine karşı yüksekte tut.','Çıkış kapılarının kolay açılır olmasını sağla; yatağın yanında ayakkabı, fener ve düdük bulundur.','Tahliyede yardım edecek bir kişi belirle; tatbikatı onunla birlikte yap.']},
+ {ad:'İşitme engelli bireyler',l:['112 Acil mobil uygulamasıyla işaret dili ya da yazılı mesajla yardım çağırabilirsin; uygulamayı afetten önce kur.','Işıklı ya da titreşimli duman alarmı kullan.','Yanında “İşitme engelliyim, yazarak anlaşalım” yazılı bir kart taşı.','İşitme cihazı için yedek pil bulundur.']},
+ {ad:'Görme engelli bireyler',l:['Ev eşyalarını sabit yerlerinde tut ve sabitle; afetten sonra eşyaların yer değiştirmiş olabileceğini unutma.','Yedek baston bulundur.','Rehber köpek için mama, su ve tasma çantada olsun.','Toplanma alanına giden yolu önceden biriyle birlikte yürü.']},
+ {ad:'Kronik hastalar',l:['İlaçların ve reçetenin fotokopisi çantada olsun; birkaç günlük yedek ilaç ayır.','İnsülin gibi soğuk saklanan ilaçlar için küçük bir soğutucu çanta hazırla.','Diyalize giriyorsan merkezin afet planını ve yedek merkezi öğren.','Elektrikle çalışan tıbbi cihaz kullanıyorsan yedek pil ya da güç kaynağı planla.']},
+ {ad:'Gebeler',l:['Gebelik takip belgelerinin fotokopisini çantaya koy.','Bol su iç, uzun süre aç kalma.','Kanama, şiddetli karın ağrısı, su gelmesi ya da bebek hareketlerinde azalma olursa hemen 112\'yi ara.']},
+ {ad:'Evcil hayvanlar',l:['Hayvan için en az 72 saatlik çanta hazırla: kuru ve yaş mama, şişe su, mama ve su kabı, tasma.','Hayvanın ayağa kalkıp dönebileceği bir taşıma kafesi, güncel aşı kayıtları ve onunla birlikte çekilmiş bir fotoğrafın olsun.','Sevdiği bir oyuncak ya da kokunu taşıyan bir giysi stresini azaltır.','Afet bölgesinin dışında, hayvanınla birlikte kalabileceğin bir yer önceden belirle.','Evcil hayvanını tahliye etmemek için bahane yapma.','Afetten sonra serbest dolaşmasına izin verme: kopuk teller, enkaz ve diğer hayvanlar tehlikelidir.','Enkazdan çıkan hayvan korkmuş olabilir ve saldırabilir; sakinleşmesini bekle.']}
+];
+function viewOzel(){
+  app.innerHTML='<div class="stack"><h2 class="sec">Özel İhtiyaçlar</h2><p class="lead">Afet planı evdeki herkesi kapsamalı. Bu kişiler için hazırlığı önceden ve onlarla birlikte yap.</p>'+
+  '<div class="cols">'+OZEL.map(function(k){return '<div class="item"><h3>'+esc(k.ad)+'</h3><ul>'+li(k.l)+'</ul></div>';}).join('')+'</div></div>';
+}
+
+/* ---------- Arama ---------- */
+var TRMAP={'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u','â':'a','î':'i','û':'u'};
+function norm(s){return String(s).toLocaleLowerCase('tr').replace(/[çğıöşüâîû]/g,function(c){return TRMAP[c];});}
+var IDX=null;
+var ITABS=[['ilkyardim','İlk Yardım','viewIlk'],['yemek','Yemek','viewYemek'],['bitkiler','Bitkiler','viewBitki'],['yapim','Barınak ve Yapım','viewYapim'],['dugumler','Düğümler','viewDugum'],['pratik','Pratik Bilgiler','viewPratik'],['psikoloji','Psikolojik Destek','viewPsi'],['ozel','Özel İhtiyaçlar','viewOzel'],['canta','Afet Çantası','viewCanta'],['araclar','Araçlar','viewArac'],['numaralar','Numaralar','viewNum']];
+function buildIndex(){
+  IDX=[];
+  var real=app, tmp=document.createElement('div');
+  ITABS.forEach(function(t){
+    app=tmp; try{ window[t[2]](); }catch(e){}
+    if(cleanup){cleanup();cleanup=null;}
+    Array.prototype.forEach.call(tmp.querySelectorAll('.item,.box'),function(el){
+      var h=el.querySelector('h3'); if(!h) return;
+      var txt=el.textContent.replace(/\s+/g,' ').trim();
+      IDX.push({h:t[0],sec:t[1],t:h.textContent.trim(),x:txt,n:norm(txt)});
+    });
+  });
+  app=real;
+}
+function dText(d){return [d.ad,d.anahtar,d.kural].concat(d.once,d.an,d.sonra,d.yapma,d.isaret||[],d.ekstra?d.ekstra.liste:[]).join(' ');}
+var QUICK=[['Deprem oluyor','deprem',''],['Yangın var','bina-yangini',''],['Sel geliyor','sel',''],['Biri nefes almıyor','ilkyardim','Nefes yok: kalp masajı'],['Ağır kanama','ilkyardim','Ağır kanama'],['Boğazına bir şey kaçtı','ilkyardim','Boğaza yabancı cisim kaçması'],['Enkaz altındayım: düdük','araclar','İmdat düdüğü']];
+function viewHome(){
+  app.innerHTML =
+   '<div class="quick"><h2>Şu an bir şey mi oluyor?</h2><div class="qgrid">'+QUICK.map(function(q){return '<a class="q" href="#'+q[1]+'"'+(q[2]?' data-f="'+esc(q[2])+'"':'')+'>'+esc(q[0])+' &rarr;</a>';}).join('')+'</div></div>'+
+   '<input class="search" id="q" type="search" placeholder="Rehberin tamamında ara: kanama, ısırgan, izbarço, kerpiç…" aria-label="Rehberde ara">'+
+   '<p class="lead" id="lead">Bir afet seç. Her sayfada tek cümlelik altın kural, uyarı işaretleri ve öncesi, anı, sonrası için yapılacaklar var.</p>'+
+   '<div class="grid" id="grid"></div><div id="res"></div>';
+  var grid=document.getElementById('grid'), q=document.getElementById('q'), res=document.getElementById('res'), lead=document.getElementById('lead');
+  function draw(){
+    var t=norm(q.value.trim());
+    var list=D.filter(function(d){return !t || norm(dText(d)).indexOf(t)>-1;});
+    lead.style.display=t?'none':'';
+    grid.innerHTML = list.map(function(d){
+      return '<a class="card" href="#'+d.id+'"><div class="pic">'+ill(d.id)+'</div><div><h3>'+esc(d.ad)+'</h3><p>'+esc(d.kural)+'</p></div></a>';
+    }).join('');
+    if(!t){res.innerHTML='';return;}
+    if(!IDX) buildIndex();
+    var hits=IDX.filter(function(e){return e.n.indexOf(t)>-1;}).slice(0,40);
+    if(!list.length && !hits.length){res.innerHTML='<div class="empty">“'+esc(q.value)+'” için sonuç yok. Daha kısa ya da farklı bir kelime dene.</div>';return;}
+    res.innerHTML = hits.length ? '<h2 class="sec">Diğer bölümlerde</h2><div class="hits">'+hits.map(function(e){
+      var i=e.n.indexOf(t), a=Math.max(0,i-50), b=Math.min(e.x.length,i+t.length+70);
+      var snip=(a>0?'…':'')+esc(e.x.slice(a,i))+'<mark>'+esc(e.x.slice(i,i+t.length))+'</mark>'+esc(e.x.slice(i+t.length,b))+(b<e.x.length?'…':'');
+      return '<a class="hit" href="#'+e.h+'" data-f="'+esc(e.t)+'"><span class="sec2">'+esc(e.sec)+'</span><b>'+esc(e.t)+'</b><span class="snip">'+snip+'</span></a>';
+    }).join('')+'</div>' : '';
+  }
+  q.addEventListener('input',draw); draw();
+}
+var FOCUS=null;
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[data-f]'); if(a) FOCUS=a.getAttribute('data-f');});
+function applyFocus(){
+  if(!FOCUS) return; var f=FOCUS; FOCUS=null;
+  var hs=app.querySelectorAll('h3');
+  for(var i=0;i<hs.length;i++){ if(hs[i].textContent.trim()===f){ var box=hs[i].closest('.item,.box')||hs[i]; box.scrollIntoView({block:'start'}); box.classList.add('flash'); setTimeout(function(){box.classList.remove('flash');},2600); return; } }
+}
+
+function viewDetail(d){
+  var phase = 'an';
+  var steps = d.adimlar ? '<div class="steps">'+d.adimlar.map(function(s,i){return '<div class="step">'+PIC[s[0]]+'<b>'+(i+1)+'. '+esc(s[1])+'</b><span>'+esc(s[2])+'</span></div>';}).join('')+'</div>' : '';
+  app.innerHTML =
+   '<a class="back" href="#afetler">&larr; Tüm afetler</a>'+
+   '<div class="detail"><div class="stack"><div class="hero">'+ill(d.id)+'</div>'+
+   '<div class="box no"><h3>Bunları yapma</h3><ul>'+li(d.yapma)+'</ul></div></div>'+
+   '<div class="stack"><h2>'+esc(d.ad)+'</h2>'+
+   '<div class="rule"><b>Altın kural</b>'+esc(d.kural)+'</div>'+steps+
+   (d.isaret?'<div class="box sign"><h3>Uyarı işaretleri</h3><ul>'+li(d.isaret)+'</ul></div>':'')+
+   '<div class="seg" role="group" aria-label="Zaman">'+
+     '<button type="button" data-p="once">Öncesi</button><button type="button" data-p="an">Afet anı</button><button type="button" data-p="sonra">Sonrası</button></div>'+
+   '<div class="box do" id="phase"></div>'+
+   (d.ekstra?'<div class="box sign"><h3>'+esc(d.ekstra.baslik)+'</h3><ul>'+li(d.ekstra.liste)+'</ul></div>':'')+
+   '</div></div>';
+  var titles = {once:'Önceden hazırlan',an:'Afet anında',sonra:'Afetten sonra'};
+  function draw(){
+    document.getElementById('phase').innerHTML = '<h3>'+titles[phase]+'</h3><ul>'+li(d[phase])+'</ul>';
+    Array.prototype.forEach.call(app.querySelectorAll('.seg button'),function(b){b.setAttribute('aria-pressed', b.dataset.p===phase?'true':'false');});
+  }
+  app.querySelector('.seg').addEventListener('click',function(e){var b=e.target.closest('button'); if(b){phase=b.dataset.p; draw();}});
+  draw();
+}
+
+var KEY='afet-canta-v1';
+function loadChecks(){try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return {};}}
+function saveChecks(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+function viewCanta(){
+  var st = loadChecks(), total = 0;
+  var html = CANTA.map(function(g,gi){
+    return '<div class="box"><h3>'+esc(g[0])+'</h3><ul class="check">'+g[1].map(function(it,ii){
+      total++; var id='c'+gi+'-'+ii;
+      return '<li><label for="'+id+'"><input type="checkbox" id="'+id+'"'+(st[id]?' checked':'')+'><span>'+esc(it)+'</span></label></li>';
+    }).join('')+'</ul></div>';
+  }).join('');
+  app.innerHTML =
+   '<div class="detail"><div class="stack"><div class="hero">'+ill('canta')+'</div>'+
+   '<div class="box sign"><h3>Çanta kuralları</h3><ul><li>İlk 72 saati yardım gelmeden geçirecek şekilde hazırla.</li><li>Su geçirmez, sırtta taşınan bir çanta seç; kapıya yakın, kolay ulaşılır yerde tut.</li><li>Evde, iş yerinde ve araçta birer tane bulundur.</li><li>En az 6 ayda bir su, gıda, ilaç ve pillerin tarihini kontrol et.</li></ul></div></div>'+
+   '<div class="stack"><h2>Afet Çantası</h2>'+
+   '<div class="row"><b id="cnt"></b><button class="btn" type="button" id="reset">Listeyi sıfırla</button></div>'+
+   '<div class="progress" aria-hidden="true"><i id="bar"></i></div>'+html+
+   '<p class="note">İşaretlediklerin bu cihazın tarayıcısında saklanır.</p></div></div>';
+  function upd(){
+    var n = app.querySelectorAll('.check input:checked').length;
+    document.getElementById('cnt').textContent = n+' / '+total+' hazır';
+    document.getElementById('bar').style.width = (100*n/total)+'%';
+  }
+  app.addEventListener('change',onChange);
+  function onChange(e){ if(!e.target.matches('.check input')) return; var o=loadChecks(); o[e.target.id]=e.target.checked; saveChecks(o); upd(); }
+  document.getElementById('reset').addEventListener('click',function(){saveChecks({}); Array.prototype.forEach.call(app.querySelectorAll('.check input'),function(c){c.checked=false;}); upd();});
+  cleanup = function(){app.removeEventListener('change',onChange);};
+  upd();
+}
+
+/* ---------- Düğüm çizici: 3B kontrol noktalarından üst/alt geçişli ip çizer ---------- */
+function sample(pts){
+  var P=[],n=pts.length;
+  for(var i=0;i<n-1;i++){
+    var p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,n-1)];
+    var steps=Math.max(4,Math.ceil(Math.hypot(p2[0]-p1[0],p2[1]-p1[1])/1.5));
+    for(var s=0;s<steps;s++){
+      var t=s/steps,t2=t*t,t3=t2*t,q=[];
+      for(var k=0;k<2;k++) q[k]=.5*((2*p1[k])+(-p0[k]+p2[k])*t+(2*p0[k]-5*p1[k]+4*p2[k]-p3[k])*t2+(-p0[k]+3*p1[k]-3*p2[k]+p3[k])*t3);
+      q[2]=p1[2]+(p2[2]-p1[2])*t; P.push(q);
+    }
+  }
+  P.push(pts[n-1].slice()); return P;
+}
+function segX(a,b,c,d){
+  var rx=b[0]-a[0],ry=b[1]-a[1],sx=d[0]-c[0],sy=d[1]-c[1],den=rx*sy-ry*sx;
+  if(Math.abs(den)<1e-9) return null;
+  var qx=c[0]-a[0],qy=c[1]-a[1],t=(qx*sy-qy*sx)/den,u=(qx*ry-qy*rx)/den;
+  return (t>=0&&t<1&&u>=0&&u<1)?[t,u]:null;
+}
+function dOf(P){return 'M'+P.map(function(p){return p[0].toFixed(1)+' '+p[1].toFixed(1);}).join('L');}
+function dst(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1]);}
+function cut(P,i){var a=i,b=i+1,l=0;while(a>0&&l<6){l+=dst(P[a],P[a-1]);a--;}l=0;while(b<P.length-1&&l<6){l+=dst(P[b],P[b+1]);b++;}return P.slice(a,b+1);}
+var RC={k:{b:'#C9A469',d:'#6E5029',h:'#F3E2B8'},r:{b:'#D2452B',d:'#761C0F',h:'#F8A893'}};
+function ropeD(d,c,cap){return '<g fill="none" stroke-linejoin="round" stroke-linecap="'+cap+'"><path d="'+d+'" stroke="'+c.d+'" stroke-width="6.8"/><path d="'+d+'" stroke="'+c.b+'" stroke-width="4.8"/><path d="'+d+'" stroke="'+c.d+'" stroke-width="4.8" stroke-dasharray="1.2 2.2" opacity=".42"/><path d="'+d+'" stroke="'+c.h+'" stroke-width="1" opacity=".7"/></g>';}
+function knotSVG(def,label){
+  var head='<svg class="knot" viewBox="0 0 160 104" role="img" aria-label="'+label+' çizimi"><rect width="160" height="104" fill="url(#gKnotBg)"/>';
+  if(def.raw) return head+def.raw+'</svg>';
+  var COL={k:RC.k,r:RC.r};
+  var R=def.ropes.map(function(r){return {c:COL[r.c],P:sample(r.pts)};});
+  function draw(P,c,cap){return ropeD(dOf(P),c,cap);}
+  var s=head; R.forEach(function(r){s+=draw(r.P,r.c,'round');});
+  var X=[];
+  for(var a=0;a<R.length;a++)for(var b=a;b<R.length;b++){
+    var A=R[a].P,B=R[b].P;
+    for(var i=0;i<A.length-1;i++)for(var j=(a===b?i+8:0);j<B.length-1;j++){
+      var h=segX(A[i],A[i+1],B[j],B[j+1]); if(!h) continue;
+      var za=A[i][2]+(A[i+1][2]-A[i][2])*h[0], zb=B[j][2]+(B[j+1][2]-B[j][2])*h[1];
+      X.push(za>zb?{r:a,i:i,z:za}:{r:b,i:j,z:zb});
+    }
+  }
+  X.sort(function(m,n){return m.z-n.z;});
+  X.forEach(function(x){s+=draw(cut(R[x.r].P,x.i),R[x.r].c,'butt');});
+  return s+'</svg>';
+}
+var KNOT = {
+sekizli:{ropes:[{c:'k',pts:[[80,4,0],[80,30,0],[80,56,0],[84,74,0],[100,86,0],[120,76,0],[122,56,0.5],[104,42,1],[80,36,1],[58,36,0.5],[46,48,0],[56,60,-1],[80,62,-1],[100,64,-1],[112,68,1],[150,78,1]]}]},
+camadan:{ropes:[{c:'k',pts:[[6,42,0],[50,42,0],[95,34,0],[112,50,0],[95,66,0],[50,58,0],[6,58,0]]},{c:'r',pts:[[154,42,-1],[110,42,-1],[80,36.6,1],[65,34,0],[48,50,-1],[65,66,0],[80,63.4,1],[110,58,-1],[154,58,-1]]}]},
+izbarco:{ropes:[{c:'k',pts:[[70,0,0],[70,22,0],[70,48,0],[76,60,0],[92,62,0],[104,50,0],[98,36,0.5],[86,32,1],[70,38,1],[56,46,0.5],[40,56,0],[26,72,0],[32,90,0],[60,96,0],[100,94,0],[124,84,0],[120,70,0],[108,62,-1],[100,55,-1],[94,46,0.5],[92,36,2],[90,24,1.5],[84,12,0],[76,7,-1],[64,9,-1],[58,18,0],[62,26,1.5],[70,29,2],[78,35,2],[82,46,0.5],[84,58,-1],[84,76,-1]]}]},
+iskota:{ropes:[{c:'k',pts:[[6,36,0],[98,36,0],[120,50,0],[98,64,0],[6,64,0]]},{c:'r',pts:[[156,50,-1],[128,50,-1],[108,50,2],[99,46,2],[93,38,1],[88,28,1],[80,22,0],[72,27,-1],[70,36,-1],[70,50,-1],[70,64,-1],[72,74,-1],[80,80,0],[90,75,1],[95,64,1],[100,56,0],[103,50,0],[104.5,45.5,0]]}]},
+kazik:{raw:'<rect x="14" y="40" width="132" height="24" rx="5" fill="url(#gWood)" stroke="#5A3D20" stroke-width="1.4"/><path d="M18 46q40-2 124 1M20 52q60 2 120-1M22 58q50-1 116 1" stroke="#6E4B2A" stroke-width=".6" opacity=".55" fill="none"/>'+
+ ropeD('M64 100V40',RC.k,'round')+ropeD('M94 64V6',RC.k,'round')+ropeD('M52.4 64L105.6 40',RC.k,'butt')+
+ '<text x="64" y="96" dx="7" font-size="8" font-family="Arial" fill="#5E6863">ana ip</text><text x="94" y="12" dx="7" font-size="8" font-family="Arial" fill="#5E6863">uç</text>'}
+};
+var DUGUM = [
+ {id:'sekizli',ad:'Sekizli düğüm',ne:'İpin ucuna durdurucu. İpin delikten, halkadan ya da elinden kaçmasını önler; yükten sonra kolay çözülür.',
+  adim:['İpin ucuyla ana ipin üstünden geçerek bir ilmek yap.','Ucu ana ipin arkasından dolaştır.','Ucu ilk ilmeğin içinden önden geçir ve çekerek sık. Şekil 8 rakamına benzemeli.']},
+ {id:'camadan',ad:'Camadan bağı (düz düğüm)',ne:'Aynı kalınlıkta iki ipi ya da bir sargının iki ucunu birleştirir. Yassı durur, üçgen sargı ve bandaj için uygundur.',
+  adim:['Sağ ucu sol ucun üstünden geçirip altından dolaştır.','Şimdi sol ucu sağ ucun üstünden geçirip altından dolaştır.','Dört ucu birden çekerek sık. Her ipin iki kolu, diğerinin ilmeğinden aynı taraftan çıkmalı.'],
+  uyari:'Yük taşıyan işlerde ve farklı kalınlıktaki iplerde güvenme; kayabilir.'},
+ {id:'izbarco',ad:'İzbarço',ne:'Kaymayan, yük altında sıkışmayan sabit ilmek. Birini çekmek, ipi ağaca ya da halkaya bağlamak için.',
+  adim:['Ana ipte küçük bir ilmek yap (delik); ana ip ilmeğin altında kalsın.','Ucu deliğin içinden alttan yukarı çıkar.','Ucu ana ipin arkasından dolaştır.','Ucu aynı delikten geri aşağı sok; ana ipi ve ucu zıt yöne çekerek sık.'],
+  uyari:'Ucu en az bir karış uzun bırak. Yük yokken gevşeyebilir; can güvenliği için ucu ayrıca düğümle.'},
+ {id:'kazik',ad:'Kazık bağı',ne:'İpi direğe, dala ya da kazığa hızlıca bağlar. Barınak çıtalarını bağlamaya başlarken kullanılır.',
+  adim:['İpi direğin etrafından bir tur dolaştır.','İkinci turu, ilk turun üstünden çapraz geçirerek at.','Ucu bu çaprazın altından geçir ve iki ucu çekerek sık. Önden bakınca iki paralel tur ve üstlerinde bir çapraz görünür.'],
+  uyari:'Yük yön değiştirirse ya da gevşerse kayar; ucu ana ipe iki yarım düğümle emniyete al.'},
+ {id:'iskota',ad:'Iskota bağı',ne:'Farklı kalınlıkta iki ipi birleştirir. İpi branda ya da çarşaf köşesine bağlamak için de kullanılır.',
+  adim:['Kalın ipin ucunu U şeklinde kıvır.','İnce ipi U\'nun içinden arkadan öne çıkar.','İnce ipi U\'nun iki kolunun arkasından dolaştır.','Ucu, kendi ana kolunun altından geçir ve sık.'],
+  uyari:'Islak ya da kaygan ipte ince ipi iki kez dolayarak çift ıskota yap.'},
+ {id:'',ad:'Gergi düğümü',ne:'Çadır ve branda ipinde boyu ayarlanabilen ilmek. Yük altında tutar, elle kaydırılır.',
+  adim:['İpi kazığın etrafından dolaştır.','Ucu, ana ipin etrafına ilmeğin iç tarafında iki tur sar.','İlmeğin dışına geçip ana ipe bir tur daha at ve ucu bu turun içinden geçir.','Düğümü kaydırarak ipi ger.']},
+ {id:'',ad:'Kamyoncu bağı',ne:'Yükü ya da branda ipini kuvvetle germek için. İp kendi üzerinde makara gibi çalışır.',
+  adim:['İpin bir ucunu sabit bir noktaya bağla.','İpin ortasında küçük sabit bir ilmek yap.','Serbest ucu bağlanacak noktadan dolaştırıp bu ilmeğin içinden geçir.','Ucu aşağı çekerek ger, gerginken iki yarım düğümle kilitle.']},
+ {id:'',ad:'Prusik',ne:'İnce bir ip halkasıyla kalın ip üzerinde tutunur: yük binince kilitlenir, boşalınca elle kayar.',
+  adim:['Ana ipten belirgin şekilde ince bir ipten halka yap.','Halkayı ana ipin etrafından dolaştırıp kendi içinden geçir.','Aynı sarımı üç kez tekrarla, sarımları düzgün yan yana diz.','Yük vererek tuttuğunu dene.']}
+];
+
+/* ---------- Bitki çizimleri (şematik) ---------- */
+function veins(L,W){if(L<12)return '';var s='M0 0L'+(L*.93).toFixed(1)+' 0';[.28,.5,.72].forEach(function(t){var x=t*L,e=2*W*t*(1-t)*.72;s+='M'+(x-L*.1).toFixed(1)+' 0L'+(x+L*.05).toFixed(1)+' '+(-e).toFixed(1)+'M'+(x-L*.1).toFixed(1)+' 0L'+(x+L*.05).toFixed(1)+' '+e.toFixed(1);});return '<path d="'+s+'" fill="none" stroke="#E6F4DA" stroke-width=".55" stroke-linecap="round" opacity=".85"/>';}
+function lf(x,y,a,L,W,c){return '<g transform="translate('+x+' '+y+') rotate('+a+')"><path class="'+c+'" d="M0 0q'+(L/2)+' '+(-W)+' '+L+' 0q'+(-L/2)+' '+W+' '+(-L)+' 0z" stroke="#24521F" stroke-width=".5"/>'+(c==='g'?veins(L,W):'')+'</g>';}
+function lfz(x,y,a,L,W,c){var n=12,top=[],bot=[];for(var k=1;k<n;k++){var t=k/n,y0=2*W*t*(1-t)*(k%2?1.12:.86);top.push((t*L).toFixed(1)+' '+(-y0).toFixed(1));bot.unshift((t*L).toFixed(1)+' '+y0.toFixed(1));}
+ return '<g transform="translate('+x+' '+y+') rotate('+a+')"><path class="'+c+'" d="M0 0L'+top.join('L')+'L'+L+' 0L'+bot.join('L')+'Z" stroke="#24521F" stroke-width=".5" stroke-linejoin="round"/>'+veins(L,W)+'<path d="M'+(L*.2)+' -1.6l.6-1.4M'+(L*.45)+' -2.2l.6-1.4M'+(L*.4)+' 2l.6 1.4M'+(L*.7)+' 1.6l.6 1.4" stroke="#F4FAEE" stroke-width=".35" fill="none"/></g>';}
+function st(d,col){return '<path class="s" style="stroke-width:1.8'+(col?';stroke:'+col:'')+'" d="'+d+'"/>';}
+function dot(x,y,r,c){return '<circle class="'+c+'" cx="'+x+'" cy="'+y+'" r="'+r+'"/>';}
+var BIT = {
+isirgan: st('M40 58V8')+lfz(40,48,-25,22,7,'g')+lfz(40,48,205,22,7,'g')+lfz(40,34,-25,19,6,'g')+lfz(40,34,205,19,6,'g')+lfz(40,21,-30,15,5,'g')+lfz(40,21,210,15,5,'g')+lfz(40,10,-60,9,3,'g')+lfz(40,10,240,9,3,'g'),
+ebegumeci: st('M40 58V28M40 46L22 32M40 42l18-14')+dot(40,22,12,'g')+dot(19,28,8,'g')+dot(60,24,8,'g')+st('M40 22v-10M40 22l-9-5M40 22l9-5M40 22l-7 7M40 22l7 7','var(--surface)')+dot(56,48,3,'m')+dot(61,45,3,'m')+dot(62,51,3,'m'),
+kuzukulagi: st('M40 58V38M24 58V46')+'<path class="g" d="M40 6q8 16 6 28l8 10-11-5h-6l-11 5 8-10q-2-12 6-28z"/><path class="g" d="M24 30q5 8 4 14l5 6-7-3h-4l-7 3 5-6q-1-6 4-14z"/>',
+karahindiba: lf(40,54,-172,28,6,'g')+lf(40,54,-150,24,6,'g')+lf(40,54,-30,24,6,'g')+lf(40,54,-8,28,6,'g')+lf(40,54,-120,18,5,'g')+lf(40,54,-60,18,5,'g')+st('M40 54V22')+dot(40,16,9,'a')+st('M40 8v16M32 16h16M34 10l12 12M46 10L34 22','var(--ink)'),
+semizotu: st('M6 50q20-18 40-12t28-10','var(--danger)')+st('M34 36q4-12 14-14','var(--danger)')+lf(14,44,-80,10,5,'g')+lf(14,44,100,10,5,'g')+lf(28,37,-90,10,5,'g')+lf(28,37,80,10,5,'g')+lf(46,38,-100,10,5,'g')+lf(46,38,70,10,5,'g')+lf(62,34,-110,10,5,'g')+lf(62,34,60,10,5,'g')+lf(48,22,-40,10,5,'g')+lf(48,22,200,10,5,'g'),
+sinirotu: lf(38,56,-92,34,11,'g')+lf(38,56,-142,28,10,'g')+lf(38,56,-42,28,10,'g')+st('M38 56V26M38 56L18 38M38 56l20-18','var(--surface)')+st('M38 56q14-10 18-28')+'<rect class="k" x="54" y="6" width="4" height="24" rx="2"/>',
+bogurtlen: st('M6 14q34 4 68 32')+st('M30 19l-4-5M48 27l-2-6M60 35l4-5')+lf(40,22,-70,18,8,'g')+lf(40,22,-20,16,7,'g')+dot(24,36,4,'k')+dot(30,40,4,'k')+dot(22,43,4,'k')+dot(28,47,4,'k')+dot(52,44,4,'r')+dot(57,48,4,'r')+dot(50,51,4,'r'),
+kusburnu: st('M6 46q30-26 68-32')+st('M22 34l-3-5M40 23l-2-6M58 17l2-5')+lf(34,26,-110,14,6,'g')+lf(52,19,-100,14,6,'g')+'<ellipse class="r" cx="26" cy="46" rx="5" ry="7"/><ellipse class="r" cx="44" cy="38" rx="5" ry="7"/><ellipse class="r" cx="62" cy="31" rx="5" ry="7"/>'+st('M26 53v3M44 45v3M62 38v3'),
+baldiran: st('M40 58V26')+st('M40 26L18 12M40 26L28 6M40 26V4M40 26L52 6M40 26L62 12')+dot(18,12,4.5,'m')+dot(28,6,4.5,'m')+dot(40,5,4.5,'m')+dot(52,6,4.5,'m')+dot(62,12,4.5,'m')+dot(40,52,1.8,'r')+dot(41,45,1.8,'r')+dot(39,38,1.8,'r')+dot(41,32,1.8,'r')+lf(40,48,-155,20,5,'g')+lf(40,48,-25,20,5,'g')+lf(40,40,-150,14,4,'g')+lf(40,40,-30,14,4,'g'),
+zakkum: st('M40 58V24')+lf(40,48,-20,28,4,'g')+lf(40,48,200,28,4,'g')+lf(40,38,-35,26,4,'g')+lf(40,38,215,26,4,'g')+lf(40,30,-60,20,4,'g')+lf(40,30,240,20,4,'g')+dot(40,10,4,'r')+dot(33,15,4,'r')+dot(47,15,4,'r')+dot(36,22,4,'r')+dot(44,22,4,'r')+dot(40,16,2.5,'a'),
+guzelavrat: st('M36 58V18M36 40l20 6')+lf(36,32,-30,24,10,'g')+lf(36,32,210,24,10,'g')+lf(36,18,-70,14,6,'g')+dot(60,48,7,'k')+dot(57.5,45.5,1.8,'m')+st('M53 44l-4-4M60 40v-5M67 44l4-4'),
+boruotu: st('M26 58V36M26 46l28-4')+'<path class="m" d="M26 36L14 10q12-6 24 0z"/><path class="s" style="stroke-width:1.8" d="M26 36L14 10q12-6 24 0zM26 36V8"/>'+dot(58,40,9,'g')+st('M58 27v-6M67 31l4-5M71 40h6M67 49l4 5M58 53v6M49 49l-4 5M49 31l-4-5'),
+sutlegen: st('M40 58V20')+lf(40,50,-15,16,3,'g')+lf(40,46,195,16,3,'g')+lf(40,42,-15,16,3,'g')+lf(40,38,195,16,3,'g')+lf(40,34,-15,16,3,'g')+lf(40,30,195,16,3,'g')+st('M40 20L28 10M40 20V6M40 20l12-10')+dot(28,10,4,'a')+dot(40,6,4,'a')+dot(52,10,4,'a')+'<path class="m" d="M62 40q5 8 0 11t0-11z"/><path class="s" style="stroke-width:1.5" d="M62 40q5 8 0 11t0-11zM56 36l6 4"/>',
+mantar: '<path class="m" d="M14 28q26-28 52 0z"/><path class="m" d="M36 28h8v24h-8z"/><path class="s" style="stroke-width:1.8" d="M14 28q26-28 52 0zM36 28v24M44 28v24M31 36h18"/><path class="a" d="M28 46l5 3h14l5-3q-2 12-12 12T28 46z"/><path class="s" style="stroke-width:1.8" d="M28 46l5 3h14l5-3q-2 12-12 12T28 46z"/>'
+};
+function bit(id,ad){return '<svg class="plant" viewBox="0 0 80 60" role="img" aria-label="'+ad+' çizimi"><rect width="80" height="60" fill="url(#gPlantBg)"/><g filter="url(#sh)">'+BIT[id]+'</g></svg>';}
+var YENIR = [
+ {id:'isirgan',ad:'Isırgan',yer:'Yol ve tarla kenarı, nemli gölgelik yerler',tani:'Karşılıklı dizilmiş, kenarı dişli, kalp biçimli yapraklar. Dokununca yakan ince tüyler ayırt edici özelliğidir.',kullan:'Eldivenle körpe tepe yapraklarını topla. Haşlayınca ya da pişirince yakıcılığı kaybolur. Çorba, kavurma, börek içi.'},
+ {id:'ebegumeci',ad:'Ebegümeci',yer:'Bahçe, yol kenarı, boş araziler',tani:'Yuvarlak, 5-7 loblu, kenarı tırtıklı yapraklar; pembe-beyaz 5 taç yapraklı çiçek.',kullan:'Yaprak ve körpe sapları haşlanır, kavrulur ya da sarması yapılır.'},
+ {id:'kuzukulagi',ad:'Kuzukulağı',yer:'Çayır, mera, orman açıklığı',tani:'Ok ucu biçimli, dipte geriye bakan iki kulakçıklı ince yaprak. Tadı belirgin ekşidir.',kullan:'Çiğ olarak salataya ya da çorbaya. Oksalik asit içerir: az miktarda ye, böbrek taşı olanlar yemesin.'},
+ {id:'karahindiba',ad:'Karahindiba',yer:'Çimenlik, çayır, yol kenarı',tani:'Yere yapışık rozet; derin dişli yapraklar; içi boş sapın ucunda tek sarı çiçek. Sapı kırılınca süt verir ama dallanmayan tek çiçekli sap ayırt eder.',kullan:'Genç yapraklar çiğ ya da haşlanmış yenir; yaşlı yapraklar acıdır, haşlama suyunu dök.'},
+ {id:'semizotu',ad:'Semizotu',yer:'Bahçe, tarla, kaldırım araları (yaz)',tani:'Yere yayılan kırmızımsı etli sap; küçük, kalın, kaşık biçimli parlak yapraklar.',kullan:'Çiğ salata ya da yoğurtlu. Benzeri sütleğenle karıştırma: semizotunun sapı kırılınca beyaz süt çıkmaz.'},
+ {id:'sinirotu',ad:'Sinirotu',yer:'Çimenlik, patika, yol kenarı',tani:'Dipten çıkan oval yapraklar; yaprak boyunca uzanan belirgin paralel damarlar; ortada ince başak.',kullan:'Genç yapraklar haşlanır ya da sarma yapılır. Yaşlı yapraklar liflidir.'},
+ {id:'bogurtlen',ad:'Böğürtlen',yer:'Çit, dere kenarı, orman kıyısı (yaz sonu)',tani:'Dikenli sürünücü dallar; küçük tanelerden oluşan, olgunlaşınca kırmızıdan siyaha dönen meyve.',kullan:'Olgun siyah meyveler çiğ yenir. Türkiye\'de bu yapıdaki (çok taneli) meyvelerin zehirli benzeri yoktur.'},
+ {id:'kusburnu',ad:'Kuşburnu',yer:'Yamaç, çit, yol kenarı (sonbahar-kış)',tani:'Dikenli yaban gülü çalısında parlak kırmızı-turuncu oval meyveler.',kullan:'C vitamini deposu. Meyveyi yar, içindeki tüylü çekirdekleri ayıkla (boğazı tahriş eder); çayı ya da marmelatı yapılır.'}
+];
+var ZEHIR = [
+ {id:'baldiran',ad:'Baldıran',tani:'1-2 m boy; maydanoz ve yabani havuca benzeyen parçalı yapraklar; şemsiye biçimli beyaz çiçekler. Tüysüz, içi boş sapında mor-kırmızı lekeler ve ezilince fare kokusu vardır.',neden:'Tüm kısımları öldürücü. Maydanoz, yabani havuç, kereviz ve rezene sanılarak toplanır. Şemsiye çiçekli yabani otları yeme.'},
+ {id:'zakkum',ad:'Zakkum',tani:'Park ve yol kenarı süs çalısı; dar, uzun, derimsi yapraklar; pembe, beyaz ya da kırmızı çiçek.',neden:'Her yeri zehirli, kalbi etkiler. Dalını şiş ya da ateş çubuğu yapma, yakıp dumanını soluma.'},
+ {id:'guzelavrat',ad:'Güzelavrat otu',tani:'Oval yapraklar, mor-kahverengi çan çiçek; yıldız biçimli çanak üzerinde kiraz büyüklüğünde parlak siyah meyve.',neden:'Tatlımsı meyvesi çocukları çeker; birkaç tanesi ölümcül olabilir.'},
+ {id:'boruotu',ad:'Boru otu (şeytan elması)',tani:'Büyük, beyaz ya da morumsu boru biçimli çiçek; ceviz büyüklüğünde dikenli yeşil kapsül.',neden:'Tohum ve yaprakları sanrı, yüksek ateş, kalp ritim bozukluğu yapar.'},
+ {id:'sutlegen',ad:'Sütleğen',tani:'Dar yapraklı dik sap, sarı-yeşil çiçek kümeleri. Kırılınca bol beyaz süt akar.',neden:'Sütü ciltte ve gözde yanık yapar, yenirse zehirler. Semizotuyla karıştırılır.'},
+ {id:'mantar',ad:'Yabani mantarlar',tani:'En ölümcül tür köygöçüren (ölüm meleği): yeşilimsi-beyaz şapka, sapta yüzük, dipte kese biçimli kılıf. Yenir türlere çok benzer.',neden:'Zehiri pişirmekle yok olmaz; belirti 6-12 saat sonra başlar, karaciğeri tahrip eder. Afette mantar toplama: kalorisi düşük, riski çok yüksek.'}
+];
+
+/* ---------- Yapım çizimleri ---------- */
+var YAP = {
+kulube:'<path class="s" d="M4 72h112"/><path class="g" d="M8 72L92 24l16 48z"/><path class="s" d="M8 72L96 22M82 72l12-48 14 48"/><path class="k" d="M86 72l8-30 8 30z"/><path class="s" style="stroke:var(--surface);stroke-width:1.5" d="M30 62l-4 9M44 54l-5 17M58 46l-6 25M72 38l-6 33"/><path class="a" d="M30 72h50v4H30z"/>',
+sundurma:'<path class="s" d="M4 72h112"/><path class="g" d="M36 26h44L60 72H14z"/><path class="s" d="M36 14v58M80 14v58M32 26h52M36 26L14 72M58 26L37 72M80 26L60 72"/><path class="r" d="M100 72c-6 0-8-6-4-12 1 3 3 2 2-2 5 3 8 8 6 12-1 1-2 2-4 2z"/><path class="k" d="M110 50h4v22h-4z"/><path class="a" d="M22 68h40v4H22z"/>',
+branda:'<path class="s" d="M4 72h112M14 10v62M106 10v62M14 28h92"/><path class="a" d="M34 28h52l22 42H12z"/><path class="s" d="M34 28L12 70M86 28l22 42M34 28h52M12 70l-6 4M108 70l6 4"/><path class="k" d="M44 70l16-30 16 30z"/>',
+ates:'<path class="s" d="M4 72h112"/><path class="r" d="M60 66c-12 0-16-12-8-22 2 6 6 4 5-4 10 6 16 16 12 22-2 3-5 4-9 4z"/><path class="a" d="M60 66c-5 0-7-6-3-11 3 3 6 6 5 9z"/><path class="s" style="stroke-width:4" d="M38 72l20-44M82 72L62 28M50 72l8-40M70 72l-8-40"/><path class="k" d="M92 64h20v4H92zM94 58h18v4H94z"/><circle class="s" cx="60" cy="70" r="30" style="stroke-dasharray:3 4;stroke:var(--muted);stroke-width:1.5"/>',
+filtre:'<path class="m" d="M44 6h32v44l-10 14v8H54v-8L44 50z"/><rect class="k" x="44" y="6" width="32" height="5"/><path class="k" d="M44 14h32v8H44z" opacity=".35"/><path class="a" d="M44 24h32v10H44z"/><path class="k" d="M44 36h32v10H44z"/><path class="m" d="M47 48h26l-5 8H52z"/><path class="s" d="M44 6h32v44l-10 14v8H54v-8L44 50zM44 14h32M44 24h32M44 36h32M46 48h28"/><path class="w" d="M60 74q3 4 0 6t0-6z"/><text x="82" y="21" font-size="6.5" font-family="Arial" fill="var(--muted)">çakıl</text><text x="82" y="32" font-size="6.5" font-family="Arial" fill="var(--muted)">kum</text><text x="82" y="44" font-size="6.5" font-family="Arial" fill="var(--muted)">kömür</text><text x="82" y="55" font-size="6.5" font-family="Arial" fill="var(--muted)">bez</text>',
+kerpic:'<path class="s" d="M4 72h112"/><path class="a" d="M10 56h28v14H10zM42 56h28v14H42zM26 40h28v14H26z"/><path class="s" d="M10 56h28v14H10zM42 56h28v14H42zM26 40h28v14H26z"/><path class="s" style="stroke-width:4" d="M78 46h34v24H78z"/><path class="a" d="M82 50h26v16H82z" opacity=".6"/><circle class="a" cx="96" cy="18" r="8"/><path class="s" d="M96 4v4M82 18h4M106 18h4M86 8l3 3M106 8l-3 3"/>',
+sedye:'<path class="m" d="M22 30h76v24H22z"/><path class="s" style="stroke-width:4" d="M6 30h108M6 54h108"/><path class="s" d="M22 30v24M98 30v24M40 30v24M60 30v24M80 30v24" style="stroke-dasharray:3 3;stroke-width:1.5"/>',
+yagmur:'<path class="s" d="M10 14v58M110 24v48M4 72h112"/><path class="a" d="M10 20l100 10-50 22z"/><path class="s" d="M10 20l100 10-50 22z"/><path class="w" d="M60 54q3 5 0 7t0-7z"/><path class="m" d="M50 62h20v10H50z"/><path class="s" d="M50 62h20v10H50z"/><path class="s" d="M30 6l-2 6M50 4l-2 6M70 6l-2 6M90 8l-2 6"/>'
+};
+var YSKY={kulube:1,sundurma:1,branda:1,ates:1,kerpic:1,yagmur:1};
+function yap(id,ad){var out=YSKY[id];return '<svg class="illu" viewBox="0 0 120 80" role="img" aria-label="'+ad+' çizimi"><rect width="120" height="80" fill="url(#'+(out?(id==='ates'?'skyDusk':'skyDay'):'skyClinic')+')"/>'+(out?'<rect y="72" width="120" height="8" fill="url(#ground)"/>':'')+'<g filter="url(#sh)">'+YAP[id]+'</g></svg>';}
+var YAPIM = [
+ {grup:'Barınak'},
+ {ill:'kulube',ad:'Yaprak kulübesi (A çatı)',ne:'Ateşsiz gecelerde vücut ısısını tutan en etkili doğal barınak. Yalnızca bir kişilik, dar yapılır.',
+  adim:['Kuru, düz, su birikmeyen bir yer seç; üstünde kuru dal ya da kaya olmasın.','Boyundan bir adım uzun sağlam bir sırık bul. Bir ucunu yere, diğerini bel hizasında çatala ya da A şeklinde bağlanmış iki dala yasla.','Sırığın iki yanına sık aralıkla dallar diz (kaburga).','Üstünü kol boyu kalınlığında kuru yaprak, eğrelti, ot ile ört; rüzgâr almasın diye üstüne birkaç dal koy.','İçine, sıkışınca en az bir karış kalacak kadar kuru yaprak doldur: soğuk zemin vücut ısısını en hızlı çalan şeydir.','Girişi çanta ya da yaprak yığınıyla kapat.']},
+ {ill:'sundurma',ad:'Sundurma ve ateş yansıtıcı',ne:'Hızlı kurulur, önündeki ateşin ısısını içeri yansıtır. Rüzgârdan ve yağmurdan tek yönlü korur.',
+  adim:['İki ağaç arasına göğüs hizasında yatay bir sırık bağla (kazık bağı ile başla).','Sırığa arkadan 45 derece eğimle dallar yasla; sırtı hâkim rüzgâra ver.','Dalların üstünü alttan başlayarak, kiremit gibi üst üste yaprak ve çam dalıyla kapla.','Zemine kalın bir yaprak ya da dal yatağı ser.','Bir adım önde ateş yak; ateşin arkasına taş ya da kütükten duvar örerek ısıyı içeri yansıt.']},
+ {ill:'branda',ad:'Branda çadırı',ne:'Branda, yağmurluk, naylon örtü ya da kurtarma battaniyesiyle birkaç dakikada kurulur.',
+  adim:['İki ağaç arasına bel hizasında ip ger (gergi düğümü ya da kamyoncu bağı).','Brandayı ortadan ipin üstüne at.','Köşeleri kazık ya da taşla yere gererek sabitle. Köşede halka yoksa içine küçük bir taş koyup ıskota bağıyla bağla.','Alçak kur: alçak çatı rüzgârı keser ve ısıyı tutar. Yağmurda bir kenarı diğerinden alçak bırak.']},
+ {ill:'',ad:'Karda barınak',ne:'Kar iyi bir yalıtkandır. Çukur ya da yığın barınak dışarıdaki ayazdan çok daha ılık kalır.',
+  adim:['Büyük bir çam ağacının dibindeki doğal kar çukurunu genişlet ya da karı göğüs hizasına kadar yığıp 1-2 saat oturmasını bekle.','Yığının içini oy; duvar ve tavan en az bir karış kalın kalsın.','Yatacağın yeri girişten yüksek yap: soğuk hava aşağıda toplanır.','Tavana bilek kalınlığında hava deliği aç ve açık tut.','Karın üstüne doğrudan yatma; dal, çanta, ip ser.']},
+ {grup:'Ateş ve su'},
+ {ill:'ates',ad:'Ateş yakma',ne:'Isı, kurutma, su kaynatma, işaret verme. Üç kat malzeme hazırlamadan kibriti çakma.',
+  adim:['Çevreyi 1 metre çapında toprağa kadar temizle, etrafını taşla çevir. Rüzgârlı havada ve orman yangını riskinde yakma.','Tutuşturucu: kuru ot, huş kabuğu, çam reçinesi, pamuk, ince yonga. Bir avuç.','Çıra: kibrit çöpü ile parmak kalınlığı arasında kuru dallar. Yerden değil, ağaçta kurumuş dallardan topla.','Odun: bilek kalınlığı ve üstü.','Tutuşturucunun üstüne çırayı çadır gibi diz, rüzgâr yönünden tutuştur, alev büyüdükçe kalın odun ekle.','Islak havada: kalın dalın içi kurudur, yarıp içinden yonga çıkar.','Ayrılırken su dök, karıştır, elinle yoklayacak kadar soğuyana dek tekrarla.']},
+ {ill:'filtre',ad:'Şişeden su filtresi',ne:'Bulanık suyu berraklaştırır. Mikropları öldürmez: süzdükten sonra mutlaka kaynat ya da klorla.',
+  adim:['Pet şişenin dibini kes, kapağına birkaç delik aç, baş aşağı çevir.','Ağız kısmına temiz bez ya da pamuk sıkıştır.','Üstüne sırasıyla ezilmiş odun kömürü (ateşten kalan, kül değil), ince kum, kaba kum ve çakıl koy.','Suyu üstten yavaşça dök, alttan damlayanı temiz kaba al. İlk süzülen bulanık suyu at.','Süzülen suyu en az 1 dakika kaynat.']},
+ {ill:'yagmur',ad:'Yağmur suyu toplama',ne:'Doğada en temiz su kaynağı. Az emekle çok su verir.',
+  adim:['Brandayı ya da naylonu dört köşesinden eğimli ger; en alçak noktanın altına kap koy.','Örtünün ortasına küçük bir taş koyarak suyu tek noktaya yönlendir.','İlk birkaç dakikanın suyunu dök: örtüdeki kiri yıkar.','Çatıdan, oluktan toplanan suyu içmeden önce kaynat.']},
+ {grup:'Malzeme ve araç yapımı'},
+ {ill:'kerpic',ad:'Kerpiç tuğla',ne:'Toprak, saman ve suyla yapılan, güneşte kurutulan yapı tuğlası. Geçici duvar, ocak, rüzgârlık için.',
+  adim:['Killi toprağı taş ve kökten ayıkla. Islak bir avuç toprak sıkınca dağılmıyor, top olabiliyorsa uygundur.','Toprağı suyla yoğur, içine bolca kıyılmış saman ya da kuru ot kat: saman çatlamayı önler.','Çamuru bir gün dinlendir, tekrar yoğur.','Tahtadan dipsiz bir kalıp yap (yaklaşık 30 x 15 x 10 cm). Kalıbı ıslat, çamuru bastırarak doldur, üstünü sıyır, kalıbı kaldır.','Tuğlaları 3-4 gün düz, sonra yan çevirerek toplam 2-4 hafta gölgeli güneşte kurut; yağmurdan koru.','Örerken aynı çamuru harç olarak kullan. Duvarın dibini taşla yükselt ve üstünü saçakla ört: kerpiç suya dayanmaz.']},
+ {ill:'',ad:'Dal örgü ve çamur sıva duvar',ne:'Kazıklar arasına örülen dalların çamurla sıvanmasıyla yapılan hafif duvar.',
+  adim:['Bir karış arayla sağlam kazıklar çak.','Aralarından söğüt, fındık gibi esnek dalları bir önden bir arkadan geçirerek sepet gibi ör.','Killi toprak, saman ve suyu yoğurup örgünün iki yüzüne bastırarak sıva.','Kuruyunca çatlakları ince çamurla kapat.']},
+ {ill:'sedye',ad:'Doğaçlama sedye',ne:'Yürüyemeyen yaralıyı iki ya da dört kişiyle taşımak için.',
+  adim:['Boyundan uzun iki sağlam sırık bul.','Battaniyeyi yere ser, sırıkları üçte bir aralıkla üstüne koy, kenarları sırıkların üstünden içe katla: yaralının ağırlığı battaniyeyi kilitler.','Battaniye yoksa: iki-üç ceketin kollarını içe çevir, fermuarı kapat, sırıkları kollardan geçir.','Önce sağlam biriyle dene. Boyun ve sırt yaralanması şüphesinde yaralıyı taşımak yerine ekip bekle.']},
+ {ill:'',ad:'Bitkiden ip',ne:'Isırgan sapı, ıhlamur ve söğüt iç kabuğu, uzun otlar bükülerek ipe dönüşür.',
+  adim:['Lifleri ayır, hafif nemli tut.','Bir tutam lifi ortasından biraz kaydırarak ikiye katla.','Üstteki kolu kendinden uzağa doğru bük, sonra diğer kolun üstünden kendine doğru aşır. Aynı hareketi sürekli tekrarla.','Kol kısalınca araya yeni lif ekleyerek devam et. Ekleri aynı hizaya getirme.']}
+];
+
+/* ---------- Tarifler ---------- */
+var TARIF = [
+ {ad:'Tavada mayasız bazlama',meta:'15 dakika · 4 adet · tava ya da sac',malz:['2 su bardağı un','Yaklaşık 1 su bardağı su','1 çay kaşığı tuz','Varsa 1 yemek kaşığı yağ'],
+  adim:['Malzemeyi ele yapışmayan bir hamur olana dek yoğur, 10 dakika dinlendir.','Dörde böl, her parçayı elinle yarım parmak kalınlığında aç.','Kuru, kızgın tavada her yüzünü 2-3 dakika, benek benek kızarana dek pişir.']},
+ {ad:'Tek kapta mercimek çorbası',meta:'25 dakika · 4 kişilik',malz:['1 su bardağı kırmızı mercimek','5 su bardağı su','1 yemek kaşığı salça','Varsa 1 soğan, 1 yemek kaşığı yağ','Tuz, pul biber'],
+  adim:['Mercimeği yıka. Her şeyi tencereye koy.','Kaynayınca kapağı kapat, kısık ateşte mercimek dağılana dek 20 dakika pişir.','Kaşıkla ya da çatalla ez, tuzunu ayarla.']},
+ {ad:'Demleme bulgur pilavı',meta:'Ateşte 5 dakika · yakıt tasarrufu',malz:['1 su bardağı pilavlık bulgur','2 su bardağı su','1 yemek kaşığı salça ya da bulyon','Tuz, varsa yağ'],
+  adim:['Suyu salça ve tuzla kaynat, bulguru ekle, 5 dakika kaynat.','Ateşten al, kapağı sıkıca kapat, tencereyi battaniye ya da havluya sar.','20 dakika kendi buharında demlendir. İnce (köftelik) bulgura yalnızca kaynar su dökmek yeter.']},
+ {ad:'Konserve nohut yahnisi',meta:'10 dakika · 2-3 kişilik',malz:['1 kutu haşlanmış nohut ya da kuru fasulye','1 yemek kaşığı salça','1 su bardağı su','Varsa soğan, yağ, kimyon, pul biber'],
+  adim:['Varsa soğanı yağda çevir, salçayı ekle.','Nohutu suyuyla birlikte kat, suyu ve baharatı ekle.','5-6 dakika kaynat. Bulgur ya da bazlamayla ye.']},
+ {ad:'Ocaksız fasulye salatası',meta:'5 dakika · ateş gerekmez',malz:['1 kutu haşlanmış fasulye ya da nohut','1 kutu ton balığı (varsa)','Yarım limon ya da 1 yemek kaşığı sirke','Varsa soğan, yağ, tuz'],
+  adim:['Konservenin suyunu süz.','Bütün malzemeyi karıştır.','Açılan konserveyi soğutamıyorsan aynı öğünde bitir.']},
+ {ad:'Tahin-pekmez enerji topları',meta:'10 dakika · ateş gerekmez · günlerce dayanır',malz:['1 su bardağı yulaf ezmesi ya da ufalanmış bisküvi','3 yemek kaşığı tahin','3 yemek kaşığı pekmez','Bir avuç ceviz, fındık ya da kuru üzüm'],
+  adim:['Hepsini kaşıkla karıştır; dağılıyorsa biraz daha tahin ekle.','Ceviz büyüklüğünde toplar yap.','Kapalı kapta sakla. Küçük hacimde yüksek kalori verir.']},
+ {ad:'Isırgan çorbası',meta:'20 dakika · doğadan toplanan otla',malz:['2 büyük avuç körpe ısırgan tepesi (eldivenle topla)','4 su bardağı su','2 yemek kaşığı bulgur, pirinç ya da un','Tuz, varsa soğan ve yağ'],
+  adim:['Isırganı yıka. Suyu kaynat, bulguru ve ısırganı at.','15 dakika pişir; ısırgan pişince yakmaz.','Tuzla tatlandır. Aynı yöntem ebegümeci için de geçerli.']},
+ {ad:'Sıcak sulu yulaf lapası',meta:'5 dakika · yalnızca sıcak su',malz:['Yarım su bardağı yulaf ezmesi','1 su bardağı kaynar su','1 yemek kaşığı pekmez ya da şeker','Varsa süt tozu, kuru meyve'],
+  adim:['Yulafın üstüne kaynar suyu dök, kapağını kapat.','5 dakika beklet, karıştır.','Pekmez ve kuru meyve ekle.']},
+ {ad:'Ağızdan sıvı karışımı',meta:'İshal, kusma ve sıcakta sıvı kaybı için',malz:['1 litre kaynatılıp soğutulmuş su','6 silme çay kaşığı şeker','Yarım silme çay kaşığı tuz'],
+  adim:['Karıştırıp tamamen erit. Ölçüyü şaşırma: fazla tuz zarar verir.','Yudum yudum, sık sık içir.','24 saat içinde kullan, kalanını dök. Kişi içemiyor ya da bilinci bulanıksa 112\'yi ara.']}
+];
+
+/* ---------- İlk yardım piktogramları ---------- */
+PIC.cpr='<svg viewBox="0 0 72 72"><path class="s" d="M4 64h64"/><circle class="k" cx="12" cy="54" r="5"/><path class="s" style="stroke-width:6" d="M19 56h42"/><circle class="k" cx="40" cy="12" r="5"/><path class="s" style="stroke-width:4" d="M36 20l3 28M44 20l-3 28"/><path class="s" style="stroke:var(--danger)" d="M56 22v20m0 0l-5-5m5 5l5-5"/></svg>';
+PIC.yan='<svg viewBox="0 0 72 72"><path class="s" d="M4 62h64"/><circle class="k" cx="12" cy="50" r="5"/><path class="s" style="stroke-width:6" d="M18 54h24"/><path class="s" style="stroke-width:5" d="M42 54h22M42 54l10-12 8 12M26 54l-10-8"/></svg>';
+PIC.heim='<svg viewBox="0 0 72 72"><path class="s" d="M4 66h64"/><circle class="k" cx="28" cy="12" r="5"/><path class="s" style="stroke-width:5" d="M28 19v26M28 45l-5 20M28 45l5 20"/><circle cx="44" cy="10" r="5" fill="var(--muted)"/><path class="s" style="stroke-width:5;stroke:var(--muted)" d="M44 17v28M44 45l-3 20M44 45l7 20"/><path class="s" style="stroke-width:4;stroke:var(--danger)" d="M44 26L24 33"/><circle class="r" cx="23" cy="33" r="3.5"/></svg>';
+
+var ILKY = [
+ {ad:'Önce: Koruma, Bildirme, Kurtarma',l:['Koruma: önce kendi güvenliğin. Trafiği, gazı, elektriği, yangını kontrol et; tehlike sürüyorsa yaklaşma.','Bildirme: 112\'yi ara ya da arat. Ne oldu, nerede, kaç kişi.','Kurtarma: bilinci, solunumu ve ağır kanamayı kontrol et; en acil olandan başla.','Yaralıyı gerekmedikçe yerinden oynatma.']},
+ {ad:'Ağır kanama',l:['Temiz bezle yaranın üstüne sıkıca, kesintisiz bas.','Bez kanla dolarsa kaldırma, üstüne yenisini koy.','Mümkünse yaralı bölgeyi kalp seviyesinin üstünde tut.','Turnikeyi yalnızca eğitim aldıysan ve kol ya da bacaktaki kanama basıyla durmuyorsa uygula.','112\'yi ara.']},
+ {pic:'yan',ad:'Bilinç yok, nefes var',l:['Kişiyi yan yatır (kurtarma pozisyonu): üstteki bacağını bük, başını hafifçe geriye al.','Ağzında yabancı cisim varsa çıkar.','Nefesini sürekli kontrol et, 112\'yi ara.']},
+ {pic:'cpr',ad:'Nefes yok: kalp masajı',l:['Yanıt vermeyen ve normal nefes almayan kişinin kalbi durmuş say. 112\'yi ara ya da arat, telefonu hoparlöre al: görevli adım adım yönlendirir.','Kişiyi sert zemine sırtüstü yatır. Göğüs kemiğinin ortasına iki elini üst üste koy, dirseklerini kırma.','5-6 cm çökecek şekilde, dakikada 100-120 hızla bas; her basıdan sonra göğsün tamamen geri gelmesine izin ver.','Eğitimin varsa 30 basıda 2 nefes ver; yoksa yalnızca bası yap.','Yardım gelene ya da kişi nefes alana kadar durma. Yorulursan yanındakiyle her 2 dakikada bir değiş.','Çocukta (eğitimin varsa): önce 5 kurtarma nefesi ver, sonra 15 bası 2 nefes şeklinde devam et.','Yakında otomatik şok cihazı (OED) varsa getirt ve sesli talimatlarını izle; eğitim gerektirmez.']},
+ {pic:'heim',ad:'Boğaza yabancı cisim kaçması',l:['Öksürebiliyor ve konuşabiliyorsa: dokunma, öksürmeye teşvik et.','Öksüremiyor, konuşamıyor, morarıyorsa: öne eğ, kürek kemiklerinin arasına avuç içinin topuğuyla 5 kez sertçe vur.','Çıkmazsa arkasına geç, yumruğunu göbeğin üstüne koy, diğer elinle kavra, içe ve yukarı doğru 5 kez bastır.','Cisim çıkana dek 5 sırt vuruşu ve 5 karın basısını dönüşümlü sürdür.','Bilinci kaybolursa yere yatır, 112\'yi ara, kalp masajına başla.','1 yaş altı bebek: yüzüstü kolunun üstüne yatır, 5 sırt vuruşu; çevir, iki parmakla 5 göğüs basısı. Karına bası yapma.']},
+ {ad:'Suda boğulma',l:['Suya girmeden kurtarmayı dene: ip, dal, can simidi uzat ya da at.','Sudan çıkarınca nefesini kontrol et. Nefes yoksa hemen kalp masajına başla; eğitimin varsa önce suni solunum ver.','Midesine bastırarak su çıkarmaya çalışma.','Kendine gelse bile hastaneye götür: saatler sonra solunum sorunu gelişebilir.']},
+ {ad:'Yanık',l:['En az 10-20 dakika serin (buzlu olmayan) akan suyun altında tut.','Yüzük, saat gibi sıkan eşyaları şişmeden çıkar.','Su toplamış kabarcıkları patlatma; temiz bezle gevşekçe ört.','Yoğurt, diş macunu, salça sürme.','Yüz, el, eklem, genital bölge yanıkları ve avuçtan büyük yanıklar için sağlık kuruluşuna git.']},
+ {ad:'Kırık ve burkulma',l:['Kırık şüphesinde bölgeyi hareket ettirme, düzeltmeye çalışma.','Tahta, karton ya da dergiyle alt ve üst eklemi içine alacak şekilde sabitle.','Boyun ve sırt yaralanması şüphesinde kişiyi yerinden oynatma.','Burkulmada: dinlendir, beze sarılı soğuk uygula (15-20 dakika), sargıyla destekle, yukarı kaldır.']},
+ {ad:'Şok',l:['Belirti: soluk, soğuk, nemli cilt; hızlı ve zayıf nabız; huzursuzluk, bulanık bilinç.','Sırtüstü yatır, bacaklarını yaklaşık 30 cm yükselt.','Üstünü ört, sıcak tut. Yiyecek içecek verme.','Kanamayı durdur, 112\'yi ara.']},
+ {ad:'Kalp krizi ve inme',l:['Kalp krizi: göğüste baskı ve sıkışma, kola, çeneye, sırta yayılan ağrı, soğuk terleme, nefes darlığı.','112\'yi ara, kişiyi yarı oturur duruma getir, yürütme, yalnız bırakma.','İnme: yüzün bir yanında sarkma, bir kolda güçsüzlük, konuşmada bozulma.','Belirtinin başladığı saati not et ve hemen 112\'yi ara: tedavi dakikalarla yarışır.']},
+ {ad:'Sara (epilepsi) nöbeti',l:['Çevresindeki sert ve sivri eşyaları uzaklaştır, başının altına yumuşak bir şey koy.','Kişiyi tutma, bastırma; ağzına hiçbir şey sokma.','Nöbet bitince yan yatır, kendine gelene dek yanında kal.','Nöbet 5 dakikadan uzun sürerse ya da tekrarlarsa 112\'yi ara.']},
+ {ad:'Yılan sokması',l:['Kişiyi sakinleştir, yatır ve hareket ettirme; hareket zehrin yayılmasını hızlandırır.','Isırılan kol ya da bacağı kalp seviyesinde, hareketsiz tut. Yüzük, saat gibi sıkan eşyaları şişmeden çıkar.','Yarayı temiz, nemli bir bezle nazikçe sil.','Yarayı kesme, emme, vakumla çekme; turnike ve buz uygulama.','112\'yi ara ya da en kısa sürede hastaneye ulaştır. Her ısırık zehirli olmaz ama bunu ancak hastane anlayabilir.']},
+ {ad:'Arı, akrep, kene',l:['Arı: iğneyi tırnak ya da kart kenarıyla sıyırarak çıkar, soğuk uygula. Dudak ve dilde şişme, nefes darlığı, yaygın kızarıklık olursa 112\'yi ara.','Akrep: bölgeyi hareketsiz tut, soğuk uygula, hastaneye git; çocuklarda acildir.','Kene: çıplak elle dokunma. İnce uçlu cımbızla deriye en yakın yerden tutup düz çek; ezme, üstüne kolonya, yağ dökme.','Kene sonrası 10 gün içinde ateş, halsizlik, kanama olursa hemen sağlık kuruluşuna git.']},
+ {ad:'Zehirlenme',l:['Ne, ne kadar ve ne zaman alındığını öğren; kutusunu ya da bitkiyi yanına al.','Kusturma, süt ya da yoğurt içirme.','114 Zehir Danışma hattını ya da 112\'yi ara.','Soba ve duman zehirlenmesinde kişiyi hemen temiz havaya çıkar.','Cilde bulaştıysa giysiyi çıkar, bol suyla 15 dakika yıka.']},
+ {ad:'Ezilme (enkazdan çıkarılan)',l:['Uzun süre sıkışmış uzvu serbest bırakmadan önce sağlık ekibine haber ver.','Kişiyi sıcak tut, bilinci açıksa su içir.','En kısa sürede hastaneye ulaştır.']},
+ {ad:'Burun kanaması',l:['Oturt, başını hafifçe öne eğ; arkaya yatırma.','Burun kanatlarını 10 dakika kesintisiz sık.','20 dakikada durmazsa ya da kafa darbesinden sonra başladıysa sağlık kuruluşuna git.']},
+ {ad:'İlk yardım çantasında bulunsun',l:['Steril gazlı bez, sargı bezi, üçgen sargı, flaster, yara bandı','Antiseptik solüsyon, tek kullanımlık eldiven','Makas, cımbız, çengelli iğne','Termal (alüminyum) battaniye','Düzenli kullandığın ilaçlar ve ateş düşürücü','Ağızdan sıvı tuzu (ORS) paketi']}
+];
+
+/* ---------- Görünümler ---------- */
+function ol(a){return '<ol>'+a.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>';}
+function viewYemek(){
+  app.innerHTML='<div class="stack"><h2 class="sec">Afette Yemek</h2><p class="lead">Az malzeme, az yakıt ve tek kapla yapılan tarifler. Çoğu, afet çantasındaki kuru gıdayla hazırlanır.</p>'+
+  '<div class="box sign"><h3>Mutfak kuralları</h3><ul><li>Önce buzdolabındakileri, sonra dondurucudakileri, en son kuru gıda ve konserveyi tüket.</li><li>Kapağı şişmiş, sızdıran, açınca fışkıran ya da kötü kokan konserveyi tadına bakmadan at.</li><li>Yakıt tasarrufu: bakliyatı önceden ıslat, tencerenin kapağını kapalı tut, yemeği küçük doğra.</li><li>Kamp ocağı ve mangalı kapalı alanda yakma: karbonmonoksit zehirler.</li><li>Yemekten önce elini sabunla ya da dezenfektanla temizle; salgın afetten sonra en hızlı mutfaktan yayılır.</li></ul></div>'+
+  '<div class="cols">'+TARIF.map(function(t){return '<div class="item"><h3>'+esc(t.ad)+'</h3><p class="meta">'+esc(t.meta)+'</p><ul>'+li(t.malz)+'</ul>'+ol(t.adim)+'</div>';}).join('')+'</div></div>';
+}
+function viewBitki(){
+  app.innerHTML='<div class="stack"><h2 class="sec">Bitkiler</h2>'+
+  '<div class="rule"><b>Altın kural</b>Yüzde yüz tanımadığın bitkiyi yeme. İnsan yemeksiz haftalarca yaşar; yanlış bitki saatler içinde öldürebilir.</div>'+
+  '<div class="box no"><h3>Uzak dur işaretleri</h3><ul><li>Şemsiye biçimli beyaz çiçek kümeleri (baldıran ailesi).</li><li>Kırılınca beyaz süt akıtan saplar (karahindiba gibi iyi tanıdıkların dışında).</li><li>Acı badem kokusu; acı ya da sabunsu tat.</li><li>Tanımadığın parlak siyah, beyaz ya da sarı meyveler.</li><li>Bütün yabani mantarlar.</li><li>“Hayvan yiyorsa insan da yer” doğru değildir.</li><li>Yol kenarından, ilaçlanmış tarladan, kirli su kıyısından toplama.</li></ul></div>'+
+  '<p class="note">Çizimler şematiktir ve teşhis için yeterli değildir. Bitkiyi sakin zamanda, bilen biriyle ve fotoğraflı bir rehberle öğren.</p>'+
+  '<h2 class="sec">Türkiye\'de yaygın yenir bitkiler</h2><div class="cols">'+YENIR.map(function(b){return '<div class="item ok"><div class="mini">'+bit(b.id,b.ad)+'</div><h3>'+esc(b.ad)+'</h3><p class="meta">'+esc(b.yer)+'</p><p><b>Tanıma:</b> '+esc(b.tani)+'</p><p><b>Kullanım:</b> '+esc(b.kullan)+'</p></div>';}).join('')+'</div>'+
+  '<h2 class="sec">Zehirli bitkiler</h2><div class="cols">'+ZEHIR.map(function(b){return '<div class="item bad"><div class="mini">'+bit(b.id,b.ad)+'</div><h3>'+esc(b.ad)+'</h3><p><b>Tanıma:</b> '+esc(b.tani)+'</p><p><b>Tehlike:</b> '+esc(b.neden)+'</p></div>';}).join('')+'</div>'+
+  '<div class="box sign"><h3>Zehirli bitki yendiyse</h3><ul><li>Kusturma. Ağızda kalanı çıkar, ağzı suyla çalkalat.</li><li>114 Zehir Danışma hattını ya da 112\'yi ara.</li><li>Bitkiden bir parça ya da fotoğrafını yanına al.</li></ul></div></div>';
+}
+function viewYapim(){
+  var h='<div class="stack"><h2 class="sec">Barınak ve Yapım</h2><p class="lead">Öncelik sırası: rüzgârdan ve ıslaklıktan korun, zeminden yalıtıl, sonra ateş ve su. Barınağı küçük yap: küçük hacmi vücut ısın ısıtır.</p>'+
+  '<div class="box sign"><h3>Yer seçimi</h3><ul><li>Dere yatağı, vadi tabanı ve çukurlardan uzak dur: sel basar, gece soğuk hava buralara çöker.</li><li>Üstünde kuru dal, gevşek kaya, kar saçağı olmasın.</li><li>Rüzgârı kesen kaya ya da sık ağaç arkasını seç; girişi rüzgârın ters yönüne çevir.</li><li>Arama ekibinin görebileceği bir açıklığa yakın ol, barınağın üstüne parlak renkli bir şey as.</li><li>Hava kararmadan en az iki saat önce başla.</li></ul></div>';
+  var open=false;
+  YAPIM.forEach(function(y){
+    if(y.grup){ if(open) h+='</div>'; h+='<h2 class="sec">'+esc(y.grup)+'</h2><div class="cols">'; open=true; return; }
+    h+='<div class="item">'+(y.ill?'<div class="mini">'+yap(y.ill,y.ad)+'</div>':'')+'<h3>'+esc(y.ad)+'</h3><p>'+esc(y.ne)+'</p>'+ol(y.adim)+'</div>';
+  });
+  app.innerHTML=h+'</div></div>';
+}
+function viewDugum(){
+  app.innerHTML='<div class="stack"><h2 class="sec">Düğümler</h2><p class="lead">Beş düğüm işlerin çoğunu görür. Çizimlerde ipin hangi kolun üstünden, hangisinin altından geçtiği gösterilir. İki ipli düğümlerde ikinci ip kırmızıdır.</p>'+
+  '<div class="box sign"><h3>Her düğümde</h3><ul><li>Düzelt, sık, kontrol et: sarımlar üst üste binmesin, düğümü yük vermeden önce elle sıkıştır.</li><li>Ucu kısa bırakma; en az bir karış pay kalsın.</li><li>Islak, donmuş ve kaygan (naylon) ipte düğüm kayar: bir tur fazla at.</li><li>Kesilen sentetik ipin ucunu çakmakla eritip dağılmasını önle.</li></ul></div>'+
+  '<div class="cols">'+DUGUM.map(function(d){return '<div class="item">'+(d.id?'<div class="mini">'+knotSVG(KNOT[d.id],d.ad)+'</div>':'')+'<h3>'+esc(d.ad)+'</h3><p>'+esc(d.ne)+'</p>'+ol(d.adim)+(d.uyari?'<p class="meta"><b>Dikkat:</b> '+esc(d.uyari)+'</p>':'')+'</div>';}).join('')+'</div>'+
+  '<p class="note">Son üç düğümün çizimi yok; adımları ip elindeyken izleyerek dene. Can güvenliğinin ipe bağlı olduğu işler (iniş, tırmanış, kurtarma) eğitim gerektirir.</p></div>';
+}
+function viewPratik(){
+  function bx(t,a,c){return '<div class="box '+(c||'do')+'"><h3>'+t+'</h3><ul>'+li(a)+'</ul></div>';}
+  app.innerHTML='<div class="stack">'+
+  '<h2 class="sec">3\'ler Kuralı</h2><p class="lead">Önceliği sıraya koymak için kaba bir ölçü. Önce nefes ve kanama, sonra barınak ve ısı, sonra su, en son yemek.</p>'+
+  '<div class="three"><div><b>3 dakika</b><span>havasız (ya da ağır kanamayla)</span></div><div><b>3 saat</b><span>aşırı soğukta ya da sıcakta barınaksız</span></div><div><b>3 gün</b><span>susuz</span></div><div><b>3 hafta</b><span>yemeksiz</span></div></div>'+
+  '<h2 class="sec">Pratik Bilgiler</h2><div class="cols">'+
+  bx('Kaybolduysan: DUR',['Dur: yürümeyi bırak, otur. Panikle yürümek seni daha da uzaklaştırır.','Düşün: en son nerede emindin, ne kadar yürüdün?','Gözle: yol, su, yükselti, ses, duman ara.','Planla: aranacağını biliyorsan olduğun yerde kal, görünür ol, barınağını gün ışığında kur.'])+
+  bx('İşaret verme',['Üçlü işaret evrensel imdat çağrısıdır: 3 düdük, 3 ışık, 3 ateş.','SOS: üç kısa, üç uzun, üç kısa (ışık ya da ses).','Ayna, telefon ekranı ya da parlak metalle güneşi uçağa ve karşı yamaca yansıt.','Açık alana taş ya da dalla 3 metreden büyük SOS ya da X yaz.','Gündüz yaş dalla beyaz duman, gece parlak alev en uzaktan görülür.','Bağırmak yerine düdük kullan: daha uzağa gider, seni yormaz.'])+
+  bx('Yön bulma',['Güneş doğudan doğar, batıdan batar; Türkiye\'de öğle vakti güneydedir.','Gölge çubuğu: yere bir çubuk dik, gölgenin ucunu taşla işaretle, 15-20 dakika sonra tekrar işaretle. İlk taş batı, ikinci taş doğudur.','Akrepli saat: akrebi güneşe çevir; akreple 12 arasındaki açının ortası güneyi gösterir (yaz saatinde 12 yerine 1).','Gece: Büyük Ayı\'nın kepçesinin ön iki yıldızını beş kat uzat, Kutup Yıldızı\'nı bulursun; o yön kuzeydir.','Yosun yönü güvenilir değildir.'])+
+  bx('Suyu içilebilir yapmak',['Bulanık suyu önce temiz bezden süz ya da dinlendirip üstünü al.','Kaynatma en güvenli yoldur: fokur fokur en az 1 dakika kaynat, soğut.','Kaynatamıyorsan: kokusuz, katkısız çamaşır suyundan (sodyum hipoklorit %5-9) litre başına 2 damla ekle; su bulanık, renkli ya da çok soğuksa 4 damla. Karıştır, en az 30 dakika beklet; hafif klor kokusu gelmeli.','Çamaşır suyunun yoğunluğunu bilmiyorsan litre başına 10 damla kullan.','Kimyasal ya da yakıt bulaşmış suyu kaynatmak temizlemez; içme.','Deniz suyu ve idrar içme: susuzluğu artırır.','Kar yeme, erit: kar yemek vücut ısını düşürür.'])+
+  bx('Sıcak kalmak',['Kat kat giyin; terlemeden önce bir kat çıkar, durunca geri giy.','Islak giysi ısıyı çok hızlı çalar: kuru kalmak sıcak kalmaktan önce gelir.','Büyük çöp poşetine baş için delik açınca yağmurluk ve rüzgârlık olur.','Giysinin içine buruşturulmuş gazete ya da kuru yaprak doldurmak yalıtım sağlar.','Baş, boyun, el ve ayakları ört.','Sıcak su dolu şişeyi beze sarıp kasığına ya da koltuk altına koy.','Zemine doğrudan oturma, yatma; altına karton, dal, çanta koy.'])+
+  bx('Telefon ve pil',['Düşük güç modunu aç, ekran parlaklığını kıs, konum ve Bluetooth\'u gerekmedikçe kapat.','Şebeke yoksa uçak moduna al; şebeke aramak pili hızla bitirir.','Arama yerine SMS at: az pil harcar, zayıf sinyalde bile gider.','Konumunu ve durumunu tek mesajda yaz; cevap için belirli saatlerde aç.','Telefonu soğukta iç cebinde taşı: soğuk pili düşürür.','Çevrimdışı harita ve bu rehberi önceden indir.'])+
+  bx('Hijyen ve tuvalet',['Tuvalet çukurunu su kaynağından ve barınaktan en az 60 metre uzağa, bir karış derinliğe kaz; her kullanımdan sonra toprakla ört.','Evde su kesikse klozete sağlam çöp poşeti geçir, her kullanımdan sonra üstüne kül, toprak ya da talaş at, ağzını bağla.','Su azsa önce eller: tuvaletten sonra ve yemekten önce sabun ya da dezenfektan.','Yarayı temiz suyla yıka ve kapat; küçük yaralar afette en sık enfeksiyon nedenidir.','Çöpü ve yemek artığını barınaktan uzakta topla: hayvan ve haşere çeker.'])+
+  bx('Aile afet planı',['Evin dışında bir buluşma noktası ve mahalle dışında ikinci bir nokta belirleyin.','İl dışından bir irtibat kişisi seçin; herkes ona haber versin.','Önemli numaraları kâğıda yazıp cüzdana koyun; telefon kapanabilir.','Gaz, su ve elektriğin nereden kapatıldığını herkes bilsin.','Yaşlı, engelli, bebek ve evcil hayvan için kim sorumlu, önceden kararlaştırın.','Planı yılda en az bir kez tatbikatla deneyin.'])+
+  bx('Evde işe yarayan küçük bilgiler',['Küvet ve kovaları uyarı gelince suyla doldur: içmek için değilse bile temizlik ve sifon için gerekir.','Termosifon ve kombi deposundaki su acil durumda kullanılabilir (kaynatarak).','Mum yerine el feneri kullan; artçı sarsıntı ve gaz kaçağında açık alev yangın çıkarır.','Aracın deposunu yarının altına düşürme; araç aynı zamanda şarj istasyonu ve barınaktır.','Önemli belgelerin fotoğrafını telefonuna ve bir bulut hesabına kaydet.','Nakit bulundur: elektrik yokken kart ve ATM çalışmaz.'])+
+  bx('Hava belirtileri',['Hızla alçalan ve kararan bulut, ani rüzgâr dönmesi ve sıcaklık düşüşü: fırtına yaklaşıyor.','Uzaktan gök gürültüsü duyuyorsan yıldırım menzilindesin.','Dağda öğleden sonra kabaran kule biçimli bulutlar oraj habercisidir: zirveden erken in.','Dere suyunun bulanması ve yükselmesi, yukarıda yağış olduğunu gösterir; yağmur görmesen de sel gelebilir.'],'sign')+
+  '</div></div>';
+}
+function viewIlk(){
+  app.innerHTML='<div class="stack"><h2 class="sec">İlk Yardım</h2><p class="lead">Sağlık ekibi gelene kadar yapılacaklar. İlaç verilmez, emin olmadığın müdahale yapılmaz: ilk kural zarar vermemektir.</p>'+
+  '<div class="cols">'+ILKY.map(function(k){return '<div class="item">'+(k.pic?'<div class="fa">'+PIC[k.pic]+'</div>':'')+'<h3>'+esc(k.ad)+'</h3><ul>'+li(k.l)+'</ul></div>';}).join('')+'</div>'+
+  '<p class="note">Bu bölüm bir ilk yardım eğitiminin yerini tutmaz. Kızılay ve il sağlık müdürlüklerinin sertifikalı ilk yardım kursları en doğru hazırlıktır. Ayrıca bkz. afet sayfalarındaki hipotermi, donma ve sıcak çarpması adımları.</p></div>';
+}
+
+function viewNum(){
+  app.innerHTML = '<div class="stack"><h2 class="sec">Acil Numaralar (Türkiye)</h2>'+
+  '<div class="nums">'+NUMS.map(function(n){return '<a class="num'+(n[3]?' main':'')+'" href="tel:'+n[0]+'"><b>'+n[0]+'</b><strong>'+esc(n[1])+'</strong><br><span>'+esc(n[2])+'</span></a>';}).join('')+'</div>'+
+  '<div class="box do"><h3>Tek numara: 112</h3><ul><li>Eski 110 İtfaiye, 155 Polis, 156 Jandarma, 122 AFAD, 177 Orman Yangını ve 158 Sahil Güvenlik numaraları 112 Acil Çağrı Merkezi\'nde birleştirildi.</li><li>Hangi kurum gerekirse gereksin 112\'yi ara; görevli seni doğru ekibe bağlar.</li></ul></div>'+'<div class="box sign"><h3>112\'yi ararken</h3><ul><li>Ne olduğunu, nerede olduğunu (il, ilçe, mahalle, sokak, tarif) ve kaç kişinin etkilendiğini söyle.</li><li>Görevli kapatmadan telefonu kapatma.</li><li>Şebeke yoksa SMS ve internet tabanlı mesajlaşmayı dene.</li></ul></div>'+
+  '<h2 class="sec">Uygulamalar ve Sorgulama</h2><div class="cols">'+'<div class="item"><h3>AFAD Acil</h3><ul><li>Tek tuşla acil çağrıyı internet üzerinden yapar; şebeke yoğunken işe yarar ve konumunu gönderir.</li><li>Sesli konuşamayacak durumdaysan hazır mesajlarla yardım iste.</li><li>En yakın toplanma alanını haritada gösterir, yol tarifi verir.</li><li>Kurulumda SMS doğrulaması, T.C. kimlik numarası ve konum izni ister: afetten önce kur ve hazırla.</li></ul></div>'+'<div class="item"><h3>112 Acil</h3><ul><li>İşitme ve konuşma engelli bireyler işaret diliyle ya da yazılı mesajla yardım çağırabilir.</li><li>Afetten önce kurup bir kez denemek iyi olur.</li></ul></div>'+'<div class="item"><h3>Toplanma alanını öğren</h3><ul><li>e-Devlet\'te “Afet ve Acil Durum Toplanma Alanı Sorgulama” hizmetini aç.</li><li>İl, ilçe, mahalle, sokak seçerek ya da “Cihaz Konumuna Göre Alan Bul” ile ara; en yakın üç alan haritada görünür.</li><li>Adresini ve yolunu ailenle paylaş, bir kez birlikte yürüyün.</li></ul></div>'+'<div class="item"><h3>Eğitim videoları</h3><ul><li>AFAD\'ın hazirol.gov.tr sitesinde afet hazırlığı eğitim videoları var; AFAD Acil uygulamasından da açılabiliyor.</li></ul></div>'+'</div>'+
+  '<h2 class="sec">Kaynaklar</h2><div class="box"><ul class="src">'+KAYNAK.map(function(k){return '<li><a href="'+k[1]+'" target="_blank" rel="noopener">'+esc(k[0])+'</a><br><span class="note">'+esc(k[2])+'</span></li>';}).join('')+'</ul></div>'+
+  '<p class="note">Bulunduğun yerin acil toplanma alanını e-Devlet\'teki “Acil Toplanma Alanı Sorgulama” hizmetinden öğrenebilirsin.</p></div>';
+}
+
+/* ---------- Araçlar: düdük, SOS ışığı, acil kart ---------- */
+var AC=null, OSC=null;
+function tone(on){
+  try{
+    if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended') AC.resume();
+    if(on){ if(OSC) return; var o=AC.createOscillator(), g=AC.createGain(); o.type='square'; o.frequency.value=3150; g.gain.value=0.6; o.connect(g); g.connect(AC.destination); o.start(); OSC={o:o,g:g}; }
+    else if(OSC){ OSC.o.stop(); OSC=null; }
+  }catch(e){}
+}
+var WTIMER=[], WMODE=null;
+function whistleStop(){WTIMER.forEach(clearTimeout);WTIMER=[];tone(false);WMODE=null;updW();}
+function whistle(mode){
+  if(WMODE===mode){whistleStop();return;}
+  whistleStop(); WMODE=mode; updW();
+  if(mode==='surekli'){tone(true);return;}
+  // 3 kısa düdük, 2 saniye ara, tekrar
+  (function loop(){
+    var t=0;[0,1,2].forEach(function(){WTIMER.push(setTimeout(function(){tone(true);},t));WTIMER.push(setTimeout(function(){tone(false);},t+500));t+=900;});
+    WTIMER.push(setTimeout(loop,t+2000));
+  })();
+}
+function updW(){
+  var a=document.getElementById('w3'), b=document.getElementById('wS');
+  if(a){a.setAttribute('aria-pressed',WMODE==='uclu');a.textContent=WMODE==='uclu'?'Durdur':'3 kısa düdük (imdat)';}
+  if(b){b.setAttribute('aria-pressed',WMODE==='surekli');b.textContent=WMODE==='surekli'?'Durdur':'Sürekli düdük';}
+}
+var SOS=null;
+function sosStart(){
+  var ov=document.createElement('div'); ov.className='sos-ov'; ov.setAttribute('role','button'); ov.setAttribute('aria-label','SOS ışığını kapat');
+  ov.innerHTML='<span>SOS · kapatmak için dokun</span>'; document.body.appendChild(ov);
+  var u=250, seq=[], add=function(on,d){seq.push([on,d]);};
+  [1,1,1].forEach(function(){add(1,u);add(0,u);}); add(0,2*u);
+  [1,1,1].forEach(function(){add(1,3*u);add(0,u);}); add(0,2*u);
+  [1,1,1].forEach(function(){add(1,u);add(0,u);}); add(0,6*u);
+  var i=0, tm=null;
+  function step(){var s=seq[i%seq.length]; ov.classList.toggle('on',!!s[0]); i++; tm=setTimeout(step,s[1]);}
+  step();
+  try{ if(window.Android&&Android.keepOn) Android.keepOn(true); }catch(e){}
+  SOS={ov:ov,stop:function(){clearTimeout(tm);ov.remove();SOS=null;try{if(window.Android&&Android.keepOn)Android.keepOn(false);}catch(e){}}};
+  ov.addEventListener('click',function(){SOS&&SOS.stop();});
+}
+var KART_KEY='afet-kart-v1';
+var KART_F=[['ad','Ad soyad','text'],['kan','Kan grubu','text'],['alerji','Alerjiler','text'],['ilac','Kullandığı ilaçlar, kronik hastalıklar','text'],['k1','Acil durumda aranacak kişi 1 (ad ve telefon)','text'],['k2','Acil durumda aranacak kişi 2 (ad ve telefon)','text'],['il_disi','İl dışındaki irtibat kişisi','text'],['toplanma','Toplanma alanımız','text'],['bulusma','Aile buluşma noktası','text'],['adres','Ev adresi','text']];
+function kartLoad(){try{return JSON.parse(localStorage.getItem(KART_KEY))||{};}catch(e){return {};}}
+function kartSave(o){try{localStorage.setItem(KART_KEY,JSON.stringify(o));return true;}catch(e){return false;}}
+function viewArac(){
+  var k=kartLoad(), dolu=KART_F.some(function(f){return k[f[0]];});
+  app.innerHTML='<div class="stack"><h2 class="sec">Araçlar</h2>'+
+  '<div class="cols">'+
+  '<div class="item"><h3>İmdat düdüğü</h3><p>Enkaz altında ya da kaybolduğunda bağırmak yerine bunu çal: ses daha uzağa gider, seni yormaz. Üç kısa ses evrensel imdat işaretidir.</p>'+
+   '<div class="seg"><button type="button" id="w3" aria-pressed="false">3 kısa düdük (imdat)</button><button type="button" id="wS" aria-pressed="false">Sürekli düdük</button></div>'+
+   '<p class="meta">Telefonun ses düzeyini sonuna kadar aç. Pili hızlı bitirir; kurtarma ekibinin sesini duyduğunda çal.</p></div>'+
+  '<div class="item"><h3>SOS ışığı</h3><p>Ekranı mors alfabesiyle SOS (üç kısa, üç uzun, üç kısa) yanıp söndürür. Gece, uzaktaki ekiplere ya da helikoptere yerini göstermek için.</p>'+
+   '<div class="seg"><button type="button" id="sosb">SOS ışığını başlat</button></div>'+
+   '<p class="meta">Ekran parlaklığını sonuna kadar aç. Yanıp sönen ışık ışığa duyarlı epilepsisi olanlarda nöbet tetikleyebilir.</p></div>'+
+  '</div>'+
+  '<h2 class="sec">Acil Kartım</h2><p class="lead">Bilgiler yalnızca bu telefonda saklanır, hiçbir yere gönderilmez. Kartı ekran görüntüsü alıp kilit ekranı yapabilir ya da yazdırıp cüzdanında taşıyabilirsin.</p>'+
+  '<div id="kartv"></div></div>';
+  document.getElementById('w3').onclick=function(){whistle('uclu');};
+  document.getElementById('wS').onclick=function(){whistle('surekli');};
+  document.getElementById('sosb').onclick=sosStart;
+  updW();
+  function show(edit){
+    var v=document.getElementById('kartv'), k=kartLoad();
+    if(edit){
+      v.innerHTML='<form class="box" id="kf">'+KART_F.map(function(f){return '<label class="fl" for="kf-'+f[0]+'">'+esc(f[1])+'<input id="kf-'+f[0]+'" type="'+f[2]+'" value="'+esc(k[f[0]]||'').replace(/"/g,'&quot;')+'" autocomplete="off"></label>';}).join('')+
+      '<div class="row"><button class="btn pri" type="submit">Kaydet</button><button class="btn" type="button" id="kc">Vazgeç</button></div><p class="meta" id="kmsg"></p></form>';
+      document.getElementById('kf').addEventListener('submit',function(e){e.preventDefault();var o={};KART_F.forEach(function(f){o[f[0]]=document.getElementById('kf-'+f[0]).value.trim();});
+        if(kartSave(o)) show(false); else document.getElementById('kmsg').textContent='Bu cihazda kayıt yapılamadı. Bilgileri kâğıda yazıp yanında taşı.';});
+      document.getElementById('kc').onclick=function(){show(false);};
+    } else {
+      var any=KART_F.some(function(f){return k[f[0]];});
+      v.innerHTML= any ? '<div class="kart"><div class="kh">ACİL DURUM KARTI</div>'+KART_F.filter(function(f){return k[f[0]];}).map(function(f){return '<div class="kr"><span>'+esc(f[1])+'</span><b>'+esc(k[f[0]])+'</b></div>';}).join('')+'<div class="kr"><span>Acil</span><b>112</b></div></div><div class="row"><button class="btn" type="button" id="ke">Düzenle</button></div>'
+        : '<div class="box sign"><h3>Kartın henüz boş</h3><p>Kan grubu, alerji, ilaçlar ve aranacak kişileri yaz. Afette konuşamayacak durumda olursan kurtarma ekibi buradan okur.</p><div class="row"><button class="btn pri" type="button" id="ke">Kartımı doldur</button></div></div>';
+      document.getElementById('ke').onclick=function(){show(true);};
+    }
+  }
+  show(false);
+  cleanup=function(){whistleStop();};
+}
+
+var cleanup = null;
+function route(){
+  if(cleanup){cleanup(); cleanup=null;}
+  var h = (location.hash||'').replace('#','') || 'afetler';
+  var tab = 'afetler';
+  if(BYID[h]){ viewDetail(BYID[h]); }
+  else if(h==='canta'){ tab=h; viewCanta(); }
+  else if(h==='araclar'){ tab=h; viewArac(); }
+  else if(h==='ilkyardim'||h==='temel'){ tab='ilkyardim'; viewIlk(); }
+  else if(h==='yemek'){ tab=h; viewYemek(); }
+  else if(h==='bitkiler'){ tab=h; viewBitki(); }
+  else if(h==='yapim'){ tab=h; viewYapim(); }
+  else if(h==='dugumler'){ tab=h; viewDugum(); }
+  else if(h==='pratik'){ tab=h; viewPratik(); }
+  else if(h==='psikoloji'){ tab=h; viewPsi(); }
+  else if(h==='ozel'){ tab=h; viewOzel(); }
+  else if(h==='numaralar'){ tab=h; viewNum(); }
+  else { viewHome(); }
+  Array.prototype.forEach.call(document.querySelectorAll('nav.tabs a'),function(a){
+    if(a.dataset.tab===tab) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
+  });
+  window.scrollTo(0,0);
+  applyFocus();
+}
+window.addEventListener('hashchange',route);
+route();
+</script>
+</body>
+</html>
