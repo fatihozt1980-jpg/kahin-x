@@ -1,0 +1,35 @@
+name: Anında Çeviri APK derle
+on:
+  push:
+    branches: [aninda-ceviri]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Derle
+        run: gradle --no-daemon assembleRelease
+      - name: APK adını düzelt
+        run: cp app/build/outputs/apk/release/app-release.apk aninda-ceviri.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aninda-ceviri-apk
+          path: aninda-ceviri.apk
+      - name: İndirme sayfasına koy
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: aninda-ceviri-son
+          target_commitish: aninda-ceviri
+          name: Anında Çeviri (son sürüm)
+          body: Telefona indirip kur. Yeni sürüm eskisinin üstüne kurulur.
+          files: aninda-ceviri.apk
+          make_latest: false

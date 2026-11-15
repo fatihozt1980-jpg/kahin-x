@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Anında Çeviri</string>
+    <string name="alt">Oyundaki ve uygulamalardaki yabancı yazıyı ekranda Türkçeye çevirir.</string>
+    <string name="dil_baslik">Oyunun dili (değiştirmek için dokun)</string>
+    <string name="izin_ver">Önce izin ver: diğer uygulamaların üstünde göster</string>
+    <string name="baslat">BAŞLAT</string>
+    <string name="durdur">DURDUR</string>
+    <string name="hazirlaniyor">Hazırlanıyor…</string>
+    <string name="durum_izin">Çeviriyi oyunun üstüne yazabilmem için bir izin gerekiyor. Aşağıdaki düğmeye bas, açılan sayfada Anında Çeviri için izni aç, sonra geri dön.</string>
+    <string name="durum_hazir">Hazır. BAŞLAT düğmesine bas.</string>
+    <string name="durum_indiriliyor">Dil paketi indiriliyor. Yalnızca ilk seferde, yaklaşık 30 MB. İnternet açık olsun.</string>
+    <string name="durum_calisiyor">Çalışıyor. Şimdi oyunu aç ve ekrandaki Ç baloncuğuna dokun.</string>
+    <string name="izin_acilamadi">İzin sayfası açılamadı. Ayarlar, Uygulamalar, Anında Çeviri yolundan diğer uygulamaların üstünde göster iznini aç.</string>
+    <string name="paket_inmedi">Dil paketi indirilemedi. İnterneti kontrol edip tekrar dene.</string>
+    <string name="ekran_izni_yok">Ekran izni verilmedi. Yazıyı okuyabilmem için bu izin şart.</string>
+    <string name="baslamadi">Çeviri başlatılamadı. Uygulamayı kapatıp yeniden dene.</string>
+    <string name="nasil_baslik">Nasıl kullanılır</string>
+    <string name="nasil">1. BAŞLAT düğmesine bas, çıkan ekran paylaşımı sorusunu onayla.\n2. Oyunu aç.\n3. Ekrandaki Ç baloncuğuna dokun. Yeşil olunca çeviri açıktır; yazılar kendiliğinden Türkçeye döner.\n4. Kapatmak için baloncuğa tekrar dokun.\n5. Baloncuk yolunu kesiyorsa sürükleyip başka yere taşı.\n6. Tamamen kapatmak için baloncuğa uzun bas ya da bildirimdeki Durdur düğmesini kullan.</string>
+    <string name="not_baslik">Bilmen gerekenler</string>
+    <string name="notlar">• Çeviri, yazı ekranda durduktan yaklaşık bir saniye sonra gelir.\n• Çeviri telefonun içinde yapılır; ekran görüntüsü hiçbir yere gönderilmez.\n• Süslü, el yazısı gibi fontlarda okuma hata yapabilir.\n• Bazı oyunlar ekran yakalamayı engeller; onlarda çalışmaz.\n• Açıkken pil biraz daha hızlı biter. İşin bitince kapat.</string>
+</resources>

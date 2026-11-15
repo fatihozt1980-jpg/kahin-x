@@ -1,0 +1,45 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'app.anindaceviri'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'app.anindaceviri'
+        minSdk 26
+        targetSdk 34
+        versionCode((System.getenv('GITHUB_RUN_NUMBER') ?: '1') as int)
+        versionName '1.0'
+        // Telefonlarda kullanılan işlemci türleri yeter; APK küçük kalır.
+        ndk { abiFilters 'arm64-v8a', 'armeabi-v7a' }
+    }
+    // Sabit imza: her derleme aynı anahtarla imzalanır, böylece güncelleme eski sürümün üstüne kurulur.
+    signingConfigs {
+        fixed {
+            storeFile file('../ceviri.keystore')
+            storePassword '6e631c5d852e101d938ed53d'
+            keyAlias 'ceviri'
+            keyPassword '6e631c5d852e101d938ed53d'
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.fixed }
+        debug { signingConfig signingConfigs.fixed }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    lint { checkReleaseBuilds false; abortOnError false }
+}
+
+dependencies {
+    // Ekrandaki yazıyı okur (model APK'nın içinde, internetsiz çalışır).
+    implementation 'com.google.mlkit:text-recognition:16.0.1'
+    // Telefonda çeviri yapar (dil paketi ilk açılışta bir kez iner).
+    implementation 'com.google.mlkit:translate:17.0.3'
+    constraints {
+        implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22') { because 'kotlin-stdlib ile aynı sınıflar çakışmasın' }
+        implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22') { because 'kotlin-stdlib ile aynı sınıflar çakışmasın' }
+    }
+}
