@@ -381,6 +381,7 @@ public class MainActivity extends ComponentActivity implements Dinleyici.Olay {
     @Override
     public void ara(String metin) {
         if (mod != KARSI && mod != BEN) return;
+        hataSayisi = 0;
         canliOzgun = metin;
         canliGoster();
         canliCevir();
@@ -475,6 +476,7 @@ public class MainActivity extends ComponentActivity implements Dinleyici.Olay {
         boolean sessizlik = kod == SpeechRecognizer.ERROR_NO_MATCH || kod == SpeechRecognizer.ERROR_SPEECH_TIMEOUT;
         if (sessizlik) {
             // Kimse konuşmadı: oturum açıksa dinlemeyi yeniden başlat.
+            hataSayisi = 0;
             if (m == KARSI && surekli) {
                 el.postDelayed(() -> {
                     if (t == tur) dinlemeyeDon();
