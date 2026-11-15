@@ -1,0 +1,59 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'app.tercuman'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'app.tercuman'
+        minSdk 26
+        targetSdk 34
+        versionCode((System.getenv('GITHUB_RUN_NUMBER') ?: '1') as int)
+        versionName '1.0'
+        // Telefonlarda kullanılan işlemci türleri yeter; APK küçük kalır.
+        ndk { abiFilters 'arm64-v8a', 'armeabi-v7a' }
+    }
+    // Sabit imza: her derleme aynı anahtarla imzalanır, böylece güncelleme eski sürümün üstüne kurulur.
+    signingConfigs {
+        fixed {
+            storeFile file('../tercuman.keystore')
+            storePassword '7c41e9b2a05d38f6c1d2e4a7'
+            keyAlias 'tercuman'
+            keyPassword '7c41e9b2a05d38f6c1d2e4a7'
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.fixed }
+        debug { signingConfig signingConfigs.fixed }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    lint { checkReleaseBuilds false; abortOnError false }
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+
+dependencies {
+    // Ekran ve kamera yaşam döngüsü.
+    implementation 'androidx.activity:activity:1.9.3'
+    implementation 'androidx.concurrent:concurrent-futures:1.1.0'
+    // Kamera önizlemesi.
+    implementation 'androidx.camera:camera-core:1.3.4'
+    implementation 'androidx.camera:camera-camera2:1.3.4'
+    implementation 'androidx.camera:camera-lifecycle:1.3.4'
+    implementation 'androidx.camera:camera-view:1.3.4'
+    // Telefonda çeviri (dil paketi dil başına bir kez iner, sonra internetsiz çalışır).
+    implementation 'com.google.mlkit:translate:17.0.3'
+    // Kameradaki yazıyı okur (modeller APK'nın içinde).
+    implementation 'com.google.mlkit:text-recognition:16.0.1'
+    implementation 'com.google.mlkit:text-recognition-chinese:16.0.1'
+    implementation 'com.google.mlkit:text-recognition-devanagari:16.0.1'
+    implementation 'com.google.mlkit:text-recognition-japanese:16.0.1'
+    implementation 'com.google.mlkit:text-recognition-korean:16.0.1'
+    constraints {
+        implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22') { because 'kotlin-stdlib ile aynı sınıflar çakışmasın' }
+        implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22') { because 'kotlin-stdlib ile aynı sınıflar çakışmasın' }
+    }
+}

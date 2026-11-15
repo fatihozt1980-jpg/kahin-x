@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tercüman</string>
+    <string name="karsi_dil">Karşı tarafın dili</string>
+    <string name="ben_dil">Benim dilim</string>
+    <string name="sesli_oku">Sesli oku</string>
+    <string name="kulaklik_modu">Kulaklık modu</string>
+    <string name="sekme_konusma">Konuşma</string>
+    <string name="sekme_yazi">Yazı</string>
+    <string name="sekme_kamera">Kamera</string>
+    <string name="yapistir">Yapıştır</string>
+    <string name="temizle">Temizle</string>
+    <string name="oku">Sesli oku</string>
+    <string name="kopyala">Kopyala</string>
+    <string name="yazi_ipucu">Çevrilecek yazıyı buraya yaz ya da yapıştır</string>
+    <string name="fener">Fener</string>
+    <string name="cevir">ÇEVİR</string>
+    <string name="yeniden">YENİDEN</string>
+    <string name="sohbeti_sil">Sohbeti sil</string>
+    <string name="bos_sohbet">DİNLE düğmesine bas: karşı tarafın konuştuğu anında senin diline çevrilir, yazısı burada görünür ve sesli okunur.\n\nCevap vereceğin zaman CEVAP VER düğmesine bas ve konuş: söylediğin karşı tarafın diline çevrilip sesli okunur, sonra dinlemeye geri dönülür.\n\nKulaklık takılıysa çeviri kulağına gelir. Kulaklık modu açıkken senin cevabın telefonun hoparlöründen çıkar, karşı taraf da duyar.\n\nBir balona dokunursan yeniden okunur, uzun basarsan kopyalanır.</string>
+</resources>

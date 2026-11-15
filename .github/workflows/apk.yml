@@ -1,0 +1,59 @@
+name: Tercüman APK derle
+on:
+  push:
+    branches: [tercuman]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Derle
+        run: |
+          set -o pipefail
+          gradle --no-daemon assembleRelease 2>&1 | tee /tmp/derleme.txt
+      - name: APK adını düzelt
+        run: cp app/build/outputs/apk/release/app-release.apk tercuman.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tercuman-apk
+          path: tercuman.apk
+      - name: İndirme sayfasına koy
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: tercuman-son
+          target_commitish: tercuman
+          name: Tercüman (son sürüm)
+          body: Telefona indirip kur. Yeni sürüm eskisinin üstüne kurulur.
+          files: tercuman.apk
+          make_latest: false
+      # Derlemenin sonucunu ayrı bir dala yazar; hata olursa nedenini oradan okuyabilmek için.
+      - name: Sonucu kaydet
+        if: always()
+        run: |
+          {
+            echo "sonuc: ${{ job.status }}"
+            echo "commit: $GITHUB_SHA"
+            echo "derleme: $GITHUB_RUN_NUMBER"
+            ls -l tercuman.apk 2>/dev/null || true
+            echo "-----"
+            grep -n -E "error:|FAILED|What went wrong|Duplicate class|AAPT|warning: \[" -A 6 /tmp/derleme.txt | head -n 250 || true
+            echo "----- son satırlar"
+            tail -n 60 /tmp/derleme.txt || true
+          } > /tmp/kayit.txt
+          git config user.name "derleme"
+          git config user.email "derleme@users.noreply.github.com"
+          git checkout -q --orphan tercuman-derleme-kaydi
+          git rm -rfq --cached .
+          cp /tmp/kayit.txt derleme-kaydi.txt
+          git add -f derleme-kaydi.txt
+          git commit -q -m "Derleme kaydı $GITHUB_RUN_NUMBER"
+          git push -f origin tercuman-derleme-kaydi

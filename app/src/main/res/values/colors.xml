@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="zemin">#0F1418</color>
+    <color name="kart">#1A232B</color>
+    <color name="marka">#0E9F8E</color>
+    <color name="marka_koyu">#0B5D54</color>
+    <color name="kirmizi">#C8483F</color>
+    <color name="yazi">#F2F5F7</color>
+    <color name="soluk">#9AA7B2</color>
+    <color name="cizgi">#33414D</color>
+</resources>
