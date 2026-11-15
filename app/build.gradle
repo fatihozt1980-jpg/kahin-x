@@ -1,0 +1,32 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'app.pusre'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'app.pusre'
+        minSdk 26
+        targetSdk 34
+        versionCode((System.getenv('GITHUB_RUN_NUMBER') ?: '1') as int)
+        versionName '1.0'
+    }
+    // Sabit imza: her derleme aynı anahtarla imzalanır, böylece güncelleme eski sürümün üstüne kurulur ve kayıtlar silinmez.
+    signingConfigs {
+        fixed {
+            storeFile file('../pusre.keystore')
+            storePassword '17439b6253040e332af097d8'
+            keyAlias 'pusre'
+            keyPassword '17439b6253040e332af097d8'
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.fixed }
+        debug { signingConfig signingConfigs.fixed }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    lint { checkReleaseBuilds false; abortOnError false }
+}

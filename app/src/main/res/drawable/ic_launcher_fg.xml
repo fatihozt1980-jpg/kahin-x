@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pusula: uyarlanabilir simgenin ön katmanı (108dp tuval, güvenli alan ortadaki 66dp) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:pathData="M54,54m-25,0a25,25 0,1 1,50 0a25,25 0,1 1,-50 0"
+        android:strokeColor="#FFFFFF" android:strokeWidth="3.5" />
+    <path android:pathData="M54,31v6M54,71v6M31,54h6M71,54h6"
+        android:strokeColor="#FFFFFF" android:strokeWidth="3.5" android:strokeLineCap="round" />
+    <path android:pathData="M54,38l7,16h-14z" android:fillColor="#F0B93A" />
+    <path android:pathData="M54,70l7,-16h-14z" android:fillColor="#8FA0D8" />
+    <path android:pathData="M54,54m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" android:fillColor="#FFFFFF" />
+</vector>
