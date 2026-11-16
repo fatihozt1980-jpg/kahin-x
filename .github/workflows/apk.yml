@@ -1,0 +1,36 @@
+name: Oyun Dünyası APK derle
+on:
+  push:
+    branches: [oyun-dunyasi]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Derle
+        run: gradle --no-daemon assembleRelease
+      - name: APK adını düzelt
+        run: cp app/build/outputs/apk/release/app-release.apk oyun-dunyasi-100.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: oyun-dunyasi-100-apk
+          path: oyun-dunyasi-100.apk
+      - name: İndirme sayfasına koy
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: oyun-dunyasi-100
+          target_commitish: oyun-dunyasi
+          name: Oyun Dünyası 100 (son sürüm)
+          body: 100 oyun, 3 zorluk seviyesi. Telefona indirip kur. Yeni sürüm eskinin üstüne kurulur, rekorlar silinmez.
+          files: oyun-dunyasi-100.apk
+          make_latest: false

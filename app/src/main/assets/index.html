@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>Oyun Dünyası 100</title>
+<style>
+:root{--bg:#0b1020;--card:#151c33;--card2:#1e2748;--line:#253055;--tx:#e8ebf3;--mut:#94a3b8;--ac:#fbbf24;--ok:#22c55e;--bad:#ef4444;--blue:#3b82f6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overscroll-behavior:none}
+button{font:inherit;color:inherit;border:0;cursor:pointer;background:none}
+input{user-select:text;-webkit-user-select:text}
+#app header{position:sticky;top:0;z-index:5;background:var(--bg);padding:max(14px,env(safe-area-inset-top)) 14px 4px}
+h1{margin:0 0 4px;font-size:23px;letter-spacing:.2px}h1 b{color:var(--ac)}
+#stats{font-size:12px;color:var(--mut);margin-bottom:10px}
+#q{width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:15px;outline:none}
+#cats{display:flex;gap:8px;overflow-x:auto;padding:10px 14px 6px;scrollbar-width:none;position:sticky;top:112px;z-index:4;background:var(--bg)}
+#cats::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:8px 13px;border-radius:999px;background:var(--card);font-size:13.5px;white-space:nowrap;border:1px solid var(--line)}
+.chip.on{background:var(--ac);color:#1a1300;font-weight:700;border-color:var(--ac)}
+#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;padding:8px 14px 40px}
+.gc{background:linear-gradient(160deg,var(--card2),var(--card));border-radius:16px;padding:16px 8px 12px;text-align:center;position:relative;border:1px solid var(--line);transition:transform .1s}
+.gc:active{transform:scale(.97)}
+.gc .ic{font-size:36px;line-height:1.1}.gc .nm{font-weight:700;font-size:14px;margin-top:7px}.gc .ct{font-size:11px;color:var(--mut);margin-top:2px}
+.gc .no{position:absolute;top:6px;left:9px;font-size:10px;color:#64748b}.gc .bs{position:absolute;top:6px;right:8px;font-size:10px;color:var(--ac)}
+.empty{grid-column:1/-1;text-align:center;color:var(--mut);padding:40px}
+#play{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg)}
+#play[hidden],#app[hidden]{display:none}
+#bar{display:flex;align-items:center;gap:10px;padding:8px 10px;padding-top:max(8px,env(safe-area-inset-top));background:#0f1530;border-bottom:1px solid var(--line)}
+#back{width:42px;height:42px;border-radius:12px;background:var(--card2);font-size:20px;flex:none}
+#title{flex:1;font-weight:700;font-size:15px;line-height:1.2;min-width:0}#title small{display:block;color:var(--mut);font-weight:400;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hud{text-align:right;font-size:12.5px;color:var(--mut);flex:none;max-width:48%}#hud b{color:var(--ac);font-size:18px;display:block}
+#stage{flex:1;overflow:auto;padding:10px 10px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;position:relative}
+.ov{position:fixed;inset:0;background:rgba(3,6,15,.72);display:flex;align-items:center;justify-content:center;z-index:30;padding:18px;animation:fd .2s}
+@keyframes fd{from{opacity:0}}
+.dlg{background:var(--card);border-radius:22px;padding:22px 20px;width:100%;max-width:370px;text-align:center;border:1px solid var(--line);max-height:92dvh;overflow:auto}
+.dlg .ri{font-size:52px}.dlg h2{margin:6px 0}.dlg p{color:#cbd5e1;margin:8px 0;line-height:1.45}.dlg .mut{color:var(--mut);font-size:13px}
+.dlg .big{font-size:44px;font-weight:800;color:var(--ac)}
+.lvb{display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px 16px;margin-top:9px;border-radius:14px;font-weight:700;font-size:16px}
+.lvb span{font-weight:400;font-size:12.5px;opacity:.85}
+.l0{background:#15803d}.l1{background:#b45309}.l2{background:#b91c1c}
+.btn{padding:11px 16px;border-radius:12px;background:var(--card2);font-weight:600;border:1px solid var(--line)}
+.btn.pri{background:var(--ac);color:#1a1300;border-color:var(--ac)}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.toast{position:fixed;left:50%;top:76px;transform:translateX(-50%);background:#111827ee;border:1px solid var(--line);padding:9px 16px;border-radius:12px;z-index:25;font-weight:600;pointer-events:none;animation:tst 1.4s forwards;white-space:nowrap}
+@keyframes tst{0%{opacity:0;transform:translate(-50%,-8px)}12%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
+.note{color:var(--mut);font-size:13px;text-align:center;max-width:520px}
+.tb,.np,.pad,.colors,.tiles{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.np{max-width:420px}.np button{min-width:52px;height:48px;border-radius:12px;background:var(--card2);font-size:19px;font-weight:700;border:1px solid var(--line)}
+.np button:active,.pb:active,.ob:active,.btn:active{filter:brightness(1.3)}
+.pad{width:100%;max-width:480px;margin-top:auto}.pb{flex:1;height:58px;border-radius:14px;background:var(--card2);font-size:22px;border:1px solid var(--line);touch-action:none}
+.cv{display:block;width:min(100%,calc((100dvh - 200px) * var(--ar)));max-width:560px;height:auto;border-radius:14px;background:#0b1020;touch-action:none;border:1px solid var(--line)}
+.grid{display:grid;gap:4px;margin:0 auto;touch-action:manipulation}
+.cell{aspect-ratio:1;background:var(--card2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:min(5.5vw,24px);position:relative;overflow:hidden}
+/* quiz */
+.quiz{width:100%;max-width:520px;display:flex;flex-direction:column;gap:14px;flex:1}
+.tbar{height:7px;background:#1f2937;border-radius:9px;overflow:hidden}.tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--ok),var(--ac))}
+.qq{min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:30px;font-weight:800;background:var(--card);border-radius:18px;padding:16px;border:1px solid var(--line);flex-direction:column;gap:8px;line-height:1.25}
+.qq small{font-size:14px;color:var(--mut);font-weight:500}.qq .lg{font-size:64px}.qq .md{font-size:22px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.opts.one{grid-template-columns:1fr}.opts.three{grid-template-columns:1fr 1fr 1fr}
+.ob{padding:16px 8px;border-radius:14px;background:var(--card2);font-size:19px;font-weight:700;border:1px solid var(--line);min-height:60px;word-break:break-word}
+.ob.good{background:var(--ok)!important;color:#fff}.ob.bad{background:var(--bad)!important;color:#fff}
+.dot{display:inline-block;width:18px;height:18px;border-radius:50%;margin:0 2px;vertical-align:middle}
+/* game specific */
+.g2048 .cell{font-size:min(7vw,30px);color:#fff;text-shadow:0 1px 2px #0006}
+.sdk{gap:2px}.sdk .cell{border-radius:4px;font-size:min(5vw,22px);color:#93c5fd;font-weight:600}.sdk .cell.fx{color:#fff;font-weight:800;background:#283458}
+.sdk .cell.br{margin-right:3px}.sdk .cell.bb{margin-bottom:3px}.sdk .cell.same{background:#3b4a7a}.sdk .cell.sel{background:#b45309!important;color:#fff}.sdk .cell.bad{color:#f87171!important}
+.slide .cell{background:#2563eb;font-size:min(8vw,32px)}.slide .cell.ok{background:#16a34a}.slide .cell.empty{background:transparent}
+.mine{gap:2px}.mine .cell{border-radius:4px;background:#3b4a7a;font-size:min(4.5vw,20px)}.mine .cell.op{background:#1a2240}
+.cell[data-n="1"]{color:#60a5fa}.cell[data-n="2"]{color:#4ade80}.cell[data-n="3"]{color:#f87171}.cell[data-n="4"]{color:#c084fc}.cell[data-n="5"]{color:#fb923c}.cell[data-n="6"]{color:#2dd4bf}
+.lights .cell{background:#1f2937;transition:background .15s}.lights .cell.on{background:#fde047;box-shadow:0 0 18px #fde04799}
+.hanoi{display:flex;gap:8px;width:100%;max-width:520px;height:46dvh}.peg{flex:1;display:flex;flex-direction:column-reverse;align-items:center;gap:3px;background:linear-gradient(#475569,#475569) center/6px 100% no-repeat;border-bottom:8px solid #64748b;border-radius:6px;padding-bottom:4px}
+.peg.sel{background-color:#fbbf2422}.disk{height:22px;border-radius:8px;flex:none}
+.flood,.same{gap:0}.flood .cell,.same .cell{border-radius:0}.same .cell{border:1px solid #0b1020}
+.cbtn{width:50px;height:50px;border-radius:50%;border:3px solid #fff3}
+.mmhist{display:flex;flex-direction:column;gap:6px;width:100%;max-width:360px;max-height:42dvh;overflow:auto}
+.mmline{display:flex;gap:6px;align-items:center;background:var(--card);padding:6px 10px;border-radius:10px}.fb{margin-left:auto;letter-spacing:2px;font-size:15px}
+.mmrow{display:flex;gap:8px;align-items:center}.peg2{width:40px;height:40px;border-radius:50%;background:#1f2937;border:2px dashed #475569}.peg2.sm{width:24px;height:24px;border:0}
+.nono{gap:2px}.nono .cell{border-radius:3px;background:#273152}.nono .cell.f{background:#e5e7eb}.nono .cell.x::after{content:"✕";color:#64748b;font-size:70%}
+.clue{font-size:10.5px;color:#a5b4fc;white-space:pre;display:flex;align-items:flex-end;justify-content:center;line-height:1.15;text-align:center;font-weight:700}.clue.r{justify-content:flex-end;align-items:center;padding-right:4px}
+.tubes{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;max-width:520px;margin-top:20px}.tube{width:42px;height:176px;border:3px solid #94a3b8;border-top:0;border-radius:0 0 24px 24px;display:flex;flex-direction:column-reverse;align-items:center;padding:5px 0;gap:5px}
+.tube.sel{border-color:var(--ac);transform:translateY(-10px)}.ball{width:32px;height:32px;border-radius:50%;flex:none;box-shadow:inset -4px -4px 8px #0005}
+.m3{gap:3px}.m3 .cell{font-size:min(7vw,30px);background:#1a2242}.m3 .cell.sel{background:#b45309}
+.t24{display:flex;flex-direction:column;gap:16px;align-items:center;width:100%;max-width:420px}.big{font-size:30px;font-weight:800;color:var(--ac)}
+.tile{width:76px;height:76px;border-radius:16px;background:#2563eb;font-size:28px;font-weight:800}.tile.sel{background:var(--ac);color:#111}
+.opb{width:62px;height:56px;border-radius:14px;background:var(--card2);font-size:26px;font-weight:800;border:1px solid var(--line)}.opb.sel{background:#16a34a}
+.peg{}.pegb{gap:6px}.hole{aspect-ratio:1;border-radius:50%;background:#1f2937;box-shadow:inset 0 2px 4px #000a}.hole.p{background:radial-gradient(circle at 35% 35%,#fde68a,#d97706)}.hole.none{visibility:hidden}.hole.sel{outline:3px solid #60a5fa}
+.jugs{display:flex;gap:16px;align-items:flex-end;justify-content:center;width:100%;max-width:480px}.jug{display:flex;flex-direction:column;align-items:center;gap:6px}
+.jb{width:74px;border:3px solid #94a3b8;border-top:0;border-radius:0 0 14px 14px;position:relative;overflow:hidden;background:#111827}.jb i{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(#38bdf8,#0369a1);transition:height .3s}.jb b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;text-shadow:0 1px 3px #000}
+.jug.sel .jb{border-color:var(--ac)}.jug .btn{padding:7px 10px;font-size:13px}
+.ttt{max-width:330px}.ttt .cell{font-size:min(14vw,60px)}
+.c4{gap:4px;background:#1d4ed8;padding:6px;border-radius:12px}.c4 .cell{border-radius:50%;background:#0b1020}.c4 .cell.p1{background:#ef4444}.c4 .cell.p2{background:#facc15}
+.rev{gap:2px;background:#14532d;padding:4px;border-radius:8px}.rev .cell{background:#15803d;border-radius:3px}.rev .cell.bk::after,.rev .cell.wh::after{content:"";width:80%;height:80%;border-radius:50%;background:#111}.rev .cell.wh::after{background:#f3f4f6}.rev .cell.hint::after{content:"";width:24%;height:24%;border-radius:50%;background:#ffffff55}
+.gomo{gap:1px;background:#92400e;padding:3px;border-radius:6px}.gomo .cell{background:#d6a35c;border-radius:0;font-size:0}.gomo .cell.p1::after,.gomo .cell.p2::after{content:"";width:82%;height:82%;border-radius:50%;background:#111}.gomo .cell.p2::after{background:#f9fafb}.gomo .cell.last{outline:2px solid #ef4444;z-index:1}
+.nim{display:flex;flex-direction:column;gap:16px;align-items:flex-start;margin-top:14px}.nimrow{display:flex;gap:9px;align-items:flex-end;min-height:66px}.stick{width:14px;height:64px;border-radius:4px;background:linear-gradient(#ef4444 0 14px,#d6a35c 14px)}.dim{color:var(--mut)}
+.mang{display:grid;grid-template-columns:60px repeat(6,1fr) 60px;grid-template-rows:1fr 1fr;gap:6px;width:100%;max-width:560px;background:#78350f;padding:8px;border-radius:18px}
+.pit{aspect-ratio:1;border-radius:50%;background:#451a03;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-direction:column;box-shadow:inset 0 3px 6px #000a}.pit.me{cursor:pointer}.pit.me:active{background:#7c2d12}.pit.last{outline:3px solid var(--ac)}
+.store{grid-row:1/3;border-radius:30px;background:#451a03;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;box-shadow:inset 0 3px 6px #000a;flex-direction:column}.store small{font-size:10px;color:#fcd34d}
+.bsgrid{gap:2px}.bsgrid .cell{border-radius:3px;background:#1e3a8a;font-size:min(4.5vw,20px)}.bsgrid .cell.ship{background:#64748b}.bsgrid .cell.miss::after{content:"•";color:#cbd5e1}.bsgrid .cell.hit{background:#dc2626}.bsgrid .cell.sunk{background:#450a0a}
+.lbl{font-size:12px;color:var(--mut);margin-bottom:-6px}
+.rps{display:flex;gap:12px}.rps button{width:92px;height:92px;border-radius:20px;background:var(--card2);font-size:46px;border:1px solid var(--line)}
+.vs{font-size:60px;display:flex;gap:30px;align-items:center;min-height:90px}
+.mole{gap:10px}.mole .cell{border-radius:50%;background:radial-gradient(#3f2a14,#1c1208);font-size:min(13vw,56px)}
+.simon{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(88vw,46dvh)}.sp{aspect-ratio:1;border-radius:24px;opacity:.45;transition:opacity .1s}.sp.on{opacity:1;box-shadow:0 0 30px currentColor}
+.memc .cell{background:#2563eb;font-size:min(9vw,40px);transition:transform .2s}.memc .cell.op{background:var(--card2)}.memc .cell.done{background:#14532d}
+.sq .cell{background:#1f2937}.sq .cell.on{background:#38bdf8}.sq .cell.good{background:#22c55e}.sq .cell.bad{background:#ef4444}
+.emg .cell{font-size:min(8vw,36px);background:var(--card)}
+.wlist{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:520px}.wl{padding:10px 14px;border-radius:12px;background:var(--card2);font-weight:700;border:1px solid var(--line)}.wl.sel{background:#2563eb}.wl.good{background:#16a34a}.wl.bad{background:#dc2626}
+.word{font-size:34px;font-weight:800;letter-spacing:6px;text-align:center}
+.kb{display:flex;flex-direction:column;gap:6px;width:100%;max-width:520px}.kb div{display:flex;gap:4px;justify-content:center}.kb button{flex:1;max-width:44px;height:48px;border-radius:8px;background:#334155;font-weight:700;font-size:15px;padding:0}.kb button.wide{max-width:70px;font-size:13px}
+.kb button.g{background:#16a34a}.kb button.y{background:#ca8a04}.kb button.x{background:#1f2937;color:#64748b}
+.wd{display:grid;gap:5px}.wd div{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.wd span{width:min(15vw,56px);aspect-ratio:1;border:2px solid #334155;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}
+.wd span.g{background:#16a34a;border-color:#16a34a}.wd span.y{background:#ca8a04;border-color:#ca8a04}.wd span.x{background:#1f2937;border-color:#1f2937}
+.ws{gap:1px;background:var(--line);padding:1px;border-radius:6px}.ws .cell{border-radius:0;font-size:min(4.6vw,19px);background:var(--card)}.ws .cell.sel{background:#b45309}.ws .cell.f{background:#166534}
+.found{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:520px;font-size:13px}.found span{padding:4px 9px;border-radius:9px;background:var(--card2)}.found span.ok{background:#166534;text-decoration:line-through}
+.slots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:52px}.slots button{width:44px;height:50px;border-radius:10px;background:var(--card2);font-size:22px;font-weight:800;border:1px solid var(--line)}.slots button.u{opacity:.25}
+.hang{font-size:15px;color:var(--mut)}
+.cards{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:88px}.card{width:58px;height:84px;border-radius:9px;background:#f8fafc;color:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:20px;box-shadow:0 2px 6px #0007;flex:none}
+.card.r{color:#dc2626}.card.bk{background:repeating-linear-gradient(45deg,#1d4ed8 0 6px,#1e40af 6px 12px);color:transparent}.card small{font-size:22px}.card.pl{cursor:pointer}.card.pl:active{transform:translateY(-6px)}
+.pile{position:relative;width:80px;height:96px}.pile .card{position:absolute}
+.dice{font-size:70px;line-height:1}
+.mbar{width:100%;max-width:480px;height:54px;background:#1f2937;border-radius:12px;position:relative;overflow:hidden}.mbar .tg{position:absolute;top:0;bottom:0;background:#16a34a55;border-left:2px solid #22c55e;border-right:2px solid #22c55e}.mbar .nd{position:absolute;top:0;bottom:0;width:6px;background:var(--ac);border-radius:3px}
+.react{width:100%;max-width:520px;flex:1;min-height:300px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;text-align:center;padding:20px;flex-direction:column}
+.hz{width:100%;max-width:520px;flex:1;min-height:330px;position:relative;background:var(--card);border-radius:18px;overflow:hidden;border:1px solid var(--line);touch-action:manipulation}
+.tgt{position:absolute;border-radius:50%;background:radial-gradient(#fff 0 18%,#ef4444 19% 38%,#fff 39% 56%,#ef4444 57%);transform:translate(-50%,-50%)}
+.typ{width:100%;max-width:420px;padding:14px;font-size:22px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--tx);text-align:center;outline:none}
+</style>
+</head>
+<body>
+<div id="app">
+<header><h1>🎮 Oyun Dünyası <b>100</b></h1><div id="stats"></div><input id="q" type="search" placeholder="🔍 Oyun ara…" autocomplete="off"></header>
+<nav id="cats"></nav>
+<main id="list"></main>
+</div>
+<div id="play" hidden>
+<div id="bar"><button id="back" aria-label="Geri">←</button><div id="title"></div><div id="hud"></div></div>
+<div id="stage"></div>
+</div>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const h=(tag,at,...kids)=>{const e=document.createElement(tag);if(at)for(const k in at){if(k==='class')e.className=at[k];else if(k==='style')e.style.cssText=at[k];else if(k==='html')e.innerHTML=at[k];else e.setAttribute(k,at[k])}kids.flat().forEach(k=>k!=null&&e.append(k instanceof Node?k:String(k)));return e};
+const TRU=s=>s.toLocaleUpperCase('tr-TR');
+const nOpts=(a,sp=5,k=4,min=-1e9)=>{const s=new Set([a]);let g=0;while(s.size<k&&g++<300){const d=a+R(-sp,sp);if(d!==a&&d>=min)s.add(d)}let x=1;while(s.size<k)s.add(a+sp+x++);return shuf([...s])};
+const mcq=(a,pool,k=4)=>{const s=new Set([a]);const p=shuf(pool);for(const v of p){if(s.size>=k)break;s.add(v)}return shuf([...s])};
+const LV=['Kolay','Orta','Zor'];
+const CATS=[['Bulmaca','🧩'],['Strateji','♟️'],['Arcade','🕹️'],['Refleks','⚡'],['Hafıza','🧠'],['Matematik','➗'],['Kelime','🔤'],['Bilgi','🌍'],['Kart & Şans','🃏']];
+const G=[];const reg=(c,i,n,d,f)=>G.push({c,i,n,d,f});
+let S={b:{},p:0,last:{}};try{const o=JSON.parse(localStorage.getItem('oyun100')||'null');if(o&&o.b)S=Object.assign(S,o)}catch(e){}
+const save=()=>{try{localStorage.setItem('oyun100',JSON.stringify(S))}catch(e){}};
+
+/* ---------- menü ---------- */
+let curCat='Tümü';
+function renderCats(){const nav=$('#cats');nav.innerHTML='';const all=[['Tümü','⭐'],...CATS,['Rastgele','🎲']];all.forEach(([c,i])=>{const n=c==='Tümü'?G.length:G.filter(g=>g.c===c).length;const b=h('button',{class:'chip'+(c===curCat?' on':'')},`${i} ${c}${c==='Rastgele'?'':' '+n}`);b.onclick=()=>{if(c==='Rastgele'){chooser(pick(G));return}curCat=c;renderCats();renderList()};nav.append(b)})}
+function bestOf(g){return Math.max(0,...[0,1,2].map(l=>S.b[g.n+'|'+l]||0))}
+function renderList(){const q=TRU($('#q').value.trim());const L=$('#list');L.innerHTML='';const list=G.map((g,i)=>[g,i]).filter(([g])=>(curCat==='Tümü'||g.c===curCat)&&(!q||TRU(g.n+' '+g.c+' '+g.d).includes(q)));if(!list.length)L.append(h('div',{class:'empty'},'Oyun bulunamadı'));list.forEach(([g,i])=>{const b=bestOf(g);const e=h('button',{class:'gc'},h('div',{class:'no'},'#'+(i+1)),b?h('div',{class:'bs'},'🏆'+b):null,h('div',{class:'ic'},g.i),h('div',{class:'nm'},g.n),h('div',{class:'ct'},g.c));e.onclick=()=>chooser(g);L.append(e)});
+ const rec=Object.keys(S.b).length;$('#stats').textContent=`${G.length} oyun • ${S.p||0} kez oynandı • ${rec} rekor`}
+$('#q').addEventListener('input',renderList);
+function overlay(html,btns){closeOv();const d=h('div',{class:'dlg',html});const row=h('div',{class:'row'});btns.forEach(([t,f,c])=>{const b=h('button',{class:'btn '+(c||'')},t);b.onclick=()=>{closeOv();f&&f()};row.append(b)});if(btns.length)d.append(row);const o=h('div',{class:'ov',id:'ov'},d);o.onclick=e=>{if(e.target===o&&o.dataset.close)closeOv()};document.body.append(o);return {o,d}}
+function closeOv(){const o=$('#ov');if(o)o.remove()}
+function chooser(g){const {o,d}=overlay(`<div class="ri">${g.i}</div><h2>${g.n}</h2><p>${g.d}</p><p class="mut">${g.c}</p>`,[]);o.dataset.close=1;
+ LV.forEach((l,i)=>{const b=S.b[g.n+'|'+i];const e=h('button',{class:'lvb l'+i},l,h('span',null,b?'🏆 '+b:'—'));e.onclick=()=>{closeOv();startGame(g,i)};d.append(e)});const c=h('button',{class:'btn',style:'margin-top:14px;width:100%'},'Kapat');c.onclick=closeOv;d.append(c)}
+
+/* ---------- oyun çalıştırıcı ---------- */
+let SES=null,sid=0;const USEH=(()=>{try{return window.self===window.top}catch(e){return false}})();
+const KM={ArrowLeft:'L',ArrowRight:'R',ArrowUp:'U',ArrowDown:'D',' ':'A',a:'L',d:'R',w:'U',s:'D'};
+addEventListener('keydown',e=>{if(!SES||e.target.tagName==='INPUT')return;const k=KM[e.key]||e.key;if(KM[e.key])e.preventDefault();if(e.repeat&&!'LRUD'.includes(k))return;SES.inp[k]=true;SES.onKey&&SES.onKey(k,e)});
+addEventListener('keyup',e=>{if(!SES)return;const k=KM[e.key]||e.key;SES.inp[k]=false});
+function stopSes(){if(SES){SES._stop();SES=null}}
+function goMenu(){stopSes();closeOv();$('#play').hidden=true;$('#app').hidden=false;renderList();if(USEH&&history.state&&history.state.g)try{history.back()}catch(e){}}
+addEventListener('popstate',()=>{if(SES||!$('#play').hidden){stopSes();closeOv();$('#play').hidden=true;$('#app').hidden=false;renderList()}});
+$('#back').onclick=()=>goMenu();
+window.__back=()=>{const ov=$('#ov'),inGame=!$('#play').hidden;if(inGame){goMenu();return true}if(ov){closeOv();return true}return false};
+function startGame(g,lv){
+ stopSes();closeOv();const my=++sid;
+ if(USEH&&!(history.state&&history.state.g))try{history.pushState({g:1},'')}catch(e){}
+ $('#app').hidden=true;$('#play').hidden=false;
+ const stage=$('#stage');stage.innerHTML='';stage.style.touchAction='';stage.scrollTop=0;
+ $('#title').innerHTML='';$('#title').append(g.i+' '+g.n,h('small',null,LV[lv]+' • '+g.c));
+ const T=[];let alive=true,ended=false,sc=0,inf='';
+ const hud=()=>{$('#hud').innerHTML=`<b>${sc}</b>${inf}`};
+ const api={lv,el:stage,inp:{},onKey:null,
+  alive:()=>alive,
+  _stop(){alive=false;T.forEach(f=>{try{f()}catch(e){}});T.length=0},
+  every(fn,ms){const t=setInterval(()=>alive&&fn(),ms);T.push(()=>clearInterval(t));return t},
+  after(fn,ms){const t=setTimeout(()=>alive&&fn(),ms);T.push(()=>clearTimeout(t));return t},
+  loop(fn){let last=performance.now(),id;const f=t=>{if(!alive)return;const dt=Math.min(.05,Math.max(0,(t-last)/1000));last=t;try{fn(dt)}catch(e){console.error(e);throw e}if(alive)id=requestAnimationFrame(f)};id=requestAnimationFrame(f);T.push(()=>cancelAnimationFrame(id))},
+  on(t,e,fn,o){t.addEventListener(e,fn,o);T.push(()=>t.removeEventListener(e,fn,o))},
+  score(v){if(ended)return;sc=Math.max(0,Math.round(v));hud()},add(v){if(ended)return;sc=Math.max(0,Math.round(sc+v));hud()},get sc(){return sc},
+  info(t){if(t!==inf){inf=t;hud()}},
+  toast(t){const e=h('div',{class:'toast'},t);document.body.append(e);setTimeout(()=>e.remove(),1450)},
+  box(cls,tag='div'){const e=h(tag,{class:cls||''});stage.append(e);return e},
+  note(t){const e=h('div',{class:'note',html:t});stage.append(e);return e},
+  toolbar(list){const r=api.box('tb');return list.map(([t,f])=>{const b=h('button',{class:'btn'},t);b.onclick=f;r.append(b);return b})},
+  numpad(list,fn){const r=api.box('np');list.forEach(v=>{const b=h('button',null,String(v));b.onclick=()=>fn(v);r.append(b)});return r},
+  grid(rows,cols,cls=''){const g=h('div',{class:'grid '+cls});g.style.gridTemplateColumns=`repeat(${cols},1fr)`;g.style.width=`min(100%,${(62*cols/rows).toFixed(1)}dvh,540px)`;const cells=[];for(let i=0;i<rows*cols;i++){const c=h('div',{class:'cell'});cells.push(c);g.append(c)}stage.append(g);return {g,cells}},
+  canvas(w,hh){const c=h('canvas',{class:'cv'});c.width=w;c.height=hh;c.style.setProperty('--ar',w/hh);stage.append(c);return c.getContext('2d')},
+  pos(el,e){const r=el.getBoundingClientRect();const sx=(el.width||r.width)/r.width,sy=(el.height||r.height)/r.height;return [(e.clientX-r.left)*sx,(e.clientY-r.top)*sy]},
+  press(el,fn){api.on(el,'pointerdown',e=>{e.preventDefault();fn(...api.pos(el,e),e)})},
+  tap(el,fn){let s=null;api.on(el,'pointerdown',e=>{s=[e.clientX,e.clientY]});api.on(el,'pointerup',e=>{if(s&&Math.hypot(e.clientX-s[0],e.clientY-s[1])<14)fn(...api.pos(el,e),e);s=null})},
+  drag(el,fn){let d=false;el.style.touchAction='none';api.on(el,'pointerdown',e=>{d=true;fn(...api.pos(el,e))});api.on(window,'pointermove',e=>{if(d)fn(...api.pos(el,e))});api.on(window,'pointerup',()=>d=false)},
+  swipe(el,fn,tapFn){let s=null;el.style.touchAction='none';api.on(el,'pointerdown',e=>{s=[e.clientX,e.clientY]});api.on(el,'pointerup',e=>{if(!s)return;const dx=e.clientX-s[0],dy=e.clientY-s[1];s=null;if(Math.max(Math.abs(dx),Math.abs(dy))<24){tapFn&&tapFn();return}fn(Math.abs(dx)>Math.abs(dy)?(dx>0?'R':'L'):(dy>0?'D':'U'))})},
+  pad(btns){const r=api.box('pad');btns.forEach(b=>{const e=h('button',{class:'pb'},b.t);let rt=null;const up=()=>{if(b.k)api.inp[b.k]=false;if(rt){clearInterval(rt);clearTimeout(rt);rt=null}};
+   e.addEventListener('pointerdown',ev=>{ev.preventDefault();if(b.k)api.inp[b.k]=true;if(b.f){b.f();if(b.rep){rt=setTimeout(()=>{rt=setInterval(()=>alive?b.f():up(),70)},230)}}});['pointerup','pointerleave','pointercancel'].forEach(x=>e.addEventListener(x,up));T.push(up);r.append(e)});return r},
+  end(msg){if(ended)return;ended=true;api._stop();
+   const k=g.n+'|'+lv,prev=S.b[k]||0,nb=sc>prev;if(nb)S.b[k]=sc;S.p=(S.p||0)+1;save();
+   setTimeout(()=>{if(sid!==my||$('#play').hidden)return;overlay(`<div class="ri">${nb&&sc>0?'🏆':g.i}</div><h2>${nb&&sc>0?'Yeni Rekor!':'Oyun Bitti'}</h2><p>${msg||''}</p><div class="big">${sc}</div><p class="mut">${LV[lv]} rekoru: ${Math.max(prev,sc)}</p>`,[['🔁 Tekrar',()=>startGame(g,lv),'pri'],['🎚 Seviye',()=>chooser(g)],['🏠 Menü',()=>{$('#back').click()}]])},650)}
+ };
+ SES=api;hud();
+ try{g.f(api)}catch(e){console.error(e);stage.append(h('div',{class:'note'},'Hata: '+e.message))}
+}
+
+/* ---------- ortak: soru motoru ---------- */
+function quiz(api,o){
+ const TT=o.t==null?0:Array.isArray(o.t)?o.t[api.lv]:o.t;let lives=o.lives??3,n=0,timer=0,cur,lock=true,right=0;
+ const box=api.box('quiz');const bar=h('div',{class:'tbar'},h('i'));const qEl=h('div',{class:'qq'});const opts=h('div',{class:'opts'});if(TT)box.append(bar);box.append(qEl,opts);
+ const info=()=>api.info((lives<20?'❤️'.repeat(Math.max(0,lives))+' ':'')+(o.rounds?`${Math.min(n,o.rounds)}/${o.rounds}`:'✔'+right));
+ const next=()=>{if(o.rounds&&n>=o.rounds)return api.end(`${o.rounds} sorudan ${right} doğru`);n++;cur=o.gen(api.lv,n);lock=false;qEl.innerHTML='';if(cur.q instanceof Node)qEl.append(cur.q);else qEl.innerHTML=cur.q;opts.innerHTML='';const list=cur.opts||[];opts.className='opts'+(cur.cls?' '+cur.cls:'');list.forEach(v=>{const b=h('button',{class:'ob'},String(v));b.onclick=()=>answer(v,b);opts.append(b)});timer=TT;info();cur.init&&cur.init()};
+ const answer=(v,b)=>{if(lock)return;lock=true;const ok=cur.check?cur.check(v):String(v)===String(cur.a);if(ok){right++;api.add(Math.round((10+(TT?Math.ceil(timer/TT*10):5))*(api.lv+1)));b&&b.classList.add('good')}else{lives--;b&&b.classList.add('bad');[...opts.children].forEach(x=>{if(x.textContent===String(cur.a))x.classList.add('good')});if(cur.reveal)cur.reveal()}info();api.after(()=>{if(lives<=0)return api.end(`${right} doğru cevap`);next()},ok?380:1100)};
+ if(TT)api.loop(dt=>{if(lock)return;timer-=dt;bar.firstChild.style.width=Math.max(0,timer/TT*100)+'%';if(timer<=0)answer(null,null)});
+ next();return {answer,box,qEl,opts};
+}
+
+/* ================= BULMACA ================= */
+reg('Bulmaca','🔢','2048','Kaydırarak aynı sayıları birleştir, en büyük karoya ulaş.',api=>{
+ const n=[5,4,4][api.lv],p4=[.1,.1,.35][api.lv];const b=Array(n*n).fill(0);const {cells}=api.grid(n,n,'g2048');
+ const add=()=>{const e=b.map((v,i)=>v?-1:i).filter(i=>i>=0);if(e.length)b[pick(e)]=Math.random()<p4?4:2};
+ const draw=()=>cells.forEach((c,i)=>{const v=b[i];c.textContent=v||'';c.style.background=v?`hsl(${(Math.log2(v)*31+20)%360} 65% ${Math.max(32,60-Math.log2(v)*2.5)}%)`:'';c.style.fontSize=v>=1000?'min(5vw,22px)':''});
+ const line=(d,k)=>{const r=[];for(let j=0;j<n;j++)r.push(d==='L'?k*n+j:d==='R'?k*n+n-1-j:d==='U'?j*n+k:(n-1-j)*n+k);return r};
+ const can=()=>{for(let i=0;i<n*n;i++){if(!b[i])return true;if(i%n<n-1&&b[i]===b[i+1])return true;if(i+n<n*n&&b[i]===b[i+n])return true}return false};
+ const move=d=>{if(!'LRUD'.includes(d))return;let mv=false;for(let k=0;k<n;k++){const idx=line(d,k),v=idx.map(i=>b[i]).filter(x=>x),out=[];for(let i=0;i<v.length;i++){if(v[i]===v[i+1]){out.push(v[i]*2);api.add(v[i]*2);i++}else out.push(v[i])}while(out.length<n)out.push(0);idx.forEach((ix,i)=>{if(b[ix]!==out[i])mv=true;b[ix]=out[i]})}
+  if(mv){add();draw();api.info('En büyük: '+Math.max(...b));if(!can())api.end('Hamle kalmadı! En büyük karo: '+Math.max(...b))}};
+ add();add();draw();api.swipe(api.el,move);api.onKey=move;api.note('Ekranı kaydır veya ok tuşlarını kullan');
+});
+
+reg('Bulmaca','🧩','Sudoku','Her satır, sütun ve 3×3 kutuda 1–9 rakamları birer kez olmalı.',api=>{
+ const s=Array(81).fill(0);
+ const ok=(b,i,v)=>{const r=Math.floor(i/9),c=i%9,br=r-r%3,bc=c-c%3;for(let k=0;k<9;k++){const a=r*9+k,bb=k*9+c,cc=(br+Math.floor(k/3))*9+bc+k%3;if((a!==i&&b[a]===v)||(bb!==i&&b[bb]===v)||(cc!==i&&b[cc]===v))return false}return true};
+ const fill=i=>{if(i===81)return true;for(const v of shuf([1,2,3,4,5,6,7,8,9]))if(ok(s,i,v)){s[i]=v;if(fill(i+1))return true}s[i]=0;return false};fill(0);
+ const fx=Array(81).fill(false);shuf([...Array(81).keys()]).slice(0,[44,35,28][api.lv]).forEach(i=>fx[i]=true);
+ const b=s.map((v,i)=>fx[i]?v:0);const {cells}=api.grid(9,9,'sdk');let sel=-1;const t0=Date.now();
+ const draw=()=>cells.forEach((c,i)=>{const r=Math.floor(i/9),col=i%9;c.textContent=b[i]||'';c.className='cell'+(fx[i]?' fx':'')+(i===sel?' sel':'')+(b[i]&&!ok(b,i,b[i])?' bad':'')+(sel>=0&&b[sel]&&b[i]===b[sel]&&i!==sel?' same':'')+(col%3===2&&col<8?' br':'')+(r%3===2&&r<8?' bb':'')});
+ cells.forEach((c,i)=>c.onclick=()=>{sel=i;draw()});
+ const put=v=>{if(sel<0||fx[sel])return;b[sel]=v;draw();api.info('Boş: '+b.filter(x=>!x).length);if(b.every((x,i)=>x&&ok(b,i,x))){api.score(Math.max(100,(1800-Math.floor((Date.now()-t0)/1000))*(api.lv+1)));api.end('Tebrikler, Sudoku çözüldü! 🎉')}};
+ api.numpad([1,2,3,4,5,6,7,8,9,'⌫'],v=>put(v==='⌫'?0:v));api.onKey=k=>{if(/^[1-9]$/.test(k))put(+k);if(k==='Backspace'||k==='0')put(0)};draw();api.info('Boş: '+b.filter(x=>!x).length);
+});
+
+reg('Bulmaca','🔲','Kaydırmalı Bulmaca','Karolara dokunarak sayıları 1’den başlayarak sıraya diz.',api=>{
+ const n=[3,4,5][api.lv],N=n*n,b=[...Array(N).keys()].map(i=>(i+1)%N);let e=N-1,mv=0;const t0=Date.now();
+ const nb=i=>[i-n,i+n,i%n?i-1:-1,i%n<n-1?i+1:-1].filter(j=>j>=0&&j<N);let prev=-1;
+ for(let k=0;k<N*40;k++){const j=pick(nb(e).filter(x=>x!==prev));b[e]=b[j];b[j]=0;prev=e;e=j}
+ const {cells}=api.grid(n,n,'slide');const solved=()=>b.every((v,i)=>v===(i+1)%N);
+ const draw=()=>cells.forEach((c,i)=>{c.textContent=b[i]||'';c.className='cell'+(!b[i]?' empty':b[i]===i+1?' ok':'')});
+ const tap=i=>{const r=Math.floor(i/n),c=i%n,er=Math.floor(e/n),ec=e%n;if(i===e||(r!==er&&c!==ec))return;const st=r===er?(c>ec?1:-1):(r>er?n:-n);while(e!==i){const j=e+st;b[e]=b[j];b[j]=0;e=j;mv++}draw();api.info('Hamle: '+mv);if(solved()){api.score(Math.max(20,1000*(api.lv+1)-mv*3-Math.floor((Date.now()-t0)/1000)*2));api.end(`${mv} hamlede çözdün!`)}};
+ cells.forEach((c,i)=>c.onclick=()=>tap(i));draw();api.note('Boşlukla aynı satır/sütundaki karoya dokun');
+});
+
+reg('Bulmaca','💣','Mayın Tarlası','Mayınlara basmadan tüm güvenli kareleri aç. Uzun bas = bayrak.',api=>{
+ const [n,M]=[[8,10],[10,17],[12,30]][api.lv],N=n*n;let mines=null,cnt=[],fm=false;const open=Array(N).fill(false),flag=Array(N).fill(false);const t0=Date.now();
+ const tb=api.toolbar([['⛏ Kazma modu',()=>{fm=!fm;tb[0].textContent=fm?'🚩 Bayrak modu':'⛏ Kazma modu'}]]);
+ const {cells}=api.grid(n,n,'mine');
+ const nb=i=>{const r=Math.floor(i/n),c=i%n,o=[];for(let a=-1;a<=1;a++)for(let d=-1;d<=1;d++){if(!a&&!d)continue;const y=r+a,x=c+d;if(y>=0&&y<n&&x>=0&&x<n)o.push(y*n+x)}return o};
+ const init=f=>{const bad=new Set([f,...nb(f)]);mines=Array(N).fill(false);shuf([...Array(N).keys()].filter(i=>!bad.has(i))).slice(0,M).forEach(i=>mines[i]=true);cnt=mines.map((_,i)=>nb(i).filter(j=>mines[j]).length)};
+ const draw=()=>cells.forEach((c,i)=>{c.className='cell'+(open[i]?' op':'');c.textContent=open[i]?(mines[i]?'💥':(cnt[i]||'')):(flag[i]?'🚩':'');if(open[i]&&!mines[i]&&cnt[i])c.dataset.n=cnt[i];else delete c.dataset.n});
+ const reveal=i=>{const st=[i];while(st.length){const j=st.pop();if(open[j]||flag[j])continue;open[j]=true;if(!cnt[j])nb(j).forEach(k=>!open[k]&&st.push(k))}};
+ const act=(i,fl)=>{if(open[i])return;if(fl){flag[i]=!flag[i];draw();api.info('🚩 '+(M-flag.filter(x=>x).length));return}if(flag[i])return;if(!mines)init(i);
+  if(mines[i]){mines.forEach((m,j)=>{if(m)open[j]=true});draw();return api.end('Mayına bastın! 💥')}
+  reveal(i);const o=open.filter(x=>x).length;api.score(o*(api.lv+1));draw();if(o===N-M){api.add(Math.max(50,(api.lv+1)*700-Math.floor((Date.now()-t0)/1000)));api.end('Tüm mayınları atlattın! 🎉')}};
+ cells.forEach((c,i)=>{let lt=null;c.addEventListener('pointerdown',()=>{lt=setTimeout(()=>{lt=null;if(api.alive())act(i,true)},420)});c.addEventListener('pointerup',()=>{if(lt){clearTimeout(lt);lt=null;act(i,fm)}});c.addEventListener('pointercancel',()=>{clearTimeout(lt);lt=null});c.oncontextmenu=e=>e.preventDefault()});
+ draw();api.info('🚩 '+M);
+});
+
+reg('Bulmaca','💡','Işıkları Söndür','Bir lambaya basınca kendisi ve 4 komşusu değişir. Hepsini söndür.',api=>{
+ const n=[3,5,6][api.lv],N=n*n,b=Array(N).fill(false);let mv=0;const t=i=>[i,i-n,i+n,i%n?i-1:-1,i%n<n-1?i+1:-1].forEach(j=>{if(j>=0&&j<N)b[j]=!b[j]});
+ do{for(let k=0;k<[3,7,12][api.lv];k++)t(R(0,N-1))}while(!b.some(x=>x));
+ const {cells}=api.grid(n,n,'lights');const draw=()=>cells.forEach((c,i)=>c.classList.toggle('on',b[i]));
+ cells.forEach((c,i)=>c.onclick=()=>{t(i);mv++;draw();api.info('Hamle: '+mv);if(!b.some(x=>x)){api.score(Math.max(20,(api.lv+1)*500-mv*10));api.end(`${mv} hamlede tüm ışıklar söndü!`)}});draw();
+});
+
+reg('Bulmaca','🗼','Hanoi Kulesi','Tüm diskleri en sağdaki çubuğa taşı. Büyük disk küçüğün üstüne konamaz.',api=>{
+ const n=[3,5,7][api.lv],P=[[...Array(n).keys()].map(i=>n-i),[],[]],min=2**n-1;let sel=-1,mv=0;
+ const w=api.box('hanoi');const pegs=[0,1,2].map(i=>{const p=h('div',{class:'peg'});p.onclick=()=>tap(i);w.append(p);return p});
+ const draw=()=>pegs.forEach((p,i)=>{p.innerHTML='';p.classList.toggle('sel',sel===i);P[i].forEach((d,j)=>p.append(h('div',{class:'disk',style:`width:${22+72*d/n}%;background:hsl(${d*300/n} 70% 55%)${sel===i&&j===P[i].length-1?';transform:translateY(-12px);outline:2px solid #fff':''}`})))});
+ const tap=i=>{if(sel<0){if(P[i].length)sel=i}else{if(i!==sel){const d=P[sel].at(-1),t=P[i].at(-1);if(!t||t>d){P[i].push(P[sel].pop());mv++}else api.toast('Büyük disk küçüğün üstüne konamaz')}sel=-1}draw();api.info(`Hamle: ${mv} (en az ${min})`);
+  if(P[2].length===n){api.score(Math.max(10,Math.round(1000*(api.lv+1)*min/mv)));api.end(`${mv} hamlede bitirdin! (en az ${min})`)}};
+ draw();api.info(`En az ${min} hamle`);api.note('Önce diskin olduğu çubuğa, sonra hedef çubuğa dokun');
+});
+
+reg('Bulmaca','🌀','Labirent','Sarı topu 🏁 çıkışa ulaştır. Kaydır ya da okları kullan.',api=>{
+ const n=[8,13,19][api.lv],N=n*n,W=Array(N).fill(0),D={U:[0,-1,1,4],R:[1,0,2,8],D:[0,1,4,1],L:[-1,0,8,2]},opp={U:'D',D:'U',L:'R',R:'L'};
+ const vis=Array(N).fill(false),st=[0];vis[0]=true;
+ while(st.length){const c=st.at(-1),x=c%n,y=Math.floor(c/n);const o=Object.values(D).filter(([dx,dy])=>{const X=x+dx,Y=y+dy;return X>=0&&Y>=0&&X<n&&Y<n&&!vis[Y*n+X]});if(!o.length){st.pop();continue}const[dx,dy,bb,ob]=pick(o);const j=(y+dy)*n+x+dx;W[c]|=bb;W[j]|=ob;vis[j]=true;st.push(j)}
+ const S=600,cs=S/n,ctx=api.canvas(S,S);let p=0;const t0=Date.now(),trail=new Set([0]);
+ const draw=()=>{ctx.fillStyle='#0b1020';ctx.fillRect(0,0,S,S);ctx.fillStyle='rgba(96,165,250,.16)';trail.forEach(i=>ctx.fillRect(i%n*cs,Math.floor(i/n)*cs,cs,cs));ctx.strokeStyle='#8ab4ff';ctx.lineWidth=Math.max(2,cs/9);ctx.lineCap='round';ctx.beginPath();
+  for(let i=0;i<N;i++){const x=i%n*cs,y=Math.floor(i/n)*cs;if(!(W[i]&1)){ctx.moveTo(x,y);ctx.lineTo(x+cs,y)}if(!(W[i]&8)){ctx.moveTo(x,y);ctx.lineTo(x,y+cs)}if(i%n===n-1){ctx.moveTo(x+cs,y);ctx.lineTo(x+cs,y+cs)}if(Math.floor(i/n)===n-1){ctx.moveTo(x,y+cs);ctx.lineTo(x+cs,y+cs)}}ctx.stroke();
+  ctx.font=cs*.7+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🏁',(n-.5)*cs,(n-.5)*cs);ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc((p%n+.5)*cs,(Math.floor(p/n)+.5)*cs,cs*.32,0,7);ctx.fill()};
+ const deg=i=>[1,2,4,8].filter(b=>W[i]&b).length;
+ const mv=k=>{if(!D[k]||!(W[p]&D[k][2]))return;let d=k,g=0;while(g++<N){const[dx,dy]=D[d];p+=dy*n+dx;trail.add(p);if(p===N-1||deg(p)!==2)break;d=Object.keys(D).find(z=>z!==opp[d]&&(W[p]&D[z][2]))}draw();
+  if(p===N-1){const s=Math.floor((Date.now()-t0)/1000);api.score(Math.max(30,(api.lv+1)*600-s*4));api.end(`${s} saniyede çıkışı buldun!`)}};
+ api.onKey=mv;api.swipe(ctx.canvas,mv);api.pad([{t:'◀',f:()=>mv('L')},{t:'▲',f:()=>mv('U')},{t:'▼',f:()=>mv('D')},{t:'▶',f:()=>mv('R')}]);draw();
+});
+
+reg('Bulmaca','🎨','Renk Doldur','Sol üst köşeden başlayan alanı renk seçerek tüm tahtaya yay.',api=>{
+ const [n,k,lim]=[[8,4,13],[12,6,22],[16,6,30]][api.lv],N=n*n,C=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316'];const b=Array.from({length:N},()=>R(0,k-1));let mv=0;
+ const {cells}=api.grid(n,n,'flood');const draw=()=>cells.forEach((c,i)=>c.style.background=C[b[i]]);
+ const flood=col=>{const old=b[0];if(old===col)return;const st=[0],seen=new Set([0]);while(st.length){const i=st.pop();b[i]=col;[i-n,i+n,i%n?i-1:-1,i%n<n-1?i+1:-1].forEach(j=>{if(j>=0&&j<N&&!seen.has(j)&&b[j]===old){seen.add(j);st.push(j)}})}mv++;draw();api.info(`Hamle: ${mv}/${lim}`);
+  if(b.every(v=>v===col)){api.score((lim-mv+1)*60*(api.lv+1));api.end(`${mv} hamlede tahta tek renk! 🎉`)}else if(mv>=lim){api.score(b.filter(v=>v===col).length);api.end('Hamle hakkın bitti.')}};
+ const row=api.box('colors');C.slice(0,k).forEach((c,i)=>{const e=h('button',{class:'cbtn',style:'background:'+c});e.onclick=()=>flood(i);row.append(e)});draw();api.info(`Hamle: 0/${lim}`);
+});
+
+reg('Bulmaca','🔐','Şifre Kırıcı','4 renkli gizli şifreyi bul. ● doğru renk doğru yer, ○ doğru renk yanlış yer.',api=>{
+ const [k,max,dup]=[[4,10,false],[6,10,true],[8,8,true]][api.lv],C=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316','#ec4899','#f8fafc'].slice(0,k);
+ const code=dup?[0,1,2,3].map(()=>R(0,k-1)):shuf([...Array(k).keys()]).slice(0,4);let cur=[],tries=0;
+ const slots=api.box('mmrow'),pal=api.box('colors'),hist=api.box('mmhist');
+ const dots=a=>a.map(v=>`<span class="dot" style="background:${C[v]}"></span>`).join('');
+ const guess=()=>{if(cur.length<4)return api.toast('4 renk seç');tries++;let ex=0,cl=0;const a=[],bq=[];cur.forEach((v,i)=>{if(v===code[i])ex++;else{a.push(v);bq.push(code[i])}});a.forEach(v=>{const j=bq.indexOf(v);if(j>=0){cl++;bq.splice(j,1)}});
+  const r=h('div',{class:'mmline'},h('b',{style:'width:22px;color:#64748b'},tries));cur.forEach(v=>r.append(h('div',{class:'peg2 sm',style:'background:'+C[v]})));r.append(h('span',{class:'fb'},'●'.repeat(ex)+'○'.repeat(cl)||'—'));hist.prepend(r);cur=[];drawCur();api.info(`Deneme: ${tries}/${max}`);
+  if(ex===4){api.score((max-tries+1)*100*(api.lv+1));api.end(`${tries}. denemede şifreyi kırdın! 🔓`)}else if(tries>=max)api.end('Şifre buydu: '+dots(code))};
+ const drawCur=()=>{slots.innerHTML='';for(let i=0;i<4;i++){const s=h('div',{class:'peg2',style:cur[i]!=null?'background:'+C[cur[i]]+';border:0':''});s.onclick=()=>{cur.splice(i,1);drawCur()};slots.append(s)}const go=h('button',{class:'btn pri'},'Dene');go.onclick=guess;slots.append(go)};
+ C.forEach((c,i)=>{const e=h('button',{class:'cbtn',style:'background:'+c});e.onclick=()=>{if(cur.length<4){cur.push(i);drawCur()}};pal.append(e)});
+ drawCur();api.info(`Deneme: 0/${max}`);if(!dup)api.note('Kolay: renkler tekrar etmez');
+});
+
+reg('Bulmaca','🖼️','Nonogram','Kenardaki sayılar o satır/sütundaki dolu blokların uzunluğudur. Resmi ortaya çıkar.',api=>{
+ const n=[5,7,10][api.lv],N=n*n,sol=Array.from({length:N},()=>Math.random()<.6),b=Array(N).fill(0);let xm=false;const t0=Date.now();
+ const runs=a=>{const r=[];let c=0;a.forEach(v=>{if(v)c++;else if(c){r.push(c);c=0}});if(c)r.push(c);return r.length?r:[0]};
+ const row=(a,i)=>a.slice(i*n,i*n+n),col=(a,j)=>a.filter((_,k)=>k%n===j);
+ const RC=[...Array(n)].map((_,i)=>runs(row(sol,i))),CC=[...Array(n)].map((_,j)=>runs(col(sol,j)));
+ const tb=api.toolbar([['⬛ Boyama',()=>{xm=!xm;tb[0].textContent=xm?'✖ İşaretleme':'⬛ Boyama'}]]);
+ const g=h('div',{class:'grid nono'});g.style.gridTemplateColumns=`auto repeat(${n},1fr)`;g.style.width=`min(100%,60dvh,540px)`;g.append(h('div'));CC.forEach(c=>g.append(h('div',{class:'clue'},c.join('\n'))));
+ const cells=[];for(let i=0;i<n;i++){g.append(h('div',{class:'clue r'},RC[i].join(' ')));for(let j=0;j<n;j++){const k=i*n+j,c=h('div',{class:'cell'});c.onclick=()=>{const m=xm?2:1;b[k]=b[k]===m?0:m;draw();chk()};cells.push(c);g.append(c)}}api.el.append(g);
+ const draw=()=>cells.forEach((c,k)=>c.className='cell'+(b[k]===1?' f':b[k]===2?' x':''));
+ const chk=()=>{const f=b.map(v=>v===1);for(let i=0;i<n;i++)if(runs(row(f,i)).join()!==RC[i].join()||runs(col(f,i)).join()!==CC[i].join())return;api.score(Math.max(50,(api.lv+1)*900-Math.floor((Date.now()-t0)/1000)*2));api.end('Resmi tamamladın! 🖼️')};draw();
+});
+
+reg('Bulmaca','🧪','Top Sıralama','Topları tüpler arasında taşı; her tüpte tek renk kalsın.',api=>{
+ const k=[3,5,7][api.lv],C=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316','#ec4899'];
+ let T;const done=()=>T.every(t=>!t.length||(t.length===4&&t.every(c=>c===t[0])));do{const bl=shuf([...Array(k*4)].map((_,i)=>i%k));T=[...Array(k)].map((_,i)=>bl.slice(i*4,i*4+4)).concat([[],[]])}while(done());
+ let sel=-1,mv=0;const w=api.box('tubes');
+ const draw=()=>{w.innerHTML='';T.forEach((t,i)=>{const e=h('div',{class:'tube'+(sel===i?' sel':'')});t.forEach(c=>e.append(h('div',{class:'ball',style:'background:'+C[c]})));e.onclick=()=>tap(i);w.append(e)})};
+ const tap=i=>{if(sel<0){if(T[i].length)sel=i}else{if(i!==sel&&T[i].length<4&&(!T[i].length||T[i].at(-1)===T[sel].at(-1))){T[i].push(T[sel].pop());mv++}sel=-1}draw();api.info('Hamle: '+mv);if(done()){api.score(Math.max(50,(api.lv+1)*700-mv*5));api.end(`${mv} hamlede tüm renkler sıralandı!`)}};
+ draw();api.toolbar([['↺ Yeniden karıştır',()=>{const bl=shuf(T.flat());T=[...Array(k)].map((_,i)=>bl.slice(i*4,i*4+4)).concat([[],[]]);sel=-1;mv+=10;draw();api.info('Hamle: '+mv)}]]);api.note('Top sadece boş tüpe ya da aynı renk topun üstüne konur');
+});
+
+reg('Bulmaca','💎','Elmas Eşle','Yan yana iki taşı yer değiştir, 3 veya daha fazla aynı taşı sıraya getir.',api=>{
+ const n=8,k=[5,6,7][api.lv],E=['💎','🍀','🔥','⭐','🍇','🍊','🌙'];let time=[120,90,75][api.lv],b=[],sel=-1,busy=false;
+ const find=()=>{const m=new Set();for(let r=0;r<n;r++)for(let c=0;c<n;c++){const i=r*n+c;if(b[i]<0)continue;if(c<n-2&&b[i]===b[i+1]&&b[i]===b[i+2])[i,i+1,i+2].forEach(x=>m.add(x));if(r<n-2&&b[i]===b[i+n]&&b[i]===b[i+2*n])[i,i+n,i+2*n].forEach(x=>m.add(x))}return[...m]};
+ const gen=()=>{b=Array.from({length:n*n},()=>R(0,k-1));let m;while((m=find()).length)m.forEach(i=>b[i]=R(0,k-1))};gen();
+ const {cells}=api.grid(n,n,'m3');const draw=()=>cells.forEach((c,i)=>{c.textContent=b[i]>=0?E[b[i]]:'';c.classList.toggle('sel',i===sel)});
+ const settle=(combo=1)=>{const m=find();if(!m.length){busy=false;return}m.forEach(i=>b[i]=-1);api.add(m.length*10*combo);if(combo>1)api.toast('Kombo x'+combo);draw();
+  api.after(()=>{for(let c=0;c<n;c++){const col=[];for(let r=n-1;r>=0;r--)if(b[r*n+c]>=0)col.push(b[r*n+c]);for(let r=n-1,j=0;r>=0;r--,j++)b[r*n+c]=j<col.length?col[j]:R(0,k-1)}draw();api.after(()=>settle(combo+1),200)},220)};
+ const adj=(a,c)=>(Math.abs(a-c)===1&&Math.floor(a/n)===Math.floor(c/n))||Math.abs(a-c)===n;const sw=(a,c)=>{[b[a],b[c]]=[b[c],b[a]]};
+ cells.forEach((c,i)=>c.onclick=()=>{if(busy)return;if(sel<0)sel=i;else if(adj(sel,i)){sw(sel,i);if(find().length){busy=true;sel=-1;draw();api.after(()=>settle(),120)}else{sw(sel,i);sel=-1;api.toast('Eşleşme yok')}}else sel=i;draw()});
+ api.toolbar([['🔀 Karıştır (−5 sn)',()=>{if(busy)return;gen();time-=5;sel=-1;draw()}]]);draw();
+ api.every(()=>{time--;api.info('⏱ '+time);if(time<=0)api.end('Süre doldu!')},1000);api.info('⏱ '+time);
+});
+
+reg('Bulmaca','🟥','Blok Patlat','Aynı renkte bitişik en az 2 bloğa dokun. Büyük grup = daha çok puan.',api=>{
+ const W=8,H=10,k=[3,4,5][api.lv],C=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7'];let b=Array.from({length:W*H},()=>R(0,k-1));const {cells}=api.grid(H,W,'same');
+ const grp=i=>{const c=b[i];if(c<0)return[];const s=[i],seen=new Set(s);for(let q=0;q<s.length;q++){const j=s[q],x=j%W;[j-W,j+W,x?j-1:-1,x<W-1?j+1:-1].forEach(t=>{if(t>=0&&t<W*H&&!seen.has(t)&&b[t]===c){seen.add(t);s.push(t)}})}return s};
+ const draw=()=>cells.forEach((c,i)=>{c.style.background=b[i]>=0?C[b[i]]:'transparent'});
+ const grav=()=>{const cols=[];for(let x=0;x<W;x++){const col=[];for(let y=H-1;y>=0;y--)if(b[y*W+x]>=0)col.push(b[y*W+x]);if(col.length)cols.push(col)}b=Array(W*H).fill(-1);cols.forEach((col,x)=>col.forEach((v,j)=>b[(H-1-j)*W+x]=v))};
+ cells.forEach((c,i)=>c.onclick=()=>{const g=grp(i);if(g.length<2)return;g.forEach(j=>b[j]=-1);api.add((g.length-1)**2*(api.lv+1));grav();draw();const left=b.filter(v=>v>=0).length;api.info('Kalan: '+left);
+  if(!b.some((v,j)=>v>=0&&grp(j).length>1)){if(!left)api.add(1000);api.end(left?`Hamle kalmadı, ${left} blok kaldı.`:'Tahtayı tamamen temizledin! +1000')}});draw();
+});
+
+reg('Bulmaca','🎯','Hedef Sayı','4 sayıyı + − × ÷ ile birleştirip hedef sayıyı bul. 3 dakikada en çok bulmacayı çöz.',api=>{
+ const [tgt,mx,ops]=[[10,9,'+-×'],[24,9,'+-×÷'],[24,13,'+-×÷']][api.lv];const op=(a,b,o)=>o==='+'?a+b:o==='-'?a-b:o==='×'?a*b:(b&&a%b===0?a/b:null);
+ const solv=a=>{if(a.length===1)return a[0]===tgt;for(let i=0;i<a.length;i++)for(let j=0;j<a.length;j++){if(i===j)continue;for(const o of ops){const v=op(a[i],a[j],o);if(v==null)continue;const r=a.filter((_,x)=>x!==i&&x!==j);r.push(v);if(solv(r))return true}}return false};
+ let nums,orig,first=-1,cop=null,time=180,solved=0;const box=api.box('t24'),te=h('div',{class:'big'}),tiles=h('div',{class:'tiles'}),oe=h('div',{class:'tiles'});box.append(te,tiles,oe);
+ ops.split('').forEach(o=>{const b=h('button',{class:'opb'},o);b.onclick=()=>{if(first>=0){cop=o;draw()}};oe.append(b)});
+ const newR=()=>{do{orig=[0,0,0,0].map(()=>R(1,mx))}while(!solv(orig));nums=[...orig];first=-1;cop=null;draw()};
+ const draw=()=>{te.textContent='🎯 Hedef: '+tgt;tiles.innerHTML='';nums.forEach((v,i)=>{const b=h('button',{class:'tile'+(i===first?' sel':'')},v);b.onclick=()=>tapN(i);tiles.append(b)});[...oe.children].forEach(b=>b.classList.toggle('sel',b.textContent===cop))};
+ const tapN=i=>{if(first<0||!cop||i===first){first=i===first?-1:i;cop=null;draw();return}const v=op(nums[first],nums[i],cop);if(v==null){api.toast('Tam bölünmüyor');return}const r=nums.filter((_,x)=>x!==first&&x!==i);r.push(v);nums=r;first=nums.length-1;cop=null;draw();
+  if(nums.length===1){if(v===tgt){solved++;api.add(100*(api.lv+1));api.toast('✔ Doğru!');api.after(newR,500)}else{api.toast('Olmadı: '+v);api.after(()=>{nums=[...orig];first=-1;draw()},700)}}};
+ api.toolbar([['↺ Baştan',()=>{nums=[...orig];first=-1;cop=null;draw()}],['⏭ Geç',newR]]);api.note('Sayı → işlem → sayı sırasıyla dokun');newR();
+ api.every(()=>{time--;api.info(`⏱ ${time} • ✔${solved}`);if(time<=0)api.end(`${solved} bulmaca çözdün`)},1000);
+});
+
+reg('Bulmaca','📍','Tek Taş','Bir taşı yanındakinin üstünden boş deliğe atlat; atlanan taş kalkar. En az taşı bırak.',api=>{
+ const goal=[6,3,1][api.lv];const b=['  ooo  ','  ooo  ','ooooooo','ooo.ooo','ooooooo','  ooo  ','  ooo  '].map(r=>r.split(''));let sel=null;
+ const g=h('div',{class:'grid pegb'});g.style.gridTemplateColumns='repeat(7,1fr)';g.style.width='min(100%,58dvh,460px)';api.el.append(g);
+ const can=(r,c,r2,c2)=>b[r]?.[c]==='o'&&b[r2]?.[c2]==='.'&&b[(r+r2)/2][(c+c2)/2]==='o';
+ const any=()=>{for(let r=0;r<7;r++)for(let c=0;c<7;c++)for(const[a,d]of[[2,0],[-2,0],[0,2],[0,-2]])if(can(r,c,r+a,c+d))return true;return false};
+ const draw=()=>{g.innerHTML='';b.forEach((row,r)=>row.forEach((v,c)=>{const e=h('div',{class:'hole'+(v===' '?' none':v==='o'?' p':'')+(sel&&sel[0]===r&&sel[1]===c?' sel':'')});e.onclick=()=>tap(r,c);g.append(e)}));const left=b.flat().filter(v=>v==='o').length;api.info(`Taş: ${left} (hedef ≤ ${goal})`);return left};
+ const tap=(r,c)=>{const v=b[r][c];if(v==='o')sel=[r,c];else if(v==='.'&&sel){const[sr,sc]=sel;if(((Math.abs(sr-r)===2&&sc===c)||(Math.abs(sc-c)===2&&sr===r))&&can(sr,sc,r,c)){b[sr][sc]='.';b[(sr+r)/2][(sc+c)/2]='.';b[r][c]='o';sel=[r,c]}}
+  const left=draw();if(!any()){api.score((33-left)*10*(api.lv+1)+(left<=goal?600*(api.lv+1):0));api.end(left<=goal?`Harika! Sadece ${left} taş kaldı 🎉`:`Hamle kalmadı, ${left} taş kaldı (hedef ${goal}).`)}};
+ draw();
+});
+
+reg('Bulmaca','🫙','Su Kapları','Kapları doldur, boşalt, birbirine aktar ve hedef litreyi elde et. 3 bulmaca.',api=>{
+ const nx=(s,c)=>{const o=[];s.forEach((v,i)=>{o.push(s.map((x,j)=>j===i?c[i]:x));o.push(s.map((x,j)=>j===i?0:x));s.forEach((w,j)=>{if(i!==j){const t=Math.min(v,c[j]-w);o.push(s.map((x,k)=>k===i?v-t:k===j?w+t:x))}})});return o};
+ const bfs=c=>{const st=c.map(()=>0),dist=new Map([[st.join(),0]]),q=[st],best={};while(q.length){const s=q.shift(),d=dist.get(s.join());s.forEach(v=>{if(best[v]==null)best[v]=d});for(const t of nx(s,c)){const k=t.join();if(!dist.has(k)){dist.set(k,d+1);q.push(t)}}}return best};
+ let caps,tgt,opt,cur,steps,round=0,sel=-1;const box=api.box('jugs'),info=api.note('');
+ const newR=()=>{if(round>=3)return api.end('3 bulmacayı da çözdün! 🫙');round++;for(;;){caps=api.lv<2?[R(api.lv?5:2,api.lv?13:7),R(api.lv?5:2,api.lv?13:7)]:[R(3,8),R(6,12),R(9,15)];caps=[...new Set(caps)].sort((a,b)=>a-b);if(caps.length<(api.lv<2?2:3))continue;const b=bfs(caps),cand=Object.keys(b).map(Number).filter(v=>v>0&&!caps.includes(v)&&b[v]>=[3,5,6][api.lv]);if(cand.length){tgt=pick(cand);opt=b[tgt];break}}cur=caps.map(()=>0);steps=0;sel=-1;draw()};
+ const act=s=>{cur=s;steps++;draw();if(cur.includes(tgt)){api.add(Math.max(20,Math.round(200*(api.lv+1)*opt/steps)));api.toast(`✔ ${steps} adımda (en az ${opt})`);api.after(newR,900)}};
+ const draw=()=>{box.innerHTML='';const mx=Math.max(...caps);caps.forEach((c,i)=>{const j=h('div',{class:'jug'+(sel===i?' sel':'')}),jb=h('div',{class:'jb',style:`height:${50+150*c/mx}px`},h('i',{style:`height:${cur[i]/c*100}%`}),h('b',null,`${cur[i]}/${c}`));jb.onclick=()=>{if(sel<0)sel=i;else if(sel===i)sel=-1;else{const t=Math.min(cur[sel],caps[i]-cur[i]);const a=sel;sel=-1;if(t){const s=[...cur];s[a]-=t;s[i]+=t;act(s);return}}draw()};
+  const f=h('button',{class:'btn'},'Doldur'),e=h('button',{class:'btn'},'Boşalt');f.onclick=()=>{if(cur[i]<c){sel=-1;act(cur.map((x,k)=>k===i?c:x))}};e.onclick=()=>{if(cur[i]){sel=-1;act(cur.map((x,k)=>k===i?0:x))}};j.append(jb,f,e);box.append(j)});
+  info.innerHTML=`<b style="font-size:22px;color:#fbbf24">Hedef: ${tgt} litre</b><br>Bulmaca ${round}/3 • Adım: ${steps} • Aktarmak için önce kaynak, sonra hedef kaba dokun`};
+ newR();
+});
+
+reg('Bulmaca','🔍','Sayı Tahmin','Aklımdaki sayıyı bul. Her tahminde büyük/küçük ipucu alırsın. 3 tur.',api=>{
+ const [mx,maxT]=[[50,8],[100,7],[1000,10]][api.lv];let secret,tries,round=0,inp='',lo,hi;const q=api.box('qq'),disp=h('div',{class:'big'}),hint=h('small'),rng=h('small');q.append(rng,disp,hint);
+ const newR=()=>{if(round>=3)return api.end('3 turu tamamladın');round++;secret=R(1,mx);tries=0;inp='';lo=1;hi=mx;draw('Tahminini yaz')};
+ const draw=t=>{disp.textContent=inp||'?';if(t)hint.textContent=t;rng.textContent=`Aralık: ${lo} – ${hi} • Hak: ${maxT-tries}`;api.info(`Tur ${round}/3`)};
+ const go=()=>{const v=+inp;if(!v)return;tries++;inp='';if(v===secret){api.add((maxT-tries+1)*30*(api.lv+1));draw(`🎉 Doğru! ${secret}`);api.after(newR,1200);return}if(v<secret)lo=Math.max(lo,v+1);else hi=Math.min(hi,v-1);if(tries>=maxT){draw('😞 Sayı '+secret+' idi');api.after(newR,1500);return}draw(v<secret?`⬆ ${v}'den BÜYÜK`:`⬇ ${v}'den KÜÇÜK`)};
+ api.numpad([1,2,3,4,5,6,7,8,9,'⌫',0,'✔'],v=>{if(v==='✔')go();else if(v==='⌫')inp=inp.slice(0,-1);else if(inp.length<4)inp+=v;draw()});api.onKey=k=>{if(/^\d$/.test(k)&&inp.length<4)inp+=k;if(k==='Backspace')inp=inp.slice(0,-1);if(k==='Enter')return go();draw()};newR();
+});
+
+/* ================= STRATEJİ ================= */
+reg('Strateji','❌','XOX','Bilgisayara karşı üçünü yan yana diz. 5 tur oynanır.',api=>{
+ const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];let b,round=0,turn,over,res={w:0,d:0,l:0};
+ const win=b=>{for(const[a,c,d]of L)if(b[a]&&b[a]===b[c]&&b[a]===b[d])return b[a];return b.every(x=>x)?'D':null};
+ const mm=(b,p,dep)=>{const w=win(b);if(w==='O')return[10-dep];if(w==='X')return[dep-10];if(w==='D')return[0];let best=p==='O'?[-99]:[99];for(let i=0;i<9;i++){if(b[i])continue;b[i]=p;const s=mm(b,p==='O'?'X':'O',dep+1)[0];b[i]=null;if(p==='O'?s>best[0]:s<best[0])best=[s,i]}return best};
+ const {cells}=api.grid(3,3,'ttt');const info=()=>api.info(`Tur ${round}/5 • G${res.w} B${res.d} M${res.l}`);
+ const draw=()=>cells.forEach((c,i)=>c.textContent=b[i]==='X'?'❌':b[i]==='O'?'⭕':'');
+ const ai=()=>{const e=b.map((v,i)=>v?-1:i).filter(i=>i>=0);let i;if(e.length===9)i=pick([0,2,4,6,8]);else i=Math.random()<[.35,.75,1][api.lv]?mm(b,'O',0)[1]:pick(e);b[i]='O';after()};
+ const after=()=>{draw();const w=win(b);if(w){over=true;if(w==='X'){res.w++;api.add(100*(api.lv+1))}else if(w==='O')res.l++;else{res.d++;api.add(30*(api.lv+1))}info();api.toast(w==='X'?'Kazandın! 🎉':w==='O'?'Bilgisayar kazandı':'Berabere');api.after(next,1200);return}turn=turn==='X'?'O':'X';if(turn==='O')api.after(ai,380)};
+ cells.forEach((c,i)=>c.onclick=()=>{if(over||turn!=='X'||b[i])return;b[i]='X';after()});
+ const next=()=>{if(round>=5)return api.end(`${res.w} galibiyet, ${res.d} beraberlik, ${res.l} mağlubiyet`);round++;b=Array(9).fill(null);over=false;turn=round%2?'X':'O';draw();info();if(turn==='O')api.after(ai,450)};next();
+});
+
+reg('Strateji','🔴','Dört Bağla','Sütuna dokun, taşını bırak. Yatay, dikey veya çapraz 4 diz. 3 tur.',api=>{
+ const Cn=7,Rn=6,dep=[2,4,6][api.lv];let b,turn,over,round=0,res={w:0,d:0,l:0};
+ const g=h('div',{class:'grid c4'});g.style.gridTemplateColumns='repeat(7,1fr)';g.style.width='min(100%,56dvh,520px)';api.el.append(g);const cells=[];for(let i=0;i<42;i++){const c=h('div',{class:'cell'});c.onclick=()=>play(i%7);cells.push(c);g.append(c)}
+ const drop=(b,c)=>{for(let r=Rn-1;r>=0;r--)if(!b[r*Cn+c])return r*Cn+c;return -1};const DIR=[[0,1],[1,0],[1,1],[1,-1]];
+ const winner=b=>{for(let r=0;r<Rn;r++)for(let c=0;c<Cn;c++){const v=b[r*Cn+c];if(!v)continue;for(const[dr,dc]of DIR){let k=1;while(k<4){const y=r+dr*k,x=c+dc*k;if(y<0||y>=Rn||x<0||x>=Cn||b[y*Cn+x]!==v)break;k++}if(k===4)return v}}return b.every(x=>x)?3:0};
+ const ev=b=>{let s=0;for(let r=0;r<Rn;r++)for(let c=0;c<Cn;c++)for(const[dr,dc]of DIR){const er=r+dr*3,ec=c+dc*3;if(er<0||er>=Rn||ec<0||ec>=Cn)continue;let a=0,p=0;for(let k=0;k<4;k++){const v=b[(r+dr*k)*Cn+c+dc*k];if(v===2)a++;else if(v===1)p++}if(a&&!p)s+=[0,1,6,40][a];if(p&&!a)s-=[0,1,7,55][p]}for(let r=0;r<Rn;r++){if(b[r*Cn+3]===2)s+=3;if(b[r*Cn+3]===1)s-=3}return s};
+ const ORD=[3,2,4,1,5,0,6];
+ const ab=(b,d,al,be,mx)=>{const w=winner(b);if(w===2)return 1e5+d;if(w===1)return -1e5-d;if(w===3)return 0;if(!d)return ev(b);let v=mx?-1e9:1e9;for(const c of ORD){const i=drop(b,c);if(i<0)continue;b[i]=mx?2:1;const s=ab(b,d-1,al,be,!mx);b[i]=0;if(mx){v=Math.max(v,s);al=Math.max(al,v)}else{v=Math.min(v,s);be=Math.min(be,v)}if(al>=be)break}return v};
+ const ai=()=>{const ok=ORD.filter(c=>drop(b,c)>=0);let c;if(api.lv===0&&Math.random()<.3)c=pick(ok);else{let best=-1e9,bc=[];for(const x of ok){const i=drop(b,x);b[i]=2;const v=ab(b,dep-1,-1e9,1e9,false);b[i]=0;if(v>best){best=v;bc=[x]}else if(v===best)bc.push(x)}c=pick(bc)}place(c,2)};
+ const place=(c,p)=>{const i=drop(b,c);if(i<0)return;b[i]=p;draw();const w=winner(b);if(w){over=true;if(w===1){res.w++;api.add(150*(api.lv+1))}else if(w===2)res.l++;else{res.d++;api.add(40*(api.lv+1))}api.toast(w===1?'Kazandın! 🎉':w===2?'Bilgisayar kazandı':'Berabere');info();api.after(next,1400)}else{turn=3-p;if(turn===2)api.after(ai,250)}};
+ const play=c=>{if(!over&&turn===1)place(c,1)};const info=()=>api.info(`Tur ${round}/3 • G${res.w} M${res.l}`);
+ const draw=()=>cells.forEach((c,i)=>c.className='cell'+(b[i]===1?' p1':b[i]===2?' p2':''));
+ const next=()=>{if(round>=3)return api.end(`${res.w} galibiyet, ${res.d} beraberlik, ${res.l} mağlubiyet`);round++;b=Array(42).fill(0);over=false;turn=round%2?1:2;draw();info();if(turn===2)api.after(ai,450)};
+ api.note('🔴 Sen • 🟡 Bilgisayar');next();
+});
+
+reg('Strateji','⚫','Reversi','Rakip taşları kendi taşlarının arasına alarak çevir. Sonunda çok taşı olan kazanır.',api=>{
+ let b=Array(64).fill(0);b[27]=b[36]=2;b[28]=b[35]=1;let turn=1;
+ const W=[100,-20,10,5,5,10,-20,100,-20,-50,-2,-2,-2,-2,-50,-20,10,-2,1,1,1,1,-2,10,5,-2,1,0,0,1,-2,5,5,-2,1,0,0,1,-2,5,10,-2,1,1,1,1,-2,10,-20,-50,-2,-2,-2,-2,-50,-20,100,-20,10,5,5,10,-20,100];
+ const flips=(b,i,p)=>{if(b[i])return[];const o=3-p,r0=Math.floor(i/8),c0=i%8,out=[];for(const[dr,dc]of[[0,1],[1,0],[0,-1],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]]){const t=[];let r=r0+dr,c=c0+dc;while(r>=0&&r<8&&c>=0&&c<8&&b[r*8+c]===o){t.push(r*8+c);r+=dr;c+=dc}if(t.length&&r>=0&&r<8&&c>=0&&c<8&&b[r*8+c]===p)out.push(...t)}return out};
+ const moves=(b,p)=>{const m=[];for(let i=0;i<64;i++){const f=flips(b,i,p);if(f.length)m.push([i,f])}return m};
+ const apply=(b,i,f,p)=>{const n=b.slice();n[i]=p;f.forEach(j=>n[j]=p);return n};
+ const ev=b=>{let s=0;for(let i=0;i<64;i++)s+=b[i]===2?W[i]:b[i]===1?-W[i]:0;return s+(moves(b,2).length-moves(b,1).length)*3};
+ const mm=(b,d,p,al,be)=>{const ms=moves(b,p);if(!d)return ev(b);if(!ms.length){if(!moves(b,3-p).length){const a=b.filter(v=>v===2).length-b.filter(v=>v===1).length;return a*1000}return mm(b,d-1,3-p,al,be)}
+  if(p===2){let v=-1e9;for(const[i,f]of ms){v=Math.max(v,mm(apply(b,i,f,2),d-1,1,al,be));al=Math.max(al,v);if(al>=be)break}return v}let v=1e9;for(const[i,f]of ms){v=Math.min(v,mm(apply(b,i,f,1),d-1,2,al,be));be=Math.min(be,v);if(al>=be)break}return v};
+ const {cells}=api.grid(8,8,'rev');
+ const draw=()=>{const ms=turn===1?moves(b,1).map(m=>m[0]):[];cells.forEach((c,i)=>c.className='cell'+(b[i]===1?' bk':b[i]===2?' wh':'')+(ms.includes(i)?' hint':''));const a=b.filter(v=>v===1).length,o=b.filter(v=>v===2).length;api.info(`⚫ Sen ${a} – ⚪ ${o}`);return[a,o]};
+ const finish=()=>{const[a,o]=draw();api.score(a*3+(a>o?250*(api.lv+1):0));api.end(a>o?`Kazandın! ${a}-${o} 🎉`:a<o?`Kaybettin ${a}-${o}`:'Berabere')};
+ const aiTurn=()=>{const ms=moves(b,2);if(!ms.length){turn=1;if(!moves(b,1).length)return finish();api.toast('Bilgisayar pas geçti');draw();return}let mv;
+  if(api.lv===0)mv=Math.random()<.5?pick(ms):ms.reduce((a,m)=>m[1].length>a[1].length?m:a);else if(api.lv===1)mv=ms.reduce((a,m)=>(m[1].length+W[m[0]]/8>a[1].length+W[a[0]]/8?m:a));else{let bv=-1e9;for(const m of ms){const v=mm(apply(b,m[0],m[1],2),3,1,-1e9,1e9);if(v>bv){bv=v;mv=m}}}
+  b=apply(b,mv[0],mv[1],2);turn=1;draw();if(!moves(b,1).length){if(!moves(b,2).length)return finish();api.toast('Hamlen yok, pas');turn=2;api.after(aiTurn,700)}};
+ cells.forEach((c,i)=>c.onclick=()=>{if(turn!==1)return;const f=flips(b,i,1);if(!f.length)return;b=apply(b,i,f,1);turn=2;draw();api.after(aiTurn,450)});draw();api.note('Sen ⚫ siyahsın. Noktalı kareler oynayabileceğin yerler.');
+});
+
+reg('Strateji','⚪','Gomoku','13×13 tahtada bilgisayardan önce 5 taşı yan yana, alt alta veya çapraz diz.',api=>{
+ const N=13;const b=Array(N*N).fill(0);let turn=1,over=false,last=-1,moves=0;const {cells}=api.grid(N,N,'gomo');
+ const DIR=[[0,1],[1,0],[1,1],[1,-1]];
+ const five=(i,p)=>{const r0=Math.floor(i/N),c0=i%N;for(const[dr,dc]of DIR){let c=1;for(const s of[1,-1]){let r=r0+dr*s,cc=c0+dc*s;while(r>=0&&r<N&&cc>=0&&cc<N&&b[r*N+cc]===p){c++;r+=dr*s;cc+=dc*s}}if(c>=5)return true}return false};
+ const ls=(c,o)=>c>=4?100000:c===3?(o===2?12000:o===1?1200:0):c===2?(o===2?600:o===1?120:0):c===1?(o===2?25:o===1?6:0):0;
+ const cs=(i,p)=>{let s=0;const r0=Math.floor(i/N),c0=i%N;for(const[dr,dc]of DIR){let cnt=0,open=0;for(const sg of[1,-1]){let r=r0+dr*sg,c=c0+dc*sg;while(r>=0&&r<N&&c>=0&&c<N&&b[r*N+c]===p){cnt++;r+=dr*sg;c+=dc*sg}if(r>=0&&r<N&&c>=0&&c<N&&!b[r*N+c])open++}s+=ls(cnt,open)}return s};
+ const near=i=>{const r0=Math.floor(i/N),c0=i%N;for(let a=-2;a<=2;a++)for(let d=-2;d<=2;d++){const r=r0+a,c=c0+d;if(r>=0&&r<N&&c>=0&&c<N&&b[r*N+c])return true}return false};
+ const [atk,def,noise]=[[1,.55,.5],[1,.95,.08],[1.15,1,0]][api.lv];
+ const ai=()=>{let best=-1,bi=-1;for(let i=0;i<N*N;i++){if(b[i]||!near(i))continue;const v=(atk*cs(i,2)+def*cs(i,1))*(1+Math.random()*noise);if(v>best){best=v;bi=i}}if(bi<0)bi=Math.floor(N*N/2);put(bi,2)};
+ const put=(i,p)=>{b[i]=p;last=i;moves++;draw();if(five(i,p)){over=true;if(p===1){api.score(300*(api.lv+1)+Math.max(0,200-moves*2));api.end('5 taşı dizdin, kazandın! 🎉')}else{api.score(moves);api.end('Bilgisayar 5 taşı dizdi.')}return}if(b.every(x=>x)){over=true;return api.end('Tahta doldu, berabere')}turn=3-p;if(turn===2)api.after(ai,300)};
+ const draw=()=>cells.forEach((c,i)=>c.className='cell'+(b[i]===1?' p1':b[i]===2?' p2':'')+(i===last?' last':''));
+ cells.forEach((c,i)=>c.onclick=()=>{if(!over&&turn===1&&!b[i])put(i,1)});draw();api.note('Sen ⚫ siyahsın, ilk hamle senin.');
+});
+
+reg('Strateji','⬜','Noktalar ve Kutular','Sırayla çizgi çiz. Kutunun 4. kenarını çizen kutuyu alır ve tekrar oynar.',api=>{
+ const n=[3,4,5][api.lv],S=600,M=50,s=(S-2*M)/n,E=[];for(let r=0;r<=n;r++)for(let c=0;c<n;c++)E.push({t:'h',r,c,o:0});for(let r=0;r<n;r++)for(let c=0;c<=n;c++)E.push({t:'v',r,c,o:0});
+ const key=(t,r,c)=>E.findIndex(e=>e.t===t&&e.r===r&&e.c===c);const BX=[];for(let r=0;r<n;r++)for(let c=0;c<n;c++)BX.push({r,c,e:[key('h',r,c),key('h',r+1,c),key('v',r,c),key('v',r,c+1)],o:0});
+ const ctx=api.canvas(S,S);let turn=1;const sides=b=>b.e.filter(i=>E[i].o).length;
+ const draw=()=>{ctx.fillStyle='#0b1020';ctx.fillRect(0,0,S,S);BX.forEach(b=>{if(b.o){ctx.fillStyle=b.o===1?'rgba(59,130,246,.5)':'rgba(239,68,68,.5)';ctx.fillRect(M+b.c*s+4,M+b.r*s+4,s-8,s-8)}});
+  E.forEach(e=>{const x=M+e.c*s,y=M+e.r*s;ctx.strokeStyle=e.o===1?'#60a5fa':e.o===2?'#f87171':'#1f2a48';ctx.lineWidth=e.o?8:4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(e.t==='h'?x+s:x,e.t==='h'?y:y+s);ctx.stroke()});
+  ctx.fillStyle='#e5e7eb';for(let r=0;r<=n;r++)for(let c=0;c<=n;c++){ctx.beginPath();ctx.arc(M+c*s,M+r*s,7,0,7);ctx.fill()}const a=BX.filter(b=>b.o===1).length,o=BX.filter(b=>b.o===2).length;api.info(`🔵 Sen ${a} – 🔴 ${o}`);return[a,o]};
+ const take=(i,p)=>{E[i].o=p;let got=0;BX.forEach(b=>{if(!b.o&&sides(b)===4){b.o=p;got++}});return got};
+ const fin=()=>E.every(e=>e.o);const end=()=>{const[a,o]=draw();api.score(a*20+(a>o?300*(api.lv+1):0));api.end(a>o?`Kazandın ${a}-${o} 🎉`:a<o?`Kaybettin ${a}-${o}`:'Berabere')};
+ const give=f=>{const se=E.map(e=>e.o),sb=BX.map(b=>b.o);E[f].o=2;BX.forEach(b=>{if(!b.o&&sides(b)===4)b.o=2});let cnt=0,lp=true;while(lp){lp=false;for(const b of BX)if(!b.o&&sides(b)===3){E[b.e.find(k=>!E[k].o)].o=1;BX.forEach(bb=>{if(!bb.o&&sides(bb)===4){bb.o=1;cnt++}});lp=true}}E.forEach((e,k)=>e.o=se[k]);BX.forEach((b,k)=>b.o=sb[k]);return cnt};
+ const aiMove=()=>{const free=E.map((e,i)=>e.o?-1:i).filter(i=>i>=0);const comp=free.filter(i=>BX.some(b=>!b.o&&b.e.includes(i)&&sides(b)===3));const safe=free.filter(i=>!BX.some(b=>!b.o&&b.e.includes(i)&&sides(b)===2));let i;
+  if(comp.length&&Math.random()<[.55,1,1][api.lv])i=pick(comp);else if(api.lv>0&&safe.length)i=pick(safe);else if(api.lv===2){let best=1e9;for(const f of free){const v=give(f);if(v<best){best=v;i=f}}}else i=pick(free);
+  const got=take(i,2);draw();if(fin())return end();if(got)api.after(aiMove,420);else turn=1};
+ api.tap(ctx.canvas,(x,y)=>{if(turn!==1)return;let bi=-1,bd=1e9;E.forEach((e,i)=>{if(e.o)return;const mx=M+e.c*s+(e.t==='h'?s/2:0),my=M+e.r*s+(e.t==='v'?s/2:0),d=Math.hypot(x-mx,y-my);if(d<bd){bd=d;bi=i}});if(bi<0||bd>s*.5)return;const got=take(bi,1);draw();if(fin())return end();if(!got){turn=2;api.after(aiMove,420)}});
+ draw();api.note('İki nokta arasındaki boşluğa dokun');
+});
+
+reg('Strateji','🪵','Kibrit (Nim)','Sırayla bir satırdan istediğin kadar kibrit al. Son kibriti alan kazanır. 3 tur.',api=>{
+ let P,turn,round=0,res={w:0,l:0};api.note('Bir kibrite dokun: o ve sağındakiler alınır');const box=api.box('nim');
+ const ai=()=>{const x=P.reduce((a,b)=>a^b,0);let mv=null;if(x&&Math.random()<[.3,.75,1][api.lv]){for(let i=0;i<P.length;i++){const t=P[i]^x;if(t<P[i]){mv=[i,P[i]-t];break}}}if(!mv){const nz=P.map((v,i)=>v?i:-1).filter(i=>i>=0),i=pick(nz);mv=[i,R(1,Math.min(P[i],3))]}P[mv[0]]-=mv[1];api.toast(`Bilgisayar ${mv[0]+1}. satırdan ${mv[1]} aldı`);check(2)};
+ const check=p=>{draw();if(P.every(v=>!v)){turn=0;if(p===1){res.w++;api.add(100*(api.lv+1))}else res.l++;api.toast(p===1?'Son kibriti aldın, kazandın! 🎉':'Bilgisayar kazandı');api.after(next,1500);return}turn=3-p;if(turn===2)api.after(ai,800)};
+ const draw=()=>{box.innerHTML='';P.forEach((v,i)=>{const row=h('div',{class:'nimrow'},h('b',{style:'width:20px;color:#64748b'},i+1));for(let k=0;k<v;k++){const s=h('div',{class:'stick'});s.onclick=()=>{if(turn!==1)return;P[i]=k;check(1)};row.append(s)}if(!v)row.append(h('span',{class:'dim'},'boş'));box.append(row)});api.info(`Tur ${round}/3 • G${res.w} M${res.l} • ${turn===1?'Sıra sende':turn===2?'Bilgisayar…':''}`)};
+ const next=()=>{if(round>=3)return api.end(`${res.w} galibiyet, ${res.l} mağlubiyet`);round++;P=api.lv===2?[0,0,0,0].map(()=>R(2,9)):[[3,4,5],[3,5,7]][api.lv].slice();turn=1;draw()};next();
+});
+
+reg('Strateji','🥜','Mangala','Geleneksel Türk zeka oyunu. Hazinende (sağ) en çok taşı topla.',api=>{
+ let b=[4,4,4,4,4,4,0,4,4,4,4,4,4,0],turn=1,last=-1;const dep=[1,3,6][api.lv];
+ const nx=(j,p)=>{j=(j+1)%14;if(j===(p===1?13:6))j=(j+1)%14;return j};
+ const sow=(b0,i,p)=>{const b=b0.slice();let n=b[i],j=i;b[i]=0;if(n===1){j=nx(j,p);b[j]++}else{b[i]=1;n--;while(n>0){j=nx(j,p);b[j]++;n--}}
+  const st=p===1?6:13,mine=p===1?j>=0&&j<=5:j>=7&&j<=12;let extra=false;if(j===st)extra=true;else if(!mine&&j!==6&&j!==13){if(b[j]%2===0){b[st]+=b[j];b[j]=0}}else if(mine&&b[j]===1&&b[12-j]>0){b[st]+=b[12-j]+1;b[12-j]=0;b[j]=0}return{b,extra,j}};
+ const s1=b=>b.slice(0,6).reduce((a,c)=>a+c,0),s2=b=>b.slice(7,13).reduce((a,c)=>a+c,0);
+ const fin=b=>{const n=b.slice();const a=s1(n),c=s2(n);if(!a){n[6]+=c;for(let k=7;k<13;k++)n[k]=0}else if(!c){n[13]+=a;for(let k=0;k<6;k++)n[k]=0}return n};
+ const over=b=>!s1(b)||!s2(b);const legal=(b,p)=>(p===1?[0,1,2,3,4,5]:[7,8,9,10,11,12]).filter(i=>b[i]>0);
+ const mm=(b,p,d,al,be)=>{if(over(b)){const f=fin(b);return(f[13]-f[6])*10}if(!d)return b[13]-b[6];const ms=legal(b,p);let v=p===2?-1e9:1e9;for(const i of ms){const r=sow(b,i,p);const s=mm(r.b,r.extra?p:3-p,d-1,al,be);if(p===2){v=Math.max(v,s);al=Math.max(al,v)}else{v=Math.min(v,s);be=Math.min(be,v)}if(al>=be)break}return v};
+ const box=api.box('mang');const status=api.note('');
+ const draw=()=>{box.innerHTML='';const st=(i,l)=>h('div',{class:'store',style:i===13?'grid-column:1':'grid-column:8'},h('small',null,l),b[i]);box.append(st(13,'Bilg.'));
+  for(let k=12;k>=7;k--)box.append(h('div',{class:'pit'+(k===last?' last':''),style:`grid-row:1;grid-column:${14-k}`},b[k]));for(let k=0;k<6;k++){const e=h('div',{class:'pit me'+(k===last?' last':''),style:`grid-row:2;grid-column:${k+2}`},b[k]);e.onclick=()=>play(k);box.append(e)}box.append(st(6,'Sen'));
+  status.innerHTML=turn===1?'<b>Sıra sende</b> — alttaki kuyulardan birine dokun':'Bilgisayar düşünüyor…';api.info(`Sen ${b[6]} – ${b[13]} Bilg.`)};
+ const endG=()=>{b=fin(b);turn=0;draw();api.score(b[6]*5+(b[6]>b[13]?300*(api.lv+1):0));api.end(b[6]>b[13]?`Kazandın ${b[6]}-${b[13]} 🎉`:b[6]<b[13]?`Kaybettin ${b[6]}-${b[13]}`:'Berabere')};
+ const move=(i,p)=>{const r=sow(b,i,p);b=r.b;last=r.j;if(over(b))return endG();turn=r.extra?p:3-p;if(r.extra)api.toast(p===1?'Hazineye düştü, tekrar oyna!':'Bilgisayar tekrar oynuyor');draw();if(turn===2)api.after(ai,800)};
+ const play=k=>{if(turn!==1||!b[k])return;move(k,1)};
+ const ai=()=>{const ms=legal(b,2);let best=-1e9,bi=ms[0];if(api.lv===0&&Math.random()<.4)bi=pick(ms);else for(const i of ms){const r=sow(b,i,2);const v=over(r.b)?(fin(r.b)[13]-fin(r.b)[6])*10:mm(r.b,r.extra?2:1,dep-1,-1e9,1e9);if(v>best){best=v;bi=i}}move(bi,2)};
+ draw();api.note('Kural: Kuyudaki taşları al, ilkini aynı kuyuya bırakıp sağa doğru dağıt. Son taş hazinene düşerse tekrar oynarsın. Rakip kuyusunu çift yaparsan taşları alırsın. Kendi boş kuyuna düşersen karşıdakileri alırsın.');
+});
+
+reg('Strateji','🚢','Amiral Battı','Bilgisayarın gizli gemilerini batır. Senin gemilerin aşağıda.',api=>{
+ const SH=[4,3,3,2,2],N=8;const place=()=>{const b=Array(64).fill(0);SH.forEach((L,id)=>{for(;;){const hz=Math.random()<.5,r=R(0,hz?7:8-L),c=R(0,hz?8-L:7),cs=[...Array(L)].map((_,k)=>hz?r*8+c+k:(r+k)*8+c);if(cs.every(i=>!b[i])){cs.forEach(i=>b[i]=id+1);break}}});return b};
+ const eB=place(),mB=place(),eS=Array(64).fill(0),mS=Array(64).fill(0);let turn=1;
+ api.box('lbl').textContent='🎯 Düşman sularına ateş et';const E=api.grid(8,8,'bsgrid');api.box('lbl').textContent='🛳 Senin filon';const M=api.grid(8,8,'bsgrid');M.g.style.width='min(64%,32dvh,300px)';
+ const sunk=(B,S,id)=>B.every((v,i)=>v!==id||S[i]);const total=SH.reduce((a,c)=>a+c,0);
+ const draw=()=>{E.cells.forEach((c,i)=>{c.className='cell'+(eS[i]===1?' miss':eS[i]===2?(sunk(eB,eS,eB[i])?' sunk':' hit'):'');c.textContent=eS[i]===2?(sunk(eB,eS,eB[i])?'☠':'🔥'):''});M.cells.forEach((c,i)=>{c.className='cell'+(mB[i]?' ship':'')+(mS[i]===1?' miss':mS[i]===2?' hit':'');c.textContent=mS[i]===2?'🔥':''});
+  const eh=eS.filter(v=>v===2).length,mh=mS.filter(v=>v===2).length;api.info(`Vuruş ${eh}/${total} • Kaybın ${mh}/${total}`);return[eh,mh]};
+ const nb=i=>[i-8,i+8,i%8?i-1:-1,i%8<7?i+1:-1].filter(j=>j>=0&&j<64);
+ const aiShot=()=>{const free=[...Array(64).keys()].filter(i=>!mS[i]);let i;const hits=free.length?[...Array(64).keys()].filter(j=>mS[j]===2&&!sunk(mB,mS,mB[j])):[];
+  if(api.lv>0&&hits.length){let cand=[...new Set(hits.flatMap(nb))].filter(j=>!mS[j]);if(hits.length>1){const rows=new Set(hits.map(j=>Math.floor(j/8))),cols=new Set(hits.map(j=>j%8));if(rows.size===1)cand=cand.filter(j=>rows.has(Math.floor(j/8)));else if(cols.size===1)cand=cand.filter(j=>cols.has(j%8))}if(!cand.length)cand=[...new Set(hits.flatMap(nb))].filter(j=>!mS[j]);i=cand.length?pick(cand):null}
+  if(i==null){let pool=free;if(api.lv===2){const p=free.filter(j=>(Math.floor(j/8)+j)%2===0);if(p.length)pool=p}i=pick(pool)}mS[i]=mB[i]?2:1;const[,mh]=draw();if(mh===total){api.score(eS.filter(v=>v===2).length*10);return api.end('Filon battı! ⚓')}turn=1};
+ E.cells.forEach((c,i)=>c.onclick=()=>{if(turn!==1||eS[i])return;eS[i]=eB[i]?2:1;if(eB[i]&&sunk(eB,eS,eB[i]))api.toast('Gemi battı! ☠');const[eh]=draw();if(eh===total){const left=total-mS.filter(v=>v===2).length;api.score((150+left*25)*(api.lv+1));return api.end('Tüm düşman gemilerini batırdın! 🎉')}turn=2;api.after(aiShot,500)});draw();
+});
+
+reg('Strateji','✊','Taş Kağıt Makas','Bilgisayara karşı 5 sayıya ilk ulaşan kazanır. Zorda bilgisayar seni çözmeye çalışır.',api=>{
+ const I=['✊','✋','✌️'],N=['Taş','Kağıt','Makas'],beats=(a,b)=>(a===0&&b===2)||(a===1&&b===0)||(a===2&&b===1);let me=0,ai=0,hist=[],busy=false;const T={};
+ const vs=api.box('vs'),msg=api.note('Seçimini yap'),row=api.box('rps');
+ const predict=()=>{if(api.lv===0||hist.length<2)return R(0,2);const k=hist.slice(-2).join('');const c=T[k];let guess;if(c&&api.lv===2){guess=[0,1,2].reduce((a,x)=>(c[x]||0)>(c[a]||0)?x:a,0)}else{const f=[0,0,0];hist.forEach(x=>f[x]++);guess=f.indexOf(Math.max(...f))}if(api.lv===1&&Math.random()<.5)return R(0,2);return(guess+1)%3};
+ I.forEach((e,i)=>{const b=h('button',null,e);b.onclick=()=>{if(busy)return;busy=true;const a=predict();if(hist.length>=2){const k=hist.slice(-2).join('');T[k]=T[k]||{};T[k][i]=(T[k][i]||0)+1}hist.push(i);vs.innerHTML=`<span>${e}</span><small style="font-size:18px">vs</small><span>${I[a]}</span>`;
+  if(beats(i,a)){me++;api.add(20*(api.lv+1));msg.textContent=`${N[i]} ${N[a]}'ı yener — Sen aldın!`}else if(beats(a,i)){ai++;msg.textContent=`${N[a]} ${N[i]}'ı yener — Bilgisayar aldı`}else msg.textContent='Berabere';api.info(`Sen ${me} – ${ai} Bilg.`);
+  if(me>=5||ai>=5){if(me>ai)api.add(200*(api.lv+1));return api.end(me>ai?`Maçı ${me}-${ai} kazandın! 🎉`:`Maçı ${me}-${ai} kaybettin`)}api.after(()=>busy=false,350)};row.append(b)});api.info('Sen 0 – 0 Bilg.');
+});
+
+/* ================= ARCADE ================= */
+const bg=(ctx,W,H,c='#0b1020')=>{ctx.fillStyle=c;ctx.fillRect(0,0,W,H)};
+const txt=(ctx,t,x,y,sz=18,c='#e5e7eb',al='center')=>{ctx.fillStyle=c;ctx.font=`bold ${sz}px system-ui,sans-serif`;ctx.textAlign=al;ctx.textBaseline='middle';ctx.fillText(t,x,y)};
+const emo=(ctx,e,x,y,sz)=>{ctx.font=`${sz}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(e,x,y)};
+const hitR=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+
+reg('Arcade','🐍','Yılan','Yemleri ye, uza. Kendine çarpma. Zor/Orta: duvara da çarpma.',api=>{
+ const N=20,S=400,cs=S/N,ctx=api.canvas(S,S),sp=[7,10,14][api.lv],wrap=api.lv===0;let sn=[[10,10],[9,10],[8,10]],dir=[1,0],q=[],food,acc=0;
+ const nf=()=>{do{food=[R(0,N-1),R(0,N-1)]}while(sn.some(p=>p[0]===food[0]&&p[1]===food[1]))};nf();
+ const setD=k=>{const d={L:[-1,0],R:[1,0],U:[0,-1],D:[0,1]}[k];if(!d)return;const ld=q.length?q.at(-1):dir;if(d[0]!==-ld[0]||d[1]!==-ld[1])if(q.length<3)q.push(d)};
+ api.onKey=setD;api.swipe(ctx.canvas,setD);api.pad([{t:'◀',f:()=>setD('L')},{t:'▲',f:()=>setD('U')},{t:'▼',f:()=>setD('D')},{t:'▶',f:()=>setD('R')}]);
+ api.loop(dt=>{acc+=dt;const step=1/(sp+sn.length*.08);if(acc>=step){acc=0;if(q.length)dir=q.shift();let[x,y]=sn[0];x+=dir[0];y+=dir[1];if(wrap){x=(x+N)%N;y=(y+N)%N}
+   if(x<0||y<0||x>=N||y>=N||sn.slice(0,-1).some(p=>p[0]===x&&p[1]===y))return api.end(`Çarptın! Uzunluk: ${sn.length}`);sn.unshift([x,y]);if(x===food[0]&&y===food[1]){api.add(10*(api.lv+1));nf()}else sn.pop()}
+  bg(ctx,S,S);ctx.strokeStyle=wrap?'#1e293b':'#ef4444';ctx.lineWidth=4;ctx.strokeRect(2,2,S-4,S-4);emo(ctx,'🍎',(food[0]+.5)*cs,(food[1]+.5)*cs+1,cs*.9);sn.forEach((p,i)=>{ctx.fillStyle=i?`hsl(140 65% ${Math.max(25,48-i*.6)}%)`:'#86efac';ctx.fillRect(p[0]*cs+1,p[1]*cs+1,cs-2,cs-2)})});
+});
+
+reg('Arcade','🟦','Blok Düşür','Düşen blokları çevir ve yerleştir, satırları tamamlayıp patlat.',api=>{
+ const Wd=10,Hd=20,cs=30,ctx=api.canvas(Wd*cs,Hd*cs);const P=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[1,1,0],[0,1,1]],[[0,1,1],[1,1,0]]],C=['#22d3ee','#facc15','#a855f7','#3b82f6','#f97316','#ef4444','#22c55e'];
+ let B=Array.from({length:Hd},()=>Array(Wd).fill(0)),cur,lines=0,acc=0,nxt=R(0,6);
+ const hit=(m,x,y)=>m.some((r,i)=>r.some((v,j)=>v&&(y+i>=Hd||x+j<0||x+j>=Wd||(y+i>=0&&B[y+i][x+j]))));
+ const spawn=()=>{const t=nxt;nxt=R(0,6);cur={m:P[t],c:t+1,x:3,y:0};if(hit(cur.m,cur.x,cur.y))api.end(`${lines} satır temizledin`)};
+ const rot=m=>m[0].map((_,j)=>m.map(r=>r[j]).reverse());
+ const lock=()=>{cur.m.forEach((r,i)=>r.forEach((v,j)=>{if(v&&cur.y+i>=0)B[cur.y+i][cur.x+j]=cur.c}));let cl=0;B=B.filter(r=>{if(r.every(v=>v)){cl++;return false}return true});while(B.length<Hd)B.unshift(Array(Wd).fill(0));if(cl){lines+=cl;api.add([0,100,300,500,800][cl]*(api.lv+1))}api.info('Satır: '+lines);spawn()};
+ const mv=(dx,dy)=>{if(!hit(cur.m,cur.x+dx,cur.y+dy)){cur.x+=dx;cur.y+=dy;return true}if(dy)lock();return false};
+ const rt=()=>{const m=rot(cur.m);for(const k of[0,-1,1,-2,2])if(!hit(m,cur.x+k,cur.y)){cur.m=m;cur.x+=k;return}};
+ const act=k=>{if(!api.alive())return;if(k==='L')mv(-1,0);else if(k==='R')mv(1,0);else if(k==='U')rt();else if(k==='D'){if(mv(0,1))api.add(1)}else if(k==='A'){while(mv(0,1))api.add(2)}};
+ api.onKey=act;api.swipe(ctx.canvas,act,()=>act('U'));api.pad([{t:'◀',f:()=>act('L'),rep:1},{t:'⟳',f:()=>act('U')},{t:'▼',f:()=>act('D'),rep:1},{t:'⤓',f:()=>act('A')},{t:'▶',f:()=>act('R'),rep:1}]);
+ spawn();api.info('Satır: 0');
+ api.loop(dt=>{acc+=dt;const sp=Math.max(.07,[.75,.48,.3][api.lv]-lines*.012);if(acc>sp){acc=0;mv(0,1)}if(!api.alive())return;
+  bg(ctx,Wd*cs,Hd*cs);ctx.strokeStyle='#141b33';for(let x=1;x<Wd;x++){ctx.beginPath();ctx.moveTo(x*cs,0);ctx.lineTo(x*cs,Hd*cs);ctx.stroke()}
+  const cell=(x,y,c)=>{ctx.fillStyle=C[c-1];ctx.fillRect(x*cs+1,y*cs+1,cs-2,cs-2)};B.forEach((r,y)=>r.forEach((v,x)=>v&&cell(x,y,v)));let gy=cur.y;while(!hit(cur.m,cur.x,gy+1))gy++;
+  ctx.globalAlpha=.22;cur.m.forEach((r,i)=>r.forEach((v,j)=>v&&cell(cur.x+j,gy+i,cur.c)));ctx.globalAlpha=1;cur.m.forEach((r,i)=>r.forEach((v,j)=>v&&cell(cur.x+j,cur.y+i,cur.c)));
+  ctx.globalAlpha=.6;P[nxt].forEach((r,i)=>r.forEach((v,j)=>{if(v){ctx.fillStyle=C[nxt];ctx.fillRect(Wd*cs-70+j*14,8+i*14,12,12)}}));ctx.globalAlpha=1});
+});
+
+reg('Arcade','🏓','Tuğla Kır','Topu raketle sektir, tüm tuğlaları kır. Raketi parmağınla sürükle. 3 can.',api=>{
+ const W=360,H=540,ctx=api.canvas(W,H),pw=[90,72,56][api.lv],sp0=[270,340,410][api.lv];let px=W/2,lives=3,ball,bricks,lvl=1;
+ const reset=()=>{ball={x:px,y:H-42,vx:0,vy:0,stuck:true}};
+ const mk=()=>{bricks=[];const rows=4+Math.min(4,lvl+api.lv);for(let r=0;r<rows;r++)for(let c=0;c<8;c++)bricks.push({x:6+c*43.5,y:50+r*20,w:40,h:16,hp:api.lv===2&&r<2?2:1,c:`hsl(${r*40} 75% 55%)`})};mk();reset();
+ const launch=()=>{if(ball.stuck){const sp=sp0*(1+(lvl-1)*.08),a=-Math.PI/2+(Math.random()-.5)*.8;ball.vx=Math.cos(a)*sp;ball.vy=Math.sin(a)*sp;ball.stuck=false}};
+ api.drag(ctx.canvas,x=>px=x);api.on(ctx.canvas,'pointerup',launch);api.onKey=k=>(k==='A'||k==='U')&&launch();api.pad([{t:'◀',k:'L'},{t:'🚀',f:launch},{t:'▶',k:'R'}]);
+ api.loop(dt=>{if(api.inp.L)px-=440*dt;if(api.inp.R)px+=440*dt;px=Math.max(pw/2,Math.min(W-pw/2,px));
+  if(ball.stuck){ball.x=px;ball.y=H-42}else{for(let s=0;s<2;s++){ball.x+=ball.vx*dt/2;ball.y+=ball.vy*dt/2;if(ball.x<6){ball.x=6;ball.vx=Math.abs(ball.vx)}if(ball.x>W-6){ball.x=W-6;ball.vx=-Math.abs(ball.vx)}if(ball.y<6){ball.y=6;ball.vy=Math.abs(ball.vy)}
+   if(ball.vy>0&&ball.y>H-38&&ball.y<H-22&&Math.abs(ball.x-px)<pw/2+7){const sp=Math.hypot(ball.vx,ball.vy)*1.01,o=(ball.x-px)/(pw/2),a=-Math.PI/2+o*1.05;ball.vx=Math.cos(a)*sp;ball.vy=Math.sin(a)*sp}
+   for(const b of bricks){if(ball.x>b.x-6&&ball.x<b.x+b.w+6&&ball.y>b.y-6&&ball.y<b.y+b.h+6){if(--b.hp<=0)b.dead=true;api.add(10*(api.lv+1));const ox=Math.min(ball.x-(b.x-6),b.x+b.w+6-ball.x),oy=Math.min(ball.y-(b.y-6),b.y+b.h+6-ball.y);if(ox<oy)ball.vx*=-1;else ball.vy*=-1;break}}}
+   bricks=bricks.filter(b=>!b.dead);if(!bricks.length){lvl++;api.add(200);mk();reset();api.toast('Seviye '+lvl)}
+   if(ball.y>H+10){lives--;if(!lives)return api.end(`Seviye ${lvl}'e ulaştın`);reset()}}
+  api.info('❤️'.repeat(lives)+' Sv.'+lvl);bg(ctx,W,H);bricks.forEach(b=>{ctx.fillStyle=b.c;ctx.globalAlpha=b.hp>1?1:.85;ctx.fillRect(b.x,b.y,b.w,b.h);if(b.hp>1){ctx.strokeStyle='#fff';ctx.strokeRect(b.x+2,b.y+2,b.w-4,b.h-4)}});ctx.globalAlpha=1;
+  ctx.fillStyle='#e5e7eb';ctx.fillRect(px-pw/2,H-30,pw,10);ctx.beginPath();ctx.arc(ball.x,ball.y,6,0,7);ctx.fillStyle='#fbbf24';ctx.fill();if(ball.stuck)txt(ctx,'Başlatmak için dokun',W/2,H/2,16,'#94a3b8')});
+});
+
+reg('Arcade','🥅','Pong','Alttaki raket senin. Bilgisayara karşı 7 sayıya ilk ulaşan kazanır.',api=>{
+ const W=360,H=540,ctx=api.canvas(W,H),pw=80,aiSp=[170,250,340][api.lv];let px=W/2,ax=W/2,ball,me=0,ai=0,wait=1;
+ const serve=d=>{const a=(Math.random()-.5)*.9+(d>0?Math.PI/2:-Math.PI/2);const sp=[260,300,340][api.lv];ball={x:W/2,y:H/2,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp};wait=.8};serve(1);
+ api.drag(ctx.canvas,x=>px=x);api.pad([{t:'◀',k:'L'},{t:'▶',k:'R'}]);
+ api.loop(dt=>{if(api.inp.L)px-=420*dt;if(api.inp.R)px+=420*dt;px=Math.max(pw/2,Math.min(W-pw/2,px));
+  const tx=ball.vy<0?ball.x+(api.lv===2?ball.vx*.15:0):W/2;ax+=Math.max(-aiSp*dt,Math.min(aiSp*dt,tx-ax));ax=Math.max(pw/2,Math.min(W-pw/2,ax));
+  if(wait>0)wait-=dt;else{ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<7||ball.x>W-7){ball.vx*=-1;ball.x=Math.max(7,Math.min(W-7,ball.x))}
+   const pad=(x,y,dirUp)=>{if(Math.abs(ball.x-x)<pw/2+7&&Math.abs(ball.y-y)<10&&(dirUp?ball.vy>0:ball.vy<0)){const sp=Math.hypot(ball.vx,ball.vy)*1.05,o=(ball.x-x)/(pw/2),a=(dirUp?-Math.PI/2:Math.PI/2)+o*(dirUp?1:-1)*.9;ball.vx=Math.cos(a)*sp;ball.vy=Math.sin(a)*sp}};pad(px,H-28,true);pad(ax,28,false);
+   if(ball.y<-10){me++;api.add(30*(api.lv+1));serve(-1)}if(ball.y>H+10){ai++;serve(1)}api.info(`Sen ${me} – ${ai} Bilg.`);if(me>=7||ai>=7){if(me>ai)api.add(300*(api.lv+1));return api.end(me>ai?`${me}-${ai} kazandın! 🎉`:`${me}-${ai} kaybettin`)}}
+  bg(ctx,W,H);ctx.setLineDash([8,10]);ctx.strokeStyle='#1f2a48';ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();ctx.setLineDash([]);txt(ctx,ai,W-24,H/2-24,26,'#f87171');txt(ctx,me,W-24,H/2+24,26,'#60a5fa');
+  ctx.fillStyle='#60a5fa';ctx.fillRect(px-pw/2,H-32,pw,10);ctx.fillStyle='#f87171';ctx.fillRect(ax-pw/2,22,pw,10);ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(ball.x,ball.y,7,0,7);ctx.fill()});
+});
+
+reg('Arcade','🐦','Uçan Kuş','Dokununca kuş kanat çırpar. Borulara çarpmadan aralardan geç.',api=>{
+ const W=360,H=540,ctx=api.canvas(W,H),gap=[175,145,122][api.lv],spd=[135,165,200][api.lv];let y=H/2,vy=0,pipes=[],t=0,started=false,passed=0;
+ const flap=()=>{started=true;vy=-300};api.press(ctx.canvas,flap);api.onKey=k=>(k==='A'||k==='U')&&flap();
+ api.loop(dt=>{if(started){vy+=900*dt;y+=vy*dt;t+=dt;if(t>1.55){t=0;pipes.push({x:W+30,g:R(70,H-70-gap)})}pipes.forEach(p=>{p.x-=spd*dt;if(!p.s&&p.x+30<90){p.s=1;passed++;api.add(10*(api.lv+1))}});pipes=pipes.filter(p=>p.x>-70)}
+  const bird={x:78,y:y-13,w:26,h:24};if(y>H-14||y<-40||pipes.some(p=>hitR(bird,{x:p.x,y:0,w:60,h:p.g})||hitR(bird,{x:p.x,y:p.g+gap,w:60,h:H})))return api.end(`${passed} borudan geçtin`);
+  bg(ctx,W,H,'#0c1730');ctx.fillStyle='#16a34a';pipes.forEach(p=>{ctx.fillRect(p.x,0,60,p.g);ctx.fillRect(p.x,p.g+gap,60,H);ctx.fillStyle='#22c55e';ctx.fillRect(p.x-4,p.g-18,68,18);ctx.fillRect(p.x-4,p.g+gap,68,18);ctx.fillStyle='#16a34a'});
+  ctx.save();ctx.translate(90,y);ctx.rotate(Math.max(-.5,Math.min(1,vy/600)));ctx.scale(-1,1);emo(ctx,'🐦',0,0,34);ctx.restore();txt(ctx,passed,W/2,50,40);if(!started)txt(ctx,'Başlamak için dokun',W/2,H/2+70,17,'#94a3b8');api.info('Geçiş: '+passed)});
+});
+
+reg('Arcade','🚀','Uzay Savaşı','Gemini sürükle, otomatik ateş et. Düşmanları vur, mermilerinden kaç. 3 can.',api=>{
+ const W=360,H=540,ctx=api.canvas(W,H);let x=W/2,lives=3,bul=[],en=[],eb=[],t=0,ft=0,inv=0,wave=1,kills=0;const rate=[1.1,.8,.55][api.lv],ebR=[.004,.008,.014][api.lv];
+ const stars=[...Array(50)].map(()=>({x:R(0,W),y:R(0,H),s:Math.random()*1.5+.3}));
+ api.drag(ctx.canvas,X=>x=X);api.pad([{t:'◀',k:'L'},{t:'▶',k:'R'}]);
+ api.loop(dt=>{if(api.inp.L)x-=300*dt;if(api.inp.R)x+=300*dt;x=Math.max(18,Math.min(W-18,x));t+=dt;ft+=dt;inv=Math.max(0,inv-dt);
+  if(ft>.28){ft=0;bul.push({x,y:H-60})}if(t>rate/(1+kills/60)){t=0;const ty=Math.random()<.25?2:1;en.push({x:R(20,W-20),y:-20,vx:(Math.random()-.5)*60*ty,vy:R(50,90)+wave*4,hp:ty,e:ty===2?'👾':'🛸'})}
+  bul.forEach(b=>b.y-=520*dt);bul=bul.filter(b=>b.y>-10);en.forEach(e=>{e.x+=e.vx*dt;e.y+=e.vy*dt;if(e.x<15||e.x>W-15)e.vx*=-1;if(Math.random()<ebR)eb.push({x:e.x,y:e.y+10,vx:(x-e.x)*.4*(api.lv/2)})});eb.forEach(b=>{b.y+=230*dt;b.x+=(b.vx||0)*dt});
+  for(const e of en)for(const b of bul)if(!b.d&&Math.abs(b.x-e.x)<17&&Math.abs(b.y-e.y)<17){b.d=1;if(--e.hp<=0){e.d=1;kills++;api.add(10*(api.lv+1));if(kills%15===0){wave++;api.toast('Dalga '+wave)}}}
+  const me={x:x-14,y:H-50,w:28,h:28};for(const e of en)if(!e.d&&(e.y>H+20||(!inv&&hitR(me,{x:e.x-14,y:e.y-14,w:28,h:28})))){e.d=1;if(e.y<=H+20||api.lv>0){lives--;inv=1.2}}for(const b of eb)if(!b.d&&!inv&&hitR(me,{x:b.x-3,y:b.y-3,w:6,h:6})){b.d=1;lives--;inv=1.2}
+  en=en.filter(e=>!e.d);bul=bul.filter(b=>!b.d);eb=eb.filter(b=>!b.d&&b.y<H+10);if(lives<=0)return api.end(`${kills} düşman vurdun, dalga ${wave}`);
+  bg(ctx,W,H,'#050816');ctx.fillStyle='#cbd5e1';stars.forEach(s=>{s.y+=s.s*40*dt;if(s.y>H)s.y=0;ctx.fillRect(s.x,s.y,s.s,s.s)});ctx.fillStyle='#fde047';bul.forEach(b=>ctx.fillRect(b.x-2,b.y-8,4,12));ctx.fillStyle='#f87171';eb.forEach(b=>{ctx.beginPath();ctx.arc(b.x,b.y,4,0,7);ctx.fill()});
+  en.forEach(e=>emo(ctx,e.e,e.x,e.y,30));if(!inv||Math.floor(inv*10)%2)emo(ctx,'🚀',x,H-36,34);api.info('❤️'.repeat(Math.max(0,lives))+' Dalga '+wave)});
+});
+
+reg('Arcade','🦖','Dino Koşu','Dokununca zıpla, kaktüslerden ve kuşlardan kaç. Hız giderek artar.',api=>{
+ const W=480,H=270,ctx=api.canvas(W,H),G=220;let y=G,vy=0,obs=[],t=1,sp=[260,320,380][api.lv],dist=0;
+ const jump=()=>{if(y>=G-.1)vy=-560};api.press(ctx.canvas,jump);api.onKey=k=>(k==='A'||k==='U')&&jump();api.pad([{t:'⤒ Zıpla',f:jump}]);
+ api.loop(dt=>{vy+=1650*dt;y=Math.min(G,y+vy*dt);if(y>=G)vy=0;sp+=dt*[6,8,11][api.lv];dist+=sp*dt/10;api.score(dist);t-=dt;
+  if(t<=0){const bird=api.lv>0&&dist>80&&Math.random()<.3;obs.push(bird?{x:W+20,y:G-R(48,70),w:30,h:22,e:'🦅'}:{x:W+20,y:G-30,w:22,h:34,e:Math.random()<.5?'🌵':'🌵🌵'});if(obs.at(-1).e==='🌵🌵')obs.at(-1).w=44;t=R(70,140)/100*(300/sp)*2}
+  obs.forEach(o=>o.x-=sp*dt);obs=obs.filter(o=>o.x>-60);if(obs.some(o=>hitR({x:46,y:y-34,w:26,h:32},{x:o.x+4,y:o.y+4,w:o.w-8,h:o.h-6})))return api.end(`${Math.floor(dist)} metre koştun`);
+  bg(ctx,W,H,'#0f172a');ctx.fillStyle='#475569';ctx.fillRect(0,G+2,W,2);obs.forEach(o=>{ctx.save();ctx.font='30px serif';ctx.textBaseline='bottom';ctx.textAlign='left';ctx.fillText(o.e,o.x,o.y+o.h+4);ctx.restore()});ctx.save();ctx.translate(58,y-16);ctx.scale(-1,1);emo(ctx,'🦖',0,0,38);ctx.restore()});
+});
+
+reg('Arcade','☄️','Meteor Yağmuru','Parmağınla gemiyi kaydır, düşen meteorlardan kaç. Ne kadar uzun dayanırsan o kadar puan.',api=>{
+ const W=360,H=540,ctx=api.canvas(W,H);let x=W/2,m=[],t=0,time=0,shield=0,pu=[];const base=[.55,.38,.26][api.lv];
+ api.drag(ctx.canvas,X=>x=X);api.pad([{t:'◀',k:'L'},{t:'▶',k:'R'}]);
+ api.loop(dt=>{if(api.inp.L)x-=320*dt;if(api.inp.R)x+=320*dt;x=Math.max(16,Math.min(W-16,x));time+=dt;t+=dt;shield=Math.max(0,shield-dt);api.score(time*10*(api.lv+1));
+  if(t>Math.max(.09,base-time*.006)){t=0;const s=R(16,34+api.lv*6);m.push({x:R(0,W),y:-30,s,vy:R(140,230)+time*3,vx:(Math.random()-.5)*60*api.lv})}if(Math.random()<.002)pu.push({x:R(20,W-20),y:-20});
+  m.forEach(o=>{o.y+=o.vy*dt;o.x+=o.vx*dt});pu.forEach(p=>p.y+=120*dt);m=m.filter(o=>o.y<H+40);
+  pu=pu.filter(p=>{if(Math.hypot(p.x-x,p.y-(H-40))<26){shield=5;api.toast('🛡 Kalkan!');return false}return p.y<H+20});
+  if(!shield&&m.some(o=>Math.hypot(o.x-x,o.y-(H-40))<o.s*.45+12))return api.end(`${time.toFixed(1)} saniye dayandın`);
+  bg(ctx,W,H,'#0b0f1e');m.forEach(o=>emo(ctx,'☄️',o.x,o.y,o.s*1.3));pu.forEach(p=>emo(ctx,'🛡',p.x,p.y,24));emo(ctx,'🛸',x,H-40,32);if(shield){ctx.strokeStyle='#38bdf8';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x,H-40,26,0,7);ctx.stroke()}api.info(`⏱ ${time.toFixed(1)} sn`)});
+});
+
+reg('Arcade','🏗️','Kule Yığ','Kayan bloğu tam alttakinin üstüne bırak. Taşan kısım kesilir.',api=>{
+ const W=360,H=540,ctx=api.canvas(W,H),bh=24;let st=[{x:80,w:200}],cur,dir=1,sp=[150,200,260][api.lv],cam=0,falling=[];
+ const nb=()=>{const t=st.at(-1);cur={x:dir>0?-t.w:W,w:t.w};};nb();
+ const drop=()=>{const t=st.at(-1),l=Math.max(cur.x,t.x),r=Math.min(cur.x+cur.w,t.x+t.w);if(r<=l){falling.push({...cur,y:H-60-st.length*bh+cam,vy:0});return api.end(`Kule ${st.length-1} kat yüksekliğe ulaştı`)}
+  const perfect=Math.abs(cur.x-t.x)<5;if(perfect){st.push({x:t.x,w:t.w});api.add(20*(api.lv+1));api.toast('Mükemmel!')}else{if(cur.x<l)falling.push({x:cur.x,w:l-cur.x,y:H-60-st.length*bh+cam,vy:0});if(cur.x+cur.w>r)falling.push({x:r,w:cur.x+cur.w-r,y:H-60-st.length*bh+cam,vy:0});st.push({x:l,w:r-l});api.add(10*(api.lv+1))}
+  dir*=-1;sp+=6;nb();api.info('Kat: '+(st.length-1))};
+ api.press(ctx.canvas,drop);api.onKey=k=>k==='A'&&drop();
+ api.loop(dt=>{cur.x+=dir*sp*dt;if(cur.x>W-cur.w*.2&&dir>0)dir=-1;if(cur.x<-cur.w*.8&&dir<0)dir=1;const target=Math.max(0,st.length*bh-H*.55);cam+=(target-cam)*Math.min(1,dt*4);falling.forEach(f=>{f.vy+=900*dt;f.y+=f.vy*dt});falling=falling.filter(f=>f.y<H+50);
+  bg(ctx,W,H,'#0c1428');st.forEach((b,i)=>{ctx.fillStyle=`hsl(${(i*14)%360} 65% 55%)`;ctx.fillRect(b.x,H-60-i*bh+cam,b.w,bh-2)});ctx.fillStyle=`hsl(${(st.length*14)%360} 65% 55%)`;ctx.fillRect(cur.x,H-60-st.length*bh+cam,cur.w,bh-2);ctx.fillStyle='#94a3b8';falling.forEach(f=>ctx.fillRect(f.x,f.y,f.w,bh-2));txt(ctx,st.length-1,W/2,40,34)});
+});
+
+reg('Arcade','🐸','Yolu Geç','Kurbağayı arabalara çarpmadan karşıya geçir. Her geçişte trafik hızlanır. 3 can.',api=>{
+ const C=9,Rw=11,cs=40,W=C*cs,H=Rw*cs,ctx=api.canvas(W,H);let px=4,py=Rw-1,lives=3,lvl=1,lanes=[],inv=0;
+ const mk=()=>{lanes=[];for(let r=1;r<Rw-1;r++){if(r===5){lanes.push(null);continue}const d=r%2?1:-1,sp=(R(40,90)+lvl*12)*(1+api.lv*.35)*d,n=R(1,2+api.lv),cars=[];for(let i=0;i<n;i++)cars.push({x:i*(W+80)/n+R(0,40),w:R(1,2)*cs*.9});lanes.push({r,sp,cars,e:pick(['🚗','🚕','🚙','🚌','🚓'])})}};mk();
+ const mv=k=>{const d={L:[-1,0],R:[1,0],U:[0,-1],D:[0,1]}[k];if(!d)return;px=Math.max(0,Math.min(C-1,px+d[0]));py=Math.max(0,Math.min(Rw-1,py+d[1]));if(d[1]<0)api.add(1);if(py===0){api.add(100*(api.lv+1));lvl++;api.toast('Geçtin! Seviye '+lvl);px=4;py=Rw-1;mk()}};
+ api.onKey=mv;api.swipe(ctx.canvas,mv,()=>mv('U'));api.pad([{t:'◀',f:()=>mv('L')},{t:'▲',f:()=>mv('U')},{t:'▼',f:()=>mv('D')},{t:'▶',f:()=>mv('R')}]);
+ api.loop(dt=>{inv=Math.max(0,inv-dt);lanes.forEach(l=>{if(!l)return;l.cars.forEach(c=>{c.x+=l.sp*dt;if(l.sp>0&&c.x>W+20)c.x=-c.w-R(0,60);if(l.sp<0&&c.x<-c.w-20)c.x=W+R(0,60)})});
+  const me={x:px*cs+8,y:py*cs+8,w:cs-16,h:cs-16};if(!inv&&lanes.some(l=>l&&l.r===py&&l.cars.some(c=>hitR(me,{x:c.x,y:l.r*cs+6,w:c.w,h:cs-12})))){lives--;inv=1;px=4;py=Rw-1;if(lives<=0)return api.end(`Seviye ${lvl}'e ulaştın`);api.toast('Çarpıldın!')}
+  bg(ctx,W,H,'#334155');ctx.fillStyle='#166534';ctx.fillRect(0,0,W,cs);ctx.fillRect(0,(Rw-1)*cs,W,cs);ctx.fillRect(0,5*cs,W,cs);ctx.strokeStyle='#64748b';ctx.setLineDash([12,12]);for(let r=2;r<Rw-1;r++){if(r===5||r===6)continue;ctx.beginPath();ctx.moveTo(0,r*cs);ctx.lineTo(W,r*cs);ctx.stroke()}ctx.setLineDash([]);
+  lanes.forEach(l=>{if(!l)return;l.cars.forEach(c=>{ctx.save();ctx.translate(c.x+c.w/2,l.r*cs+cs/2);if(l.sp>0)ctx.scale(-1,1);ctx.font=`${cs*.85}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(c.w>cs?l.e+l.e:l.e,0,0);ctx.restore()})});
+  if(!inv||Math.floor(inv*10)%2)emo(ctx,'🐸',px*cs+cs/2,py*cs+cs/2,cs*.8);api.info('❤️'.repeat(lives)+' Sv.'+lvl)});
+});
+
+reg('Arcade','🦘','Zıpla Yüksel','Karakter platformlarda otomatik zıplar. Sağa-sola yönlendir, yükseğe çık.',api=>{
+ const W=360,H=540,ctx=api.canvas(W,H);let x=W/2,y=H-80,vy=-650,vx=0,cam=0,best=0,plats=[];const gapY=[62,78,92][api.lv],pw=[80,66,54][api.lv];
+ for(let i=0;i<12;i++)plats.push({x:R(0,W-pw),y:H-20-i*gapY,m:0});plats[0].x=x-pw/2;
+ let tx=null;api.drag(ctx.canvas,X=>tx=X);api.on(window,'pointerup',()=>tx=null);api.pad([{t:'◀',k:'L'},{t:'▶',k:'R'}]);
+ api.loop(dt=>{let ax=0;if(api.inp.L)ax=-1;if(api.inp.R)ax=1;if(tx!=null)ax=Math.max(-1,Math.min(1,(tx-x)/40));vx=ax*300;x+=vx*dt;if(x<-15)x=W+15;if(x>W+15)x=-15;
+  vy+=1200*dt;const oy=y;y+=vy*dt;if(vy>0)for(const p of plats)if(oy<=p.y&&y>=p.y&&x>p.x-10&&x<p.x+pw+10){y=p.y;vy=p.sp?-950:-650;break}
+  plats.forEach(p=>{if(p.m){p.x+=p.m*dt;if(p.x<0||p.x>W-pw)p.m*=-1}});
+  if(y-cam<H*.4)cam=y-H*.4;const top=Math.min(...plats.map(p=>p.y));if(top>cam-60){const p={x:R(0,W-pw),y:top-gapY*(0.75+Math.random()*.4),m:api.lv&&Math.random()<.25*api.lv?R(40,90):0,sp:Math.random()<.06};plats.push(p)}plats=plats.filter(p=>p.y<cam+H+40);
+  best=Math.max(best,Math.floor((H-80-y)/10));api.score(best*(api.lv+1));if(y>cam+H+40)return api.end(`${best} metreye çıktın`);
+  bg(ctx,W,H,'#0e1a33');plats.forEach(p=>{ctx.fillStyle=p.sp?'#f59e0b':p.m?'#38bdf8':'#22c55e';ctx.fillRect(p.x,p.y-cam,pw,10)});emo(ctx,'🐰',x,y-cam-16,32);txt(ctx,best+' m',W/2,30,22)});
+});
+
+reg('Arcade','🧺','Sepet Yakala','Sepeti kaydır, meyveleri yakala. Bombaları yakalama! 3 can.',api=>{
+ const W=360,H=540,ctx=api.canvas(W,H);let x=W/2,lives=3,it=[],t=0,time=0;const F=['🍎','🍌','🍇','🍓','🍊','🍉','🍒'],bomb=[.12,.2,.28][api.lv];
+ api.drag(ctx.canvas,X=>x=X);api.pad([{t:'◀',k:'L'},{t:'▶',k:'R'}]);
+ api.loop(dt=>{if(api.inp.L)x-=360*dt;if(api.inp.R)x+=360*dt;x=Math.max(30,Math.min(W-30,x));time+=dt;t+=dt;
+  if(t>Math.max(.32,[1,.8,.65][api.lv]-time*.006)){t=0;const b=Math.random()<bomb;it.push({x:R(20,W-20),y:-20,v:R(150,220)+time*3*(api.lv+1),e:b?'💣':pick(F),b,g:Math.random()<.05&&!b})}
+  it.forEach(o=>o.y+=o.v*dt);it=it.filter(o=>{if(o.y>H-58&&o.y<H-22&&Math.abs(o.x-x)<36){if(o.b){lives--;api.toast('💥 Bomba!')}else api.add((o.g?50:10)*(api.lv+1));return false}if(o.y>H+20){if(!o.b){lives--}return false}return true});
+  if(lives<=0)return api.end('Canların bitti');if(it.some(o=>o.g))0;
+  bg(ctx,W,H,'#13203d');it.forEach(o=>emo(ctx,o.g?'⭐':o.e,o.x,o.y,30));emo(ctx,'🧺',x,H-36,52);api.info('❤️'.repeat(Math.max(0,lives)))});
+});
+
+reg('Arcade','🚁','Mağara Uçuşu','Basılı tut: yüksel, bırak: alçal. Mağara duvarlarına çarpma.',api=>{
+ const W=480,H=320,ctx=api.canvas(W,H);let y=H/2,vy=0,hold=false,dist=0,seg=[],gap=[200,165,140][api.lv],sp=[150,190,230][api.lv],cy=H/2,obs=[];const sw=16;
+ for(let x=0;x<=W+sw;x+=sw)seg.push({x,c:cy,g:gap});
+ api.on(ctx.canvas,'pointerdown',e=>{e.preventDefault();hold=true});api.on(window,'pointerup',()=>hold=false);api.onKey=(k)=>{if(k==='A'||k==='U')hold=true};api.on(window,'keyup',()=>hold=false);api.pad([{t:'⬆ Basılı tut',k:'U'}]);
+ api.loop(dt=>{const up=hold||api.inp.U;vy+=(up?-900:700)*dt;vy=Math.max(-320,Math.min(320,vy));y+=vy*dt;dist+=sp*dt;sp+=dt*3;api.score(dist/10*(api.lv+1));
+  seg.forEach(s=>s.x-=sp*dt);while(seg[0].x<-sw)seg.shift();while(seg.at(-1).x<W+sw){const l=seg.at(-1);cy=Math.max(gap/2+10,Math.min(H-gap/2-10,l.c+R(-14,14)));gap=Math.max([120,100,85][api.lv],gap-.15);seg.push({x:l.x+sw,c:cy,g:gap});if(Math.random()<.04*(api.lv+1))obs.push({x:l.x+sw,y:cy+R(-gap/3,gap/3),h:R(30,50)})}
+  obs.forEach(o=>o.x-=sp*dt);obs=obs.filter(o=>o.x>-20);const s=seg.find(s=>s.x+sw>80);
+  if(!s||y<s.c-s.g/2+8||y>s.c+s.g/2-8||obs.some(o=>Math.abs(o.x-80)<14&&Math.abs(o.y-y)<o.h/2+8))return api.end(`${Math.floor(dist/10)} metre uçtun`);
+  bg(ctx,W,H,'#1c1208');ctx.fillStyle='#0b1020';ctx.beginPath();seg.forEach((s,i)=>i?ctx.lineTo(s.x,s.c-s.g/2):ctx.moveTo(s.x,s.c-s.g/2));for(let i=seg.length-1;i>=0;i--)ctx.lineTo(seg[i].x,seg[i].c+seg[i].g/2);ctx.fill();ctx.fillStyle='#78350f';obs.forEach(o=>ctx.fillRect(o.x-8,o.y-o.h/2,16,o.h));
+  ctx.save();ctx.translate(80,y);ctx.scale(-1,1);emo(ctx,'🚁',0,0,30);ctx.restore();api.info(Math.floor(dist/10)+' m')});
+});
+
+reg('Arcade','🏎️','Şerit Yarışı','Şerit değiştirerek araçlardan kaç. Ekranın soluna/sağına dokun ya da kaydır.',api=>{
+ const W=360,H=560,ctx=api.canvas(W,H),L=api.lv===2?4:3,lw=W/L;let lane=1,px=lane*lw+lw/2,cars=[],t=0,sp=[260,320,380][api.lv],dist=0,off=0;
+ const mv=k=>{if(k==='L')lane=Math.max(0,lane-1);if(k==='R')lane=Math.min(L-1,lane+1)};api.onKey=mv;api.swipe(ctx.canvas,mv);
+ api.on(ctx.canvas,'pointerup',e=>{const[x]=api.pos(ctx.canvas,e);if(Math.abs(x-px)>20)mv(x<px?'L':'R')});
+ api.loop(dt=>{sp+=dt*5;dist+=sp*dt/20;api.score(dist*(api.lv+1));px+=(lane*lw+lw/2-px)*Math.min(1,dt*14);t+=dt;off=(off+sp*dt)%60;
+  if(t>Math.max(.35,[1,.8,.6][api.lv]-dist*.0015)){t=0;const free=[...Array(L).keys()];const n=Math.random()<.3+api.lv*.12?2:1;shuf(free).slice(0,Math.min(n,L-1)).forEach(l=>cars.push({l,y:-60,v:R(40,140),e:pick(['🚗','🚙','🚕','🚓','🚚'])}))}
+  cars.forEach(c=>c.y+=(sp-c.v)*dt);cars=cars.filter(c=>c.y<H+60);if(cars.some(c=>Math.abs(c.l*lw+lw/2-px)<lw*.55&&Math.abs(c.y-(H-80))<52))return api.end(`${Math.floor(dist)} metre sürdün`);
+  bg(ctx,W,H,'#374151');ctx.fillStyle='#e5e7eb';for(let l=1;l<L;l++)for(let y=-60+off;y<H;y+=60)ctx.fillRect(l*lw-2,y,4,30);
+  cars.forEach(c=>{ctx.save();ctx.translate(c.l*lw+lw/2,c.y);ctx.rotate(Math.PI/2);emo(ctx,c.e,0,0,52);ctx.restore()});ctx.save();ctx.translate(px,H-80);ctx.rotate(-Math.PI/2);emo(ctx,'🏎️',0,0,56);ctx.restore();api.info(Math.floor(dist)+' m')});
+});
+
+reg('Arcade','🎈','Balon Patlat','Yükselen balonlara dokunup patlat. 5 balon kaçarsa biter. 💣 balonlara dokunma!',api=>{
+ const W=360,H=560,ctx=api.canvas(W,H);let b=[],t=0,miss=0,time=0,pops=[];const C=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#ec4899'];
+ api.press(ctx.canvas,(x,y)=>{for(let i=b.length-1;i>=0;i--){const o=b[i];if(Math.hypot(x-o.x,y-o.y)<o.r+8){b.splice(i,1);pops.push({x:o.x,y:o.y,t:.3});if(o.bomb){miss+=2;api.toast('💥 Bomba!')}else api.add((o.g?50:10)*(api.lv+1));return}}});
+ api.loop(dt=>{time+=dt;t+=dt;if(t>Math.max(.25,[.9,.7,.55][api.lv]-time*.008)){t=0;const bomb=api.lv>0&&Math.random()<.12*api.lv;b.push({x:R(30,W-30),y:H+40,r:R(22,32)-api.lv*3,v:R(70,120)+time*2*(api.lv+1),c:pick(C),bomb,g:!bomb&&Math.random()<.05,ph:Math.random()*6})}
+  b.forEach(o=>{o.y-=o.v*dt;o.x+=Math.sin(time*2+o.ph)*20*dt});b=b.filter(o=>{if(o.y<-50){if(!o.bomb)miss++;return false}return true});pops.forEach(p=>p.t-=dt);pops=pops.filter(p=>p.t>0);if(miss>=5)return api.end('5 balon kaçtı');
+  bg(ctx,W,H,'#0e1f3d');b.forEach(o=>{ctx.strokeStyle='#94a3b8';ctx.beginPath();ctx.moveTo(o.x,o.y+o.r);ctx.lineTo(o.x,o.y+o.r+22);ctx.stroke();ctx.fillStyle=o.bomb?'#111827':o.g?'#fbbf24':o.c;ctx.beginPath();ctx.ellipse(o.x,o.y,o.r*.86,o.r,0,0,7);ctx.fill();if(o.bomb)emo(ctx,'💣',o.x,o.y,o.r);if(o.g)emo(ctx,'⭐',o.x,o.y,o.r)});
+  pops.forEach(p=>emo(ctx,'💥',p.x,p.y,40*(1-p.t)+20));api.info('Kaçan: '+miss+'/5')});
+});
+
+reg('Arcade','🔨','Köstebek Vur','Çıkan köstebeklere hızlıca vur. 60 saniye. Orta/Zor: 💣 vurma!',api=>{
+ const n=api.lv===2?4:3,{cells}=api.grid(n,n,'mole');let time=60,up=new Map(),hits=0;const life=[1100,800,620][api.lv];
+ cells.forEach((c,i)=>c.addEventListener('pointerdown',e=>{e.preventDefault();const u=up.get(i);if(!u)return;up.delete(i);if(u.b){api.add(-30);api.toast('💥 −30');c.textContent='💥'}else{hits++;api.add((u.g?30:10)*(api.lv+1));c.textContent='😵'}api.after(()=>{if(!up.has(i))c.textContent=''},250)}));
+ api.every(()=>{const free=[...Array(n*n).keys()].filter(i=>!up.has(i));if(!free.length)return;const k=api.lv===0?1:Math.random()<.3?2:1;shuf(free).slice(0,k).forEach(i=>{const b=api.lv>0&&Math.random()<.18,g=!b&&Math.random()<.08;up.set(i,{b,g});cells[i].textContent=b?'💣':g?'🐹':'🐭';const tok=up.get(i);api.after(()=>{if(up.get(i)===tok){up.delete(i);cells[i].textContent=''}},life)})},[900,700,520][api.lv]);
+ api.every(()=>{time--;api.info(`⏱ ${time} • 🔨${hits}`);if(time<=0)api.end(`${hits} köstebek vurdun`)},1000);api.info('⏱ 60');
+});
+
+/* ================= REFLEKS ================= */
+reg('Refleks','⏱️','Reaksiyon Testi','Ekran YEŞİL olunca hemen dokun. 5 deneme. Orta/Zor: sarı/mavi tuzak renklere dokunma!',api=>{
+ const box=api.box('react');let st='wait',t0=0,res=[],tm=null;
+ const set=(bg,t,sub='')=>{box.style.background=bg;box.innerHTML=t+(sub?`<small style="font-size:15px;font-weight:500;margin-top:10px;color:#e2e8f0">${sub}</small>`:'')};
+ const round=()=>{if(res.length>=5){const avg=Math.round(res.reduce((a,c)=>a+c,0)/5);api.score(Math.max(0,650-avg)*(api.lv+1)*2);return api.end(`Ortalama tepki süren: ${avg} ms`)}st='wait';set('#7f1d1d','Bekle…','Yeşil olunca dokun');
+  const d=R(1300,3600),fk=api.lv===0?0:R(0,api.lv);for(let k=0;k<fk;k++){const fd=R(500,d-400);api.after(()=>{if(st==='wait'){st='fake';set(pick(['#ca8a04','#1d4ed8']),'Dokunma!');api.after(()=>{if(st==='fake'){st='wait';set('#7f1d1d','Bekle…')}},[0,550,380][api.lv])}},fd)}
+  tm=api.after(()=>{if(st==='wait'||st==='fake'){st='go';t0=performance.now();set('#15803d','DOKUN!')}},d)};
+ box.addEventListener('pointerdown',e=>{e.preventDefault();if(st==='go'){const r=Math.round(performance.now()-t0);res.push(r);st='done';set('#1e3a8a',r+' ms',`${res.length}/5 • Devam için dokun`);api.info(res.join(' • '))}else if(st==='wait'||st==='fake'){clearTimeout(tm);st='done';res.push(600);set('#78350f','Erken!',`+600 ms ceza • Devam için dokun`);api.info(res.join(' • '))}else if(st==='done')round()});
+ round();
+});
+
+reg('Refleks','🎯','Hedef Vur','Beliren hedeflere küçülüp kaybolmadan dokun. 30 saniye. Boşa dokunmak −5.',api=>{
+ const box=api.box('hz'),sz=[66,50,38][api.lv],life=[1.8,1.3,.95][api.lv];let time=30,hits=0,miss=0;
+ const spawn=()=>{const r=box.getBoundingClientRect(),w=Math.max(200,r.width),hh=Math.max(260,r.height);const t=h('div',{class:'tgt',style:`left:${R(sz,w-sz)}px;top:${R(sz,hh-sz)}px;width:${sz}px;height:${sz}px`});
+  t.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();if(t.dataset.d)return;t.dataset.d=1;t.remove();hits++;api.add(10*(api.lv+1));api.info(`⏱ ${time} • 🎯${hits}`)});box.append(t);
+  t.animate([{transform:'translate(-50%,-50%) scale(1)'},{transform:'translate(-50%,-50%) scale(.25)'}],{duration:life*1000,fill:'forwards'});api.after(()=>{if(!t.dataset.d){t.remove();miss++}},life*1000)};
+ box.addEventListener('pointerdown',()=>api.add(-5));
+ api.every(spawn,[700,560,430][api.lv]);api.every(()=>{time--;api.info(`⏱ ${time} • 🎯${hits}`);if(time<=0)api.end(`${hits} hedef vurdun, ${miss} kaçtı`)},1000);spawn();
+});
+
+const COL=[['KIRMIZI','#ef4444'],['MAVİ','#3b82f6'],['YEŞİL','#22c55e'],['SARI','#eab308'],['MOR','#a855f7'],['TURUNCU','#f97316']];
+reg('Refleks','🌈','Renk Tuzağı','Yazının anlamına değil, YAZININ RENGİNE göre cevap ver.',api=>{
+ const k=[3,4,6][api.lv];
+ quiz(api,{t:[4,3,2.3],gen:()=>{const cs=COL.slice(0,k),w=pick(cs);let c=pick(cs);if(Math.random()<.75)while(c===w)c=pick(cs);return{q:`<span style="color:${c[1]};font-size:50px">${w[0]}</span><small>Bu yazı hangi RENKTE yazılmış?</small>`,a:c[0],opts:shuf(cs.map(x=>x[0])),cls:k===6?'three':''}}});
+});
+
+reg('Refleks','🟩','Farklı Rengi Bul','Kareler arasında tonu farklı olanı bul. 60 saniye. Yanlış dokunuş −3 sn.',api=>{
+ let time=60,lvl=0,g=null;
+ const next=()=>{lvl++;const n=Math.min(8,2+Math.floor(lvl/3)+api.lv),d=Math.max([6,4,2.5][api.lv],[26,18,12][api.lv]-lvl*.9),hue=R(0,359),s=R(45,80),l=R(38,58),odd=R(0,n*n-1);if(g)g.g.remove();g=api.grid(n,n,'');g.g.style.gap='5px';
+  g.cells.forEach((c,i)=>{c.style.background=`hsl(${hue} ${s}% ${i===odd?l+d:l}%)`;c.onclick=()=>{if(i===odd){api.add(lvl*(api.lv+1));next()}else{time-=3;api.toast('−3 sn')}}});api.info(`⏱ ${time} • Sv.${lvl}`)};
+ next();api.every(()=>{time--;api.info(`⏱ ${time} • Sv.${lvl}`);if(time<=0)api.end(`${lvl-1}. seviyeye ulaştın`)},1000);
+});
+
+reg('Refleks','😀','Farklı Emojiyi Bul','Aynı emojiler arasında farklı olanı bul. 60 saniye. Yanlış dokunuş −3 sn.',api=>{
+ const PR=[['😀','😃'],['😺','😸'],['🐶','🐕'],['🍎','🍅'],['⭐','🌟'],['🔵','🟦'],['❤️','🧡'],['🙂','🙃'],['🐱','🐈'],['🍏','🍐'],['🌲','🌳'],['🕐','🕑'],['🔒','🔓'],['📕','📙'],['🐟','🐠'],['😐','😑'],['🚗','🚙'],['💙','💜'],['🐭','🐹'],['🍋','🍌'],['😊','😌'],['🌑','🌚'],['🔈','🔉'],['☁️','🌥️'],['🦊','🐺'],['😮','😯']];
+ let time=60,lvl=0,g=null;
+ const next=()=>{lvl++;const n=Math.min(8,3+Math.floor(lvl/3)+api.lv),[a,b]=shuf(pick(PR)),odd=R(0,n*n-1);if(g)g.g.remove();g=api.grid(n,n,'emg');g.g.style.gap='3px';
+  g.cells.forEach((c,i)=>{c.textContent=i===odd?b:a;c.style.fontSize=`min(${60/n}vw,${36-n*2}px)`;c.onclick=()=>{if(i===odd){api.add(lvl*(api.lv+1));next()}else{time-=3;api.toast('−3 sn')}}});api.info(`⏱ ${time} • Sv.${lvl}`)};
+ next();api.every(()=>{time--;api.info(`⏱ ${time} • Sv.${lvl}`);if(time<=0)api.end(`${lvl-1}. seviyeye ulaştın`)},1000);
+});
+
+reg('Refleks','➡️','Ok Yönü','Sadece ORTADAKİ okun yönünü seç. Yandakiler seni yanıltmaya çalışır.',api=>{
+ const D=api.lv===2?['←','→','↑','↓']:['←','→'];
+ quiz(api,{t:[3,2.2,1.8],gen:()=>{const c=pick(D),f=Math.random()<.4?c:pick(D.filter(x=>x!==c)),n=api.lv?3:2;return{q:`<span style="font-size:46px;letter-spacing:4px">${f.repeat(n)}<span style="color:#fbbf24">${c}</span>${f.repeat(n)}</span><small>Ortadaki ok nereyi gösteriyor?</small>`,a:c,opts:D}}});
+});
+
+reg('Refleks','📏','Tam Ortası','Kayan çubuğu yeşil bölgenin tam ortasında durdur. 10 deneme.',api=>{
+ const bar=api.box('mbar'),tg=h('div',{class:'tg'}),nd=h('div',{class:'nd'});bar.append(tg,nd);const msg=api.note('DUR tuşuna bas');let pos=0,dir=1,sp,c,w,round=0,stopped=true;
+ const next=()=>{if(round>=10)return api.end('10 denemeyi bitirdin');round++;stopped=false;w=[22,14,8][api.lv];c=R(Math.ceil(w/2)+2,98-Math.ceil(w/2));sp=[45,70,100][api.lv]+round*6;tg.style.left=(c-w/2)+'%';tg.style.width=w+'%';api.info(`Deneme ${round}/10`)};
+ const stop=()=>{if(stopped)return;stopped=true;const d=Math.abs(pos-c),pts=d<w/2?Math.round((1-d/(w/2))*100)*(api.lv+1):0;api.add(pts);msg.textContent=pts?(d<1?'🎯 Kusursuz! +':'✔ +')+pts:'✖ Iskaladın';api.after(next,800)};
+ api.pad([{t:'⏹ DUR',f:stop}]);api.onKey=k=>k==='A'&&stop();
+ api.loop(dt=>{if(stopped)return;pos+=dir*sp*dt;if(pos>100){pos=100;dir=-1}if(pos<0){pos=0;dir=1}nd.style.left=`calc(${pos}% - 3px)`});next();
+});
+
+reg('Refleks','⏲️','Tam 10 Saniye','Başlat, içinden say ve tam 10,00. saniyede durdur. Süre bir süre sonra gizlenir. 3 deneme.',api=>{
+ const q=api.box('qq'),disp=h('div',{class:'lg',style:'font-variant-numeric:tabular-nums'},'0.00'),sub=h('small',null,'Hazır olunca başlat');q.append(disp,sub);let run=false,t0=0,tries=0;const vis=[5,3,0][api.lv];
+ const tog=()=>{if(!run){if(tries>=3)return;run=true;t0=performance.now();btn.textContent='⏹ Durdur';sub.textContent=vis?`${vis} saniye sonra süre gizlenecek`:'Süre gizli — içinden say'}else{run=false;tries++;const t=(performance.now()-t0)/1000,d=Math.abs(t-10);disp.textContent=t.toFixed(2);const p=Math.max(0,Math.round((1-d/2)*300))*(api.lv+1);api.add(p);sub.textContent=`Fark: ${d.toFixed(2)} sn • +${p}`;btn.textContent='▶ Başlat';api.info(`Deneme ${tries}/3`);if(tries>=3)api.after(()=>api.end('3 denemenin toplam puanı'),1300)}};
+ const btn=api.pad([{t:'▶ Başlat',f:()=>tog()}]).firstChild;
+ api.loop(()=>{if(run){const t=(performance.now()-t0)/1000;disp.textContent=t<vis?t.toFixed(2):'?.??'}});api.onKey=k=>k==='A'&&tog();api.info('Deneme 0/3');
+});
+
+reg('Refleks','🔟','Sayı Avı','Sayılara 1’den başlayarak sırayla, olabildiğince hızlı dokun.',api=>{
+ const n=[4,5,6][api.lv],N=n*n,nums=shuf([...Array(N).keys()].map(i=>i+1));let nxt=1;const t0=performance.now();const {cells}=api.grid(n,n,'');
+ cells.forEach((c,i)=>{c.textContent=nums[i];if(api.lv===2)c.style.color=`hsl(${R(0,359)} 85% 70%)`;c.onclick=()=>{if(nums[i]===nxt){c.style.opacity=.2;nxt++;api.info('Sıradaki: '+(nxt<=N?nxt:'✔'));if(nxt>N){const s=(performance.now()-t0)/1000;api.score(Math.max(10,Math.round((N*2.2-s)*20*(api.lv+1))));api.end(`${s.toFixed(1)} saniyede bitirdin`)}}else c.animate([{background:'#dc2626'},{background:'#1e2748'}],300)}});api.info('Sıradaki: 1');
+});
+
+reg('Refleks','✅','Doğru mu Yanlış mı','Ekrandaki işlem doğru mu? Hızla karar ver.',api=>{
+ quiz(api,{t:[3.5,2.6,1.9],gen:lv=>{const op=pick(lv?['+','−','×']:['+','−']);let a=R(2,[12,40,80][lv]),b=R(2,[12,25,40][lv]);if(op==='×'){a=R(2,[9,12,19][lv]);b=R(2,[9,12,15][lv])}if(op==='−'&&b>a)[a,b]=[b,a];const c=op==='+'?a+b:op==='−'?a-b:a*b;
+  const tr=Math.random()<.5,shown=tr?c:c+pick([-10,-2,-1,1,2,10].filter(x=>c+x>=0));return{q:`${a} ${op} ${b} = ${shown}`,a:shown===c?'✔ Doğru':'✖ Yanlış',opts:['✔ Doğru','✖ Yanlış']}}});
+});
+
+/* ================= HAFIZA ================= */
+reg('Hafıza','🃏','Kart Eşleştir','Kartları çevir, aynı resimleri eşleştir. Az hamle = yüksek puan.',api=>{
+ const [pairs,cols]=[[6,4],[8,4],[15,6]][api.lv],E=shuf(['🐶','🐱','🦊','🐼','🐸','🦁','🐵','🐧','🦄','🐙','🦋','🐢','🍕','🍩','⚽','🎸','🚀','🌈']).slice(0,pairs),d=shuf([...E,...E]);
+ const {cells}=api.grid(Math.ceil(d.length/cols),cols,'memc');let open=[],mv=0,found=0,lock=false;const t0=Date.now();const inf=()=>api.info(`Hamle: ${mv} • ${found}/${pairs}`);
+ cells.forEach((c,i)=>c.onclick=()=>{if(lock||c.classList.contains('op'))return;c.classList.add('op');c.textContent=d[i];open.push(i);if(open.length<2)return;mv++;const[a,b]=open;open=[];
+  if(d[a]===d[b]){cells[a].classList.add('done');cells[b].classList.add('done');found++;if(found===pairs){api.score(Math.max(20,(pairs*30-(mv-pairs)*8)*(api.lv+1)-Math.floor((Date.now()-t0)/1000)));api.end(`${mv} hamlede tüm çiftleri buldun!`)}}else{lock=true;api.after(()=>{[a,b].forEach(j=>{cells[j].classList.remove('op');cells[j].textContent=''});lock=false},750)}inf()});
+ inf();if(api.lv===0){lock=true;cells.forEach((c,i)=>{c.classList.add('op');c.textContent=d[i]});api.after(()=>{cells.forEach(c=>{c.classList.remove('op');c.textContent=''});lock=false},2200)}
+});
+
+reg('Hafıza','🔴','Renk Sırası','Yanan renklerin sırasını aklında tut ve aynı sırayla dokun. Her turda bir renk eklenir.',api=>{
+ const C=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316'].slice(0,[4,4,6][api.lv]),sp=[700,500,380][api.lv],box=api.box('simon');if(C.length===6)box.style.gridTemplateColumns='1fr 1fr 1fr';
+ const pads=C.map((c,i)=>{const p=h('button',{class:'sp',style:`background:${c};color:${c}`});p.onclick=()=>tap(i);box.append(p);return p});const msg=api.note('');let seq=[],pos=0,busy=true;
+ const flash=(i,d)=>{pads[i].classList.add('on');api.after(()=>pads[i].classList.remove('on'),d)};
+ const play=()=>{busy=true;msg.textContent='İzle…';seq.push(R(0,C.length-1));seq.forEach((v,k)=>api.after(()=>flash(v,sp*.7),400+k*sp));api.after(()=>{busy=false;pos=0;msg.textContent='Sıra sende!'},400+seq.length*sp)};
+ const tap=i=>{if(busy)return;flash(i,200);if(i!==seq[pos]){busy=true;return api.end(`${seq.length-1} renklik diziyi hatırladın`)}pos++;if(pos===seq.length){api.add(seq.length*10*(api.lv+1));api.info('Uzunluk: '+seq.length);busy=true;api.after(play,700)}};
+ api.after(play,500);
+});
+
+reg('Hafıza','🔢','Sayı Hafızası','Gösterilen sayıyı ezberle, kaybolunca yaz. Her doğruda bir basamak uzar. 2 can.',api=>{
+ let len=[3,4,5][api.lv],num='',inp='',lives=2,phase='show';const q=api.box('qq'),d=h('div',{style:'letter-spacing:4px;font-size:40px'}),s=h('small');q.append(d,s);
+ const inf=()=>api.info(`Basamak: ${len} • ❤️${lives}`);
+ const show=()=>{phase='show';num=Array.from({length:len},(_,i)=>R(i?0:1,9)).join('');inp='';d.textContent=num;s.textContent='Ezberle!';api.after(()=>{phase='in';draw();s.textContent='Şimdi yaz'},1000+len*[700,500,350][api.lv])};
+ const draw=()=>{d.textContent=inp+'_'.repeat(Math.max(0,len-inp.length))};
+ const ok=()=>{if(phase!=='in')return;phase='x';if(inp===num){api.add(len*10*(api.lv+1));s.textContent='✔ Doğru!';len++}else{lives--;s.innerHTML=`✖ Doğrusu: <b>${num}</b>`}inf();if(lives<=0)return api.after(()=>api.end(`En uzun ${len-1} basamak`),800);api.after(show,1300)};
+ api.numpad([1,2,3,4,5,6,7,8,9,'⌫',0,'✔'],v=>{if(phase!=='in')return;if(v==='✔')return ok();if(v==='⌫')inp=inp.slice(0,-1);else if(inp.length<len)inp+=v;draw();if(inp.length===len)api.after(ok,250)});
+ api.onKey=k=>{if(phase!=='in')return;if(/^\d$/.test(k)&&inp.length<len){inp+=k;draw();if(inp.length===len)api.after(ok,250)}if(k==='Backspace'){inp=inp.slice(0,-1);draw()}};show();inf();
+});
+
+reg('Hafıza','🟦','Kare Hafızası','Yanan kareleri aklında tut, sonra hepsine dokun. Her turda bir kare artar. 3 can.',api=>{
+ const n=[3,4,5][api.lv];let k=[3,4,5][api.lv],lives=3,set,got,phase;const {cells}=api.grid(n,n,'sq');
+ const round=()=>{phase='show';got=new Set();set=new Set(shuf([...Array(n*n).keys()]).slice(0,Math.min(k,n*n-1)));cells.forEach((c,i)=>c.className='cell'+(set.has(i)?' on':''));api.after(()=>{cells.forEach(c=>c.className='cell');phase='in'},900+k*200);api.info(`Kare: ${k} • ❤️${lives}`)};
+ cells.forEach((c,i)=>c.onclick=()=>{if(phase!=='in'||got.has(i))return;if(set.has(i)){got.add(i);c.className='cell good';if(got.size===set.size){phase='x';api.add(k*10*(api.lv+1));k++;api.after(round,700)}}else{c.className='cell bad';phase='x';lives--;set.forEach(j=>{if(!got.has(j))cells[j].className='cell on'});api.info(`Kare: ${k} • ❤️${lives}`);if(lives<=0)return api.after(()=>api.end(`${k} karelik seviyeye ulaştın`),700);api.after(round,1200)}});round();
+});
+
+reg('Hafıza','📝','Kelime Hafızası','Kelimeleri ezberle. Sonra karışık listeden gördüklerini seç. 4 tur.',api=>{
+ const k=[5,7,9][api.lv];let round=0,shown,sel,phase;const msg=api.note(''),box=api.box('wlist'),btn=api.toolbar([['✔ Kontrol et',()=>check()]])[0];btn.style.display='none';
+ const next=()=>{if(round>=4)return api.end('4 turu tamamladın');round++;const pool=shuf(ALLW.filter(w=>w.length<=8));shown=pool.slice(0,k);const extra=pool.slice(k,k+Math.round(k*.8));sel=new Set();phase='show';box.innerHTML='';shown.forEach(w=>box.append(h('div',{class:'wl'},TRU(w))));msg.textContent='Ezberle!';btn.style.display='none';api.info(`Tur ${round}/4`);
+  api.after(()=>{phase='pick';box.innerHTML='';msg.textContent=`Gördüğün ${k} kelimeyi seç, sonra Kontrol et`;btn.style.display='';shuf([...shown,...extra]).forEach(w=>{const b=h('button',{class:'wl'},TRU(w));b.dataset.w=w;b.onclick=()=>{if(phase!=='pick')return;if(sel.has(w)){sel.delete(w);b.classList.remove('sel')}else{sel.add(w);b.classList.add('sel')}};box.append(b)})},2500+k*[650,480,360][api.lv])};
+ const check=()=>{if(phase!=='pick')return;phase='x';let ok=0,bad=0;[...box.children].forEach(b=>{const w=b.dataset.w,s=sel.has(w),real=shown.includes(w);if(s&&real){ok++;b.className='wl good'}else if(s){bad++;b.className='wl bad'}else if(real)b.style.outline='2px solid #22c55e'});api.add(Math.max(0,ok*10-bad*10)*(api.lv+1));msg.textContent=`✔ ${ok}/${k} doğru • ✖ ${bad} yanlış`;btn.style.display='none';api.after(next,2300)};next();
+});
+
+reg('Hafıza','🔄','Hangisi Değişti?','Resimlere bak. Kısa bir aradan sonra biri değişecek, hangisi olduğunu bul. 3 can.',api=>{
+ const n=[6,9,12][api.lv],cols=n===12?4:3,P=['🍎','🚗','🐶','⚽','🎈','🌵','🎩','🔑','📚','🍩','🐠','🌙','⏰','🎸','🍄','🚲','👓','🧲','🪁','🦉','🍉','🧸','🔔','🌻'];let lives=3,cur,ch,phase,round=0,ok=0;const {cells}=api.grid(n/cols,cols,'emg');
+ const next=()=>{round++;cur=shuf(P).slice(0,n);cells.forEach((c,i)=>{c.textContent=cur[i];c.style.background=''});phase='show';api.info(`Tur ${round} • ❤️${lives}`);
+  api.after(()=>{cells.forEach(c=>c.textContent='');api.after(()=>{ch=R(0,n-1);cur[ch]=pick(P.filter(x=>!cur.includes(x)));cells.forEach((c,i)=>c.textContent=cur[i]);phase='pick'},[700,600,450][api.lv])},[3200,2600,2000][api.lv])};
+ cells.forEach((c,i)=>c.onclick=()=>{if(phase!=='pick')return;phase='x';if(i===ch){ok++;c.style.background='#16a34a';api.add(20*(api.lv+1))}else{c.style.background='#dc2626';cells[ch].style.background='#16a34a';lives--}api.after(()=>lives<=0?api.end(`${ok} kez doğru buldun`):next(),1000)});next();
+});
+
+reg('Hafıza','🔁','N-Geri','Harf, N adım önceki harfle aynıysa EŞLEŞME bas. Kolay 1, Orta 2, Zor 3 geri.',api=>{
+ const N=api.lv+1,L='ABCDEFGHK'.split(''),q=api.box('qq'),d=h('div',{class:'lg'}),s=h('small',null,`${N} adım önceki harfle aynı mı?`);q.append(d,s);let seq=[],i=0,pressed=false,hit=0,fa=0,miss=0;const tot=25;
+ const isM=()=>seq.length>N&&seq.at(-1)===seq.at(-1-N);
+ const step=()=>{if(i>0&&isM()&&!pressed)miss++;if(i>=tot){api.score(Math.max(0,hit*20-fa*10-miss*5)*(api.lv+1));return api.end(`İsabet ${hit} • Yanlış alarm ${fa} • Kaçırılan ${miss}`)}i++;pressed=false;const c=seq.length>=N&&Math.random()<.33?seq.at(-N):pick(L);seq.push(c);d.textContent=c;d.style.color='';d.animate([{opacity:0},{opacity:1}],200);api.info(`${i}/${tot} • ✔${hit}`)};
+ const press=()=>{if(pressed||!seq.length)return;pressed=true;if(isM()){hit++;d.style.color='#22c55e'}else{fa++;d.style.color='#ef4444'}api.info(`${i}/${tot} • ✔${hit}`)};
+ api.pad([{t:'✔ EŞLEŞME',f:press}]);api.onKey=k=>k==='A'&&press();step();api.every(step,[2600,2400,2200][api.lv]);
+});
+
+reg('Hafıza','🔀','Emoji Sırası','Emojileri gösterildiği sırayla aklında tut, sonra aynı sırayla dokun. 2 can.',api=>{
+ let len=[3,4,5][api.lv],lives=2,seq,pos,phase;const P=['🍎','🐶','⚽','🎈','🚗','🌙','🔑','🎸','🍩','🐠','🌻','⏰'],q=api.box('qq'),d=h('div',{style:'font-size:56px'}),s=h('small');q.append(d,s);const opts=api.box('opts three');const sp=[900,700,550][api.lv];
+ const round=()=>{phase='show';seq=shuf(P).slice(0,len);opts.innerHTML='';pos=0;s.textContent='İzle…';d.style.fontSize='56px';seq.forEach((e,k)=>api.after(()=>{d.textContent=e;d.animate([{transform:'scale(.5)'},{transform:'scale(1)'}],200)},k*sp));
+  api.after(()=>{d.textContent='❓';s.textContent='Aynı sırayla dokun';phase='in';shuf(seq.concat(shuf(P.filter(x=>!seq.includes(x))).slice(0,api.lv*2))).forEach(e=>{const b=h('button',{class:'ob',style:'font-size:30px'},e);b.onclick=()=>tap(e,b);opts.append(b)})},len*sp);api.info(`Uzunluk: ${len} • ❤️${lives}`)};
+ const tap=(e,b)=>{if(phase!=='in')return;if(e===seq[pos]){b.classList.add('good');b.disabled=true;pos++;d.style.fontSize='28px';d.textContent=seq.slice(0,pos).join(' ');if(pos===len){phase='x';api.add(len*15*(api.lv+1));len++;api.after(round,900)}}else{b.classList.add('bad');phase='x';lives--;d.style.fontSize='28px';d.textContent=seq.join(' ');s.textContent='Doğru sıra buydu';api.info(`Uzunluk: ${len} • ❤️${lives}`);if(lives<=0)return api.after(()=>api.end(`En uzun ${len-1} emojilik diziyi hatırladın`),1300);api.after(round,1900)}};round();
+});
+
+reg('Hafıza','🆕','Hangisi Yeni?','Her turda gruba yeni bir resim eklenir ve hepsi karışır. Yeni geleni bul.',api=>{
+ const P=shuf(['🍎','🐶','⚽','🎈','🚗','🌙','🔑','🎸','🍩','🐠','🌻','⏰','🦉','🍄','🚲','👓','🧲','🧸','🔔','🌵','🎩','📚','🍉','🪁','🦋','🐢','🍕','🚀','🎁','🍦']);let lives=[3,2,1][api.lv],set=[P[0]],k=1,newest=P[0],lock=false,g=null;
+ const draw=()=>{if(g)g.g.remove();const cols=Math.min(6,Math.ceil(Math.sqrt(set.length)));g=api.grid(Math.ceil(set.length/cols),cols,'emg');const order=shuf(set);g.cells.forEach((c,i)=>{if(i>=order.length){c.style.visibility='hidden';return}c.textContent=order[i];c.onclick=()=>tap(order[i],c)});api.info(`${set.length} resim • ❤️${lives}`)};
+ const tap=(e,c)=>{if(lock)return;lock=true;if(e===newest){c.style.background='#16a34a';api.add(set.length*5*(api.lv+1))}else{c.style.background='#dc2626';lives--;api.info(`${set.length} resim • ❤️${lives}`)}api.after(()=>{if(lives<=0||k>=P.length)return api.end(`${set.length} resme kadar takip ettin`);newest=P[k++];set.push(newest);lock=false;draw()},650)};
+ api.note('İlk turda tek resim var, ona dokun. Sonra her turda yeni eklenen resmi bul.');draw();
+});
+
+/* ================= MATEMATİK ================= */
+const near=(a,lv,min=0)=>{const s=new Set([a]);const cand=shuf([a+1,a-1,a+2,a-2,a+10,a-10,a+R(3,9),a-R(3,9),a+R(11,25)]);for(const c of cand){if(s.size>=4)break;if(c>=min&&c!==a)s.add(c)}while(s.size<4)s.add(a+s.size*3);return shuf([...s])};
+const mq=(n,ic,name,desc,t,gen)=>reg('Matematik',ic,name,desc,api=>quiz(api,{t,gen:lv=>gen(lv,api)}));
+
+mq(0,'➕','Toplama Yarışı','Toplama işlemlerini süre bitmeden çöz. 3 can.',[9,11,15],lv=>{const r=[[1,20],[10,99],[100,999]][lv],a=R(...r),b=R(...r);return{q:`${a} + ${b}`,a:a+b,opts:near(a+b,lv)}});
+mq(0,'➖','Çıkarma Yarışı','Çıkarma işlemlerini süre bitmeden çöz. Zorda sonuç negatif olabilir.',[9,11,15],lv=>{const r=[[1,20],[10,99],[100,999]][lv];let a=R(...r),b=R(...r);if(lv<2&&b>a)[a,b]=[b,a];return{q:`${a} − ${b}`,a:a-b,opts:near(a-b,lv,-1e9)}});
+mq(0,'✖️','Çarpım Tablosu','Çarpma işlemlerini çöz. Kolay: çarpım tablosu, Zor: iki basamaklı.',[8,12,20],lv=>{const[a,b]=lv===0?[R(2,10),R(2,10)]:lv===1?[R(2,9),R(11,30)]:[R(11,40),R(11,30)];return{q:`${a} × ${b}`,a:a*b,opts:near(a*b,lv)}});
+mq(0,'➗','Bölme Yarışı','Bölme işlemlerini çöz. Sonuçlar hep tam sayı.',[8,12,18],lv=>{const[b,q]=lv===0?[R(2,10),R(2,10)]:lv===1?[R(2,12),R(3,20)]:[R(11,25),R(5,40)];return{q:`${b*q} ÷ ${b}`,a:q,opts:near(q,lv,1)}});
+mq(0,'🧮','Karışık İşlem','İşlem önceliğine dikkat ederek sonucu bul.',[12,16,22],lv=>{let q,a;if(lv===0){const x=R(1,20),y=R(1,20),z=R(1,x+y);q=`${x} + ${y} − ${z}`;a=x+y-z}else if(lv===1){const x=R(2,9),y=R(2,9),z=R(1,30);if(Math.random()<.5){q=`${x} × ${y} + ${z}`;a=x*y+z}else{q=`${z} + ${x} × ${y}`;a=z+x*y}}else{const x=R(2,15),y=R(2,15),z=R(2,9),w=R(1,30);if(Math.random()<.5){q=`(${x} + ${y}) × ${z} − ${w}`;a=(x+y)*z-w}else{q=`${x} × ${z} + ${y} × ${R(2,9)}`;a=eval(q.replace(/×/g,'*'))}}return{q,a,opts:near(a,lv,-1e9)}});
+mq(0,'❓','Eksik Sayı','Soru işaretinin yerine hangi sayı gelmeli?',[10,13,18],lv=>{let q,a;if(lv===0){const x=R(1,30);a=R(1,30);q=Math.random()<.5?`${x} + ? = ${x+a}`:`? + ${x} = ${x+a}`}else if(lv===1){if(Math.random()<.5){const x=R(2,12);a=R(2,12);q=`${x} × ? = ${x*a}`}else{const b=R(5,50);a=R(b+1,99);q=`? − ${b} = ${a-b}`}}else{const x=R(2,12),b=R(1,40);a=R(2,15);q=`${x} × ? + ${b} = ${x*a+b}`}return{q,a,opts:near(a,lv,0)}});
+
+reg('Matematik','⚖️','Hangisi Büyük?','İki işlemi karşılaştır: sol mu büyük, sağ mı, yoksa eşit mi?',api=>{
+ const ex=lv=>{if(lv===0){const a=R(1,20),b=R(1,20);return[`${a} + ${b}`,a+b]}if(lv===1){const a=R(2,12),b=R(2,12);return Math.random()<.5?[`${a} × ${b}`,a*b]:[`${a*b} − ${a}`,a*b-a]}const a=R(2,15),b=R(2,15),c=R(1,30);return pick([[`${a} × ${b} − ${c}`,a*b-c],[`${a} × ${b}`,a*b],[`${a*b} ÷ ${a} + ${c}`,b+c]])};
+ quiz(api,{t:[8,10,13],gen:lv=>{const L=ex(lv);let Rr=ex(lv);if(Math.random()<.2){const d=L[1]-R(0,5),x=L[1]-d;Rr=[`${d} + ${x}`,L[1]]}const a=L[1]>Rr[1]?'◀ Sol':L[1]<Rr[1]?'Sağ ▶':'= Eşit';return{q:`<div style="display:flex;gap:16px;align-items:center;font-size:24px"><span>${L[0]}</span><span style="color:#fbbf24">?</span><span>${Rr[0]}</span></div>`,a,opts:['◀ Sol','= Eşit','Sağ ▶'],cls:'three'}}});
+});
+
+mq(0,'📈','Sayı Dizisi','Dizideki kuralı bul, sıradaki sayıyı tahmin et.',[15,20,25],lv=>{let s=[];const t=lv===0?R(0,1):lv===1?R(0,3):R(0,4);
+ if(lv===0){const a=R(1,20),d=t?R(2,10):-R(1,5);const st=t?a:a+50;for(let i=0;i<6;i++)s.push(st+d*i)}
+ else if(lv===1){if(t===0){const a=R(1,5),r=R(2,3);for(let i=0;i<6;i++)s.push(a*r**i)}else if(t===1){const a=R(1,10),d1=R(2,9),d2=R(1,9);let v=a;for(let i=0;i<6;i++){s.push(v);v+=i%2?d2:d1}}else if(t===2){const a=R(50,100),d=R(3,12);for(let i=0;i<6;i++)s.push(a-d*i)}else{const a=R(1,9),d=R(11,25);for(let i=0;i<6;i++)s.push(a+d*i)}}
+ else{if(t===0){const k=R(1,5);for(let i=0;i<6;i++)s.push((i+k)**2)}else if(t===1){let a=R(1,5),b=R(1,6);for(let i=0;i<6;i++){s.push(a);[a,b]=[b,a+b]}}else if(t===2){let v=R(1,10),d=R(1,4);for(let i=0;i<6;i++){s.push(v);v+=d;d++}}else if(t===3){let v=R(1,5);for(let i=0;i<6;i++){s.push(v);v=v*2+1}}else{const k=R(1,9);for(let i=1;i<=6;i++)s.push(i**3+k)}}
+ const a=s.pop();return{q:`<span style="font-size:24px">${s.join(', ')}, <b style="color:#fbbf24">?</b></span>`,a,opts:near(a,lv,-1e9)}});
+
+reg('Matematik','🍰','Kesirler','Hangi kesir daha büyük? Ya da eşit mi?',api=>{
+ const fr=(a,b)=>`<span style="display:inline-flex;flex-direction:column;align-items:center;line-height:1.1"><span>${a}</span><span style="border-top:3px solid currentColor;padding:0 6px">${b}</span></span>`;
+ quiz(api,{t:[10,13,16],gen:lv=>{let a,b,c,d;if(lv===0){b=d=R(3,12);a=R(1,b-1);c=R(1,d-1)}else if(lv===1){b=R(2,10);d=R(2,10);a=R(1,b-1);c=R(1,d-1)}else{b=R(5,15);d=R(5,15);a=R(1,b-1);c=Math.max(1,Math.min(d-1,Math.round(a/b*d)+pick([-1,0,1])))}if(Math.random()<.15){const k=R(2,3);c=a*k;d=b*k}
+  const L=a/b,Rr=c/d,ans=Math.abs(L-Rr)<1e-9?'= Eşit':L>Rr?'◀ Sol':'Sağ ▶';return{q:`<div style="display:flex;gap:26px;align-items:center;font-size:34px">${fr(a,b)}<span style="color:#fbbf24">?</span>${fr(c,d)}</div>`,a:ans,opts:['◀ Sol','= Eşit','Sağ ▶'],cls:'three'}}});
+});
+
+mq(0,'💯','Yüzde Hesabı','Bir sayının yüzdesini hesapla.',[12,15,22],lv=>{let y,x;if(lv===0){y=pick([10,20,25,50,75,100]);x=R(1,20)*20}else if(lv===1){y=R(1,19)*5;x=R(1,50)*20}else{y=R(1,99);x=R(1,30)*100}const a=y*x/100;return{q:`<span style="color:#fbbf24">%${y}</span><small>×</small>${x}<small>${x} sayısının yüzde ${y} kadarı kaç eder?</small>`,a,opts:near(a,lv,0)}});
+
+mq(0,'²','Kare, Küp, Kök','Kare, küp ve karekök hesapla.',[10,13,18],lv=>{const t=lv===0?0:lv===1?R(0,1):R(0,2);let q,a;if(lv===0){const n=R(2,12);q=`${n}²`;a=n*n}else if(lv===1){const n=t?R(2,20):R(11,25);if(t){q=`√${n*n}`;a=n}else{q=`${n}²`;a=n*n}}else{if(t===0){const n=R(2,12);q=`${n}³`;a=n**3}else if(t===1){const n=R(2,10);q=`∛${n**3}`;a=n}else{const n=R(15,30);q=`√${n*n}`;a=n}}return{q,a,opts:near(a,lv,0)}});
+
+reg('Matematik','🔍','Asal mı?','Sayı asal mı değil mi? Asal: sadece 1’e ve kendisine bölünen sayı.',api=>{
+ const isP=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true};
+ quiz(api,{t:[6,8,10],gen:lv=>{const[lo,hi]=[[2,50],[51,200],[201,1000]][lv];const want=Math.random()<.5;let n;let g=0;do{n=R(lo,hi);if(lv>0&&n%2===0)n++;if(lv===2&&n%5===0)n+=2}while(isP(n)!==want&&g++<500);return{q:`<span class="lg">${n}</span><small>Asal mı?</small>`,a:isP(n)?'✔ Evet, asal':'✖ Hayır',opts:['✔ Evet, asal','✖ Hayır']}}});
+});
+
+reg('Matematik','🏛️','Romen Rakamları','Romen rakamlarını sayıya, sayıları Romen rakamına çevir.',api=>{
+ const rom=n=>{const v=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let s='';for(const[a,b]of v)while(n>=a){s+=b;n-=a}return s};
+ quiz(api,{t:[12,15,20],gen:lv=>{const[lo,hi]=[[1,20],[1,100],[100,3999]][lv],n=R(lo,hi),nums=near(n,lv,1);if(lv===0||Math.random()<.5)return{q:`<span class="lg" style="font-size:52px">${n}</span><small>Romen rakamıyla nasıl yazılır?</small>`,a:rom(n),opts:nums.map(rom)};return{q:`<span style="font-size:44px">${rom(n)}</span><small>Kaç eder?</small>`,a:n,opts:nums}}});
+});
+
+reg('Matematik','🕰️','Saat Okuma','Analog saatin gösterdiği zamanı bul.',api=>{
+ const clock=(hh,mm)=>{const c=h('canvas');c.width=c.height=200;c.style.width='170px';const x=c.getContext('2d');x.translate(100,100);x.fillStyle='#f8fafc';x.beginPath();x.arc(0,0,92,0,7);x.fill();x.fillStyle='#111';x.font='bold 17px sans-serif';x.textAlign='center';x.textBaseline='middle';
+  for(let i=1;i<=12;i++){const a=i*Math.PI/6;x.fillText(i,Math.sin(a)*74,-Math.cos(a)*74)}for(let i=0;i<60;i++){const a=i*Math.PI/30;x.fillRect(Math.sin(a)*86-1,-Math.cos(a)*86-1,2,2)}
+  const hand=(a,l,w,col)=>{x.strokeStyle=col;x.lineWidth=w;x.lineCap='round';x.beginPath();x.moveTo(0,0);x.lineTo(Math.sin(a)*l,-Math.cos(a)*l);x.stroke()};hand((hh%12+mm/60)*Math.PI/6,48,6,'#111');hand(mm*Math.PI/30,72,3.5,'#2563eb');x.fillStyle='#111';x.beginPath();x.arc(0,0,5,0,7);x.fill();return c};
+ const f=(hh,mm)=>`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+ quiz(api,{t:[12,15,18],gen:lv=>{const hh=R(1,12),mm=lv===0?pick([0,30]):lv===1?R(0,11)*5:R(0,59);const a=f(hh,mm),s=new Set([a]);const sw=Math.round(mm/5)%12||12;const cand=shuf([f(sw,(hh%12)*5),f(hh%12+1,mm),f(hh===1?12:hh-1,mm),f(hh,(mm+5)%60),f(hh,(mm+55)%60),f(hh,(mm+30)%60),f(hh,(mm+15)%60)]);for(const c of cand){if(s.size>=4)break;s.add(c)}
+  const w=h('div',{style:'display:flex;flex-direction:column;align-items:center;gap:6px'},clock(hh,mm),h('small',null,'Saat kaç?'));return{q:w,a,opts:shuf([...s])}}});
+});
+
+reg('Matematik','💵','Para Üstü','Alışverişte kasiyersin: doğru para üstünü ver.',api=>{
+ const tl=k=>(k/100).toFixed(2).replace('.',',')+' ₺';
+ quiz(api,{t:[12,16,22],gen:lv=>{let price,paid,desc;if(lv===0){price=R(1,45)*100;paid=price<1000?pick([1000,2000]):price<2000?2000:5000;desc=`Ürün: <b>${tl(price)}</b>`}else if(lv===1){price=R(1,95)*100+pick([0,25,50,75]);paid=10000;desc=`Ürün: <b>${tl(price)}</b>`}else{const a=R(100,6000)+R(0,99),b=R(100,6000)+R(0,99);price=a+b;paid=price<10000?10000:20000;desc=`${tl(a)} + ${tl(b)}`}
+  const ch=paid-price,o=new Set([ch]);[ch+100,ch-100,ch+10,ch-50,ch+1000,ch-10].forEach(v=>{if(o.size<4&&v>0)o.add(v)});while(o.size<4)o.add(ch+o.size*200);return{q:`<span class="md">${desc}</span><span class="md">Verilen: <b style="color:#4ade80">${tl(paid)}</b></span><small>Para üstü ne kadar?</small>`,a:tl(ch),opts:shuf([...o]).map(tl)}}});
+});
+
+reg('Matematik','💻','İkili Sayılar','İkilik (binary) sayıları onluğa, onluk sayıları ikiliğe çevir.',api=>{
+ quiz(api,{t:[15,18,22],gen:lv=>{const bits=[4,6,8][lv],n=R(1,2**bits-1);if(lv<2||Math.random()<.5)return{q:`<span style="font-size:40px;letter-spacing:3px">${n.toString(2)}</span><small>Onluk tabanda kaç?</small>`,a:n,opts:near(n,1,1)};const o=near(n,1,1).map(v=>v.toString(2));return{q:`<span class="lg">${n}</span><small>İkilik tabanda nasıl yazılır?</small>`,a:n.toString(2),opts:o}}});
+});
+
+reg('Matematik','⚫','Nokta Tahmini','Noktalar kısa süre görünür. Kaç tane olduğunu tahmin et.',api=>{
+ quiz(api,{t:[10,10,10],gen:lv=>{const[lo,hi,sp]=[[5,15,4],[15,40,7],[30,80,6]][lv],n=R(lo,hi);const c=h('canvas');c.width=300;c.height=200;c.style.width='min(100%,320px)';const x=c.getContext('2d');x.fillStyle='#0b1020';x.fillRect(0,0,300,200);const pts=[];let g=0;while(pts.length<n&&g++<5000){const p=[R(10,290),R(10,190)];if(pts.every(q=>Math.hypot(q[0]-p[0],q[1]-p[1])>13))pts.push(p)}x.fillStyle='#fbbf24';pts.forEach(p=>{x.beginPath();x.arc(p[0],p[1],5,0,7);x.fill()});
+  const s=new Set([pts.length]);while(s.size<4){const v=pts.length+R(-sp*2,sp*2);if(v>0&&Math.abs(v-pts.length)>=Math.ceil(sp/2))s.add(v)}
+  return{q:h('div',{style:'display:flex;flex-direction:column;align-items:center;gap:6px'},c,h('small',null,'Kaç nokta var?')),a:pts.length,opts:shuf([...s]).sort((a,b)=>a-b),init:()=>api.after(()=>{x.fillStyle='#1e2748';x.fillRect(0,0,300,200);x.fillStyle='#94a3b8';x.font='bold 22px sans-serif';x.textAlign='center';x.fillText('?',150,108)},[2000,1600,1300][lv])}}});
+});
+
+/* ================= VERİ ================= */
+const WCAT={
+ 'Hayvan':'kedi köpek aslan kaplan fil zürafa zebra maymun tavşan kurbağa kartal baykuş penguen yunus balina timsah kaplumbağa sincap kirpi ayı kurt tilki geyik at eşek inek koyun keçi tavuk horoz ördek papağan karınca arı kelebek örümcek yılan ahtapot deve gergedan leopar panda kanguru fok martı serçe güvercin leylek flamingo'.split(' '),
+ 'Meyve-Sebze':'elma armut muz çilek kiraz karpuz kavun üzüm portakal mandalina limon şeftali kayısı erik nar incir ananas avokado domates salatalık biber patlıcan havuç patates soğan sarımsak ıspanak marul lahana brokoli kabak bezelye fasulye mısır turp pırasa kereviz enginar böğürtlen ahududu'.split(' '),
+ 'Eşya':'masa sandalye kalem defter kitap makas bardak tabak çatal kaşık bıçak tencere saat gözlük şemsiye anahtar telefon bilgisayar televizyon buzdolabı çanta cüzdan ayna yastık battaniye lamba perde halı dolap merdiven çekiç tornavida süpürge fırça kumanda kulaklık çaydanlık termos sepet kova'.split(' '),
+ 'Meslek':'doktor öğretmen mühendis avukat polis itfaiyeci aşçı pilot hemşire berber terzi marangoz çiftçi şoför garson kasap fırıncı eczacı mimar ressam şarkıcı oyuncu gazeteci yazar hakim asker bahçıvan elektrikçi tesisatçı veteriner muhasebeci kaptan balıkçı postacı'.split(' '),
+ 'Doğa':'dağ deniz nehir göl orman çöl ada vadi şelale yağmur kar rüzgar bulut güneş yıldız gökkuşağı şimşek fırtına toprak kaya kum çiçek ağaç yaprak okyanus volkan mağara buzul çayır tepe gökyüzü sis dolu'.split(' '),
+ 'Yiyecek':'ekmek peynir zeytin bal reçel yumurta süt yoğurt ayran çorba pilav makarna köfte kebap lahmacun pide börek baklava lokum simit mantı dolma sarma kumpir döner helva aşure kurabiye pasta dondurma çikolata salata menemen gözleme tost'.split(' '),
+ 'Spor-Oyun':'futbol basketbol voleybol tenis yüzme koşu güreş boks okçuluk eskrim satranç kayak bisiklet golf hentbol jimnastik halter kürek sörf dalış tavla okey dama judo karate'.split(' ')};
+const ALLW=[...new Set(Object.values(WCAT).flat())];const ALLWU=new Set(ALLW.map(TRU));
+const W5=[...new Set(('kalem kitap araba deniz güneş bulut çiçek elmas kavun armut limon zebra aslan tavuk horoz ördek maske sabun havlu kapak bıçak kaşık çatal tabak kazak ceket çorap şapka kemer yüzük bilet şehir köprü sokak bahçe duvar yatak dolap lamba perde kilim radyo gitar davul zurna keman roman masal resim kumaş iplik düğme banka kredi vergi silgi kağıt posta kargo bavul valiz çadır orman nehir ırmak çayır dalga liman vapur kayık motor tekne roket dünya buhar duman kömür demir bakır altın gümüş hayat sevgi huzur barış savaş zafer kader komşu teyze bebek çocuk insan kadın erkek beyin burun kulak dudak bacak göğüs kemik kafes çeşme havuz bahar nisan mayıs şubat eylül kasım pazar sabah öğlen akşam çorba pilav köfte kebap börek simit mantı dolma sarma döner helva aşure pasta ekmek ayran şeker biber kabak havuç marul bamya incir kiraz çilek ceviz badem tilki kirpi geyik koyun katır panda yunus balık karga serçe martı köpek böcek sinek polis asker hakim pilot kasap terzi fidan tohum yaprak dikiş ölçek kural cevap soru ödev sınav okul sınıf'.split(' ')).filter(w=>[...w].length===5).map(TRU))];
+const TRKB=['ERTYUIOPĞÜ','ASDFGHJKLŞİ','ZCVBNMÖÇ'];
+const SYN=[['siyah','kara'],['beyaz','ak'],['kırmızı','al'],['cevap','yanıt'],['okul','mektep'],['öğrenci','talebe'],['hediye','armağan'],['yıl','sene'],['ad','isim'],['rüya','düş'],['şehir','kent'],['doktor','hekim'],['kalp','yürek'],['misafir','konuk'],['imkan','olanak'],['fakir','yoksul'],['yaşlı','ihtiyar'],['cesur','yürekli'],['sınav','imtihan'],['örnek','misal'],['amaç','hedef'],['neden','sebep'],['kural','kaide'],['deprem','zelzele'],['savaş','harp'],['barış','sulh'],['anlam','mana'],['düşünce','fikir'],['özgür','hür'],['ilaç','deva'],['sonuç','netice'],['şart','koşul'],['uzak','ırak'],['doğa','tabiat'],['akıl','us'],['bilgi','malumat'],['kelime','sözcük'],['cümle','tümce'],['değer','kıymet'],['güç','kuvvet'],['ihtiyaç','gereksinim'],['problem','sorun'],['birey','fert'],['toplum','cemiyet'],['yöntem','metot'],['ekonomi','iktisat'],['istek','arzu'],['mutlu','mesut'],['hızlı','süratli'],['zengin','varlıklı'],['millet','ulus'],['tarih','zaman'],['vatan','yurt'],['yemek','aş'],['eser','yapıt'],['hikaye','öykü']];
+const ANT=[['büyük','küçük'],['uzun','kısa'],['sıcak','soğuk'],['açık','kapalı'],['iyi','kötü'],['güzel','çirkin'],['zengin','fakir'],['yaşlı','genç'],['hızlı','yavaş'],['kolay','zor'],['ağır','hafif'],['ince','kalın'],['dolu','boş'],['yeni','eski'],['temiz','kirli'],['doğru','yanlış'],['erken','geç'],['gece','gündüz'],['aşağı','yukarı'],['ileri','geri'],['sağ','sol'],['var','yok'],['alt','üst'],['iç','dış'],['ön','arka'],['gelmek','gitmek'],['almak','vermek'],['açmak','kapamak'],['gülmek','ağlamak'],['kazanmak','kaybetmek'],['uyumak','uyanmak'],['ıslak','kuru'],['tatlı','acı'],['cesur','korkak'],['çalışkan','tembel'],['mutlu','mutsuz'],['yüksek','alçak'],['geniş','dar'],['derin','sığ'],['uzak','yakın'],['siyah','beyaz'],['ucuz','pahalı'],['sert','yumuşak'],['kalabalık','tenha'],['savaş','barış'],['giriş','çıkış'],['ilk','son'],['kuzey','güney'],['doğu','batı'],['artı','eksi'],['sevinç','üzüntü'],['başlamak','bitirmek'],['batmak','çıkmak'],['dost','düşman'],['ölü','diri']];
+const DEF=[['Arıların yaptığı tatlı besin','bal'],['Gökyüzünden düşen donmuş su taneleri, beyaz örtü','kar'],['Zamanı gösteren alet','saat'],['Yağmurdan korunmak için açılan araç','şemsiye'],['Kitapların bulunduğu ve ödünç alınabildiği yer','kütüphane'],['Hastaları muayene edip tedavi eden kişi','doktor'],['Ekmek yapıp satan kişi','fırıncı'],['Uzaktaki gök cisimlerini gözlemlemeye yarayan alet','teleskop'],['Çok küçük canlıları görmeyi sağlayan laboratuvar aleti','mikroskop'],['İğnesi kuzeyi göstererek yön bulmaya yarayan alet','pusula'],['Dünya’nın tek doğal uydusu','ay'],['Çölde yaşayan, hörgüçlü hayvan','deve'],['Boynu en uzun olan hayvan','zürafa'],['Ağaçların yoğun olduğu geniş alan','orman'],['Dört tarafı sularla çevrili kara parçası','ada'],['Üç tarafı sularla çevrili kara parçası','yarımada'],['Yüksekten dökülen akarsu','şelale'],['Ağzından lav püskürten dağ','yanardağ'],['Sıcaklığı ölçen alet','termometre'],['Mektup ve kargoları dağıtan kişi','postacı'],['Yangınları söndüren kişi','itfaiyeci'],['Elbise dikip onaran kişi','terzi'],['Binaları tasarlayan kişi','mimar'],['Uçağı kullanan kişi','pilot'],['Yağmurdan sonra gökyüzünde görülen renkli kuşak','gökkuşağı'],['Kış uykusuna yatan, bal seven iri hayvan','ayı'],['Kabuğu sırtında olan, çok yavaş yürüyen sürüngen','kaplumbağa'],['Gece avlanan, başını çok çevirebilen kuş','baykuş'],['Sütü için beslenen, “mö” diye ses çıkaran hayvan','inek'],['Ahşap işleri yapan usta','marangoz'],['Eczanede ilaç veren kişi','eczacı'],['Şiddetli rüzgar ve yağmurla gelen hava olayı','fırtına'],['Yazı yazmaya yarayan araç','kalem'],['Çay demlemeye yarayan kap','çaydanlık'],['Kapıyı anahtarla kapatan düzenek','kilit'],['Yufkayla yapılan, şerbetli Türk tatlısı','baklava'],['Sabah yenen ilk öğün','kahvaltı'],['Gece gökyüzünde parlayan gök cisimleri','yıldız'],['Dünya’yı ısıtan ve aydınlatan yıldız','güneş'],['Hayvanları tedavi eden doktor','veteriner'],['Deniz kıyısındaki kumluk alan','kumsal'],['Gemilerin yanaştığı korunaklı yer','liman'],['Yüzü görmek için bakılan cam','ayna'],['Saçı kesip düzelten kişi','berber'],['Kağıdı kesmeye yarayan iki ağızlı araç','makas']];
+const CTRY=[['Almanya','Berlin','DE','Avrupa',0],['Fransa','Paris','FR','Avrupa',0],['İtalya','Roma','IT','Avrupa',0],['İspanya','Madrid','ES','Avrupa',0],['Birleşik Krallık','Londra','GB','Avrupa',0],['Rusya','Moskova','RU','Avrupa',0],['Japonya','Tokyo','JP','Asya',0],['Çin','Pekin','CN','Asya',0],['ABD','Washington','US','Kuzey Amerika',0],['Kanada','Ottawa','CA','Kuzey Amerika',0],['Brezilya','Brasilia','BR','Güney Amerika',0],['Arjantin','Buenos Aires','AR','Güney Amerika',0],['Mısır','Kahire','EG','Afrika',0],['Yunanistan','Atina','GR','Avrupa',0],['Azerbaycan','Bakü','AZ','Asya',0],['Güney Kore','Seul','KR','Asya',0],['Hindistan','Yeni Delhi','IN','Asya',0],['Avustralya','Kanberra','AU','Okyanusya',0],['Meksika','Meksiko','MX','Kuzey Amerika',0],['Portekiz','Lizbon','PT','Avrupa',0],['Hollanda','Amsterdam','NL','Avrupa',0],['Belçika','Brüksel','BE','Avrupa',0],['İsveç','Stockholm','SE','Avrupa',0],['Norveç','Oslo','NO','Avrupa',0],['Ukrayna','Kiev','UA','Avrupa',0],['İran','Tahran','IR','Asya',0],['Irak','Bağdat','IQ','Asya',0],['Suudi Arabistan','Riyad','SA','Asya',0],['Gürcistan','Tiflis','GE','Asya',0],['Bulgaristan','Sofya','BG','Avrupa',0],
+ ['Avusturya','Viyana','AT','Avrupa',1],['İsviçre','Bern','CH','Avrupa',1],['Polonya','Varşova','PL','Avrupa',1],['Macaristan','Budapeşte','HU','Avrupa',1],['Çekya','Prag','CZ','Avrupa',1],['Romanya','Bükreş','RO','Avrupa',1],['Finlandiya','Helsinki','FI','Avrupa',1],['Danimarka','Kopenhag','DK','Avrupa',1],['İrlanda','Dublin','IE','Avrupa',1],['Sırbistan','Belgrad','RS','Avrupa',1],['Hırvatistan','Zagreb','HR','Avrupa',1],['Kazakistan','Astana','KZ','Asya',1],['Özbekistan','Taşkent','UZ','Asya',1],['Pakistan','İslamabad','PK','Asya',1],['Endonezya','Cakarta','ID','Asya',1],['Tayland','Bangkok','TH','Asya',1],['Vietnam','Hanoi','VN','Asya',1],['Fas','Rabat','MA','Afrika',1],['Cezayir','Cezayir','DZ','Afrika',1],['Tunus','Tunus','TN','Afrika',1],['Güney Afrika','Pretoria','ZA','Afrika',1],['Nijerya','Abuja','NG','Afrika',1],['Kenya','Nairobi','KE','Afrika',1],['Şili','Santiago','CL','Güney Amerika',1],['Kolombiya','Bogota','CO','Güney Amerika',1],['Peru','Lima','PE','Güney Amerika',1],['Yeni Zelanda','Wellington','NZ','Okyanusya',1],['Suriye','Şam','SY','Asya',1],['Ürdün','Amman','JO','Asya',1],['Lübnan','Beyrut','LB','Asya',1],['Katar','Doha','QA','Asya',1],
+ ['Moğolistan','Ulan Batur','MN','Asya',2],['Kırgızistan','Bişkek','KG','Asya',2],['Türkmenistan','Aşkabat','TM','Asya',2],['Tacikistan','Duşanbe','TJ','Asya',2],['Afganistan','Kabil','AF','Asya',2],['Nepal','Katmandu','NP','Asya',2],['Bangladeş','Dakka','BD','Asya',2],['Filipinler','Manila','PH','Asya',2],['Malezya','Kuala Lumpur','MY','Asya',2],['Etiyopya','Addis Ababa','ET','Afrika',2],['Gana','Akra','GH','Afrika',2],['Senegal','Dakar','SN','Afrika',2],['Tanzanya','Dodoma','TZ','Afrika',2],['Uganda','Kampala','UG','Afrika',2],['Angola','Luanda','AO','Afrika',2],['Venezuela','Karakas','VE','Güney Amerika',2],['Ekvador','Kito','EC','Güney Amerika',2],['Paraguay','Asunción','PY','Güney Amerika',2],['Uruguay','Montevideo','UY','Güney Amerika',2],['Küba','Havana','CU','Kuzey Amerika',2],['İzlanda','Reykjavik','IS','Avrupa',2],['Estonya','Tallinn','EE','Avrupa',2],['Letonya','Riga','LV','Avrupa',2],['Litvanya','Vilnius','LT','Avrupa',2],['Slovenya','Ljubljana','SI','Avrupa',2],['Slovakya','Bratislava','SK','Avrupa',2],['Arnavutluk','Tiran','AL','Avrupa',2],['Kuzey Makedonya','Üsküp','MK','Avrupa',2],['Bosna-Hersek','Saraybosna','BA','Avrupa',2],['Karadağ','Podgorica','ME','Avrupa',2],['Moldova','Kişinev','MD','Avrupa',2],['Belarus','Minsk','BY','Avrupa',2],['Ermenistan','Erivan','AM','Asya',2],['Libya','Trablus','LY','Afrika',2],['Sudan','Hartum','SD','Afrika',2],['Umman','Maskat','OM','Asya',2],['Kuveyt','Kuveyt','KW','Asya',2],['Jamaika','Kingston','JM','Kuzey Amerika',2],['Panama','Panama','PA','Kuzey Amerika',2],['Kosta Rika','San José','CR','Kuzey Amerika',2],['Papua Yeni Gine','Port Moresby','PG','Okyanusya',2],['Fiji','Suva','FJ','Okyanusya',2]];
+const flag=iso=>String.fromCodePoint(...[...iso].map(c=>127397+c.charCodeAt(0)));
+const ILLER='Adana Adıyaman Afyonkarahisar Ağrı Amasya Ankara Antalya Artvin Aydın Balıkesir Bilecik Bingöl Bitlis Bolu Burdur Bursa Çanakkale Çankırı Çorum Denizli Diyarbakır Edirne Elazığ Erzincan Erzurum Eskişehir Gaziantep Giresun Gümüşhane Hakkari Hatay Isparta Mersin İstanbul İzmir Kars Kastamonu Kayseri Kırklareli Kırşehir Kocaeli Konya Kütahya Malatya Manisa Kahramanmaraş Mardin Muğla Muş Nevşehir Niğde Ordu Rize Sakarya Samsun Siirt Sinop Sivas Tekirdağ Tokat Trabzon Tunceli Şanlıurfa Uşak Van Yozgat Zonguldak Aksaray Bayburt Karaman Kırıkkale Batman Şırnak Bartın Ardahan Iğdır Yalova Karabük Kilis Osmaniye Düzce'.split(' ');
+const BOLGE={'Marmara':'Edirne Kırklareli Tekirdağ İstanbul Kocaeli Sakarya Yalova Bursa Bilecik Balıkesir Çanakkale','Ege':'İzmir Manisa Aydın Denizli Muğla Uşak Kütahya Afyonkarahisar','Akdeniz':'Antalya Isparta Burdur Mersin Adana Hatay Osmaniye Kahramanmaraş','İç Anadolu':'Ankara Konya Eskişehir Kayseri Sivas Yozgat Kırşehir Kırıkkale Nevşehir Niğde Aksaray Karaman Çankırı','Karadeniz':'Bolu Düzce Zonguldak Bartın Karabük Kastamonu Sinop Samsun Amasya Tokat Çorum Ordu Giresun Trabzon Rize Artvin Gümüşhane Bayburt','Doğu Anadolu':'Erzurum Erzincan Kars Ardahan Iğdır Ağrı Van Muş Bitlis Bingöl Tunceli Elazığ Malatya Hakkari','Güneydoğu Anadolu':'Gaziantep Şanlıurfa Diyarbakır Mardin Batman Siirt Şırnak Kilis Adıyaman'};
+const GK=[['Türkiye Cumhuriyeti hangi yıl kuruldu?','1923','1920','1919','1938',0],['Dünyanın en büyük okyanusu hangisidir?','Pasifik (Büyük) Okyanusu','Atlas Okyanusu','Hint Okyanusu','Arktik Okyanusu',0],['Gökkuşağında kaç renk vardır?','7','5','6','8',0],['İstanbul’u fetheden padişah kimdir?','Fatih Sultan Mehmet','Yavuz Sultan Selim','Kanuni Sultan Süleyman','II. Murat',0],['Dünyanın en yüksek dağı hangisidir?','Everest','K2','Ağrı Dağı','Kilimanjaro',0],['Türkiye’nin en yüksek dağı hangisidir?','Ağrı Dağı','Erciyes Dağı','Uludağ','Palandöken',0],['Futbolda bir takım sahaya kaç oyuncuyla çıkar?','11','10','9','12',0],['İstiklal Marşı’nın şairi kimdir?','Mehmet Akif Ersoy','Namık Kemal','Ziya Gökalp','Yahya Kemal',0],['Güneş Sistemi’nin en büyük gezegeni hangisidir?','Jüpiter','Satürn','Dünya','Neptün',0],['“Kızıl Gezegen” olarak bilinen gezegen hangisidir?','Mars','Venüs','Merkür','Jüpiter',0],['Mona Lisa tablosunu kim yapmıştır?','Leonardo da Vinci','Picasso','Van Gogh','Michelangelo',0],['Bir üçgenin iç açıları toplamı kaç derecedir?','180','90','270','360',0],['Türkiye’de kaç il vardır?','81','80','76','82',0],['Türkiye’nin en kalabalık şehri hangisidir?','İstanbul','Ankara','İzmir','Bursa',0],
+ ['Türkiye’nin en büyük gölü hangisidir?','Van Gölü','Tuz Gölü','Beyşehir Gölü','Eğirdir Gölü',1],['Kaynağı ve döküldüğü yer Türkiye’de olan en uzun nehir hangisidir?','Kızılırmak','Fırat','Sakarya','Yeşilırmak',1],['TBMM hangi tarihte açıldı?','23 Nisan 1920','29 Ekim 1923','19 Mayıs 1919','30 Ağustos 1922',1],['Sakarya Meydan Muharebesi hangi yıl yapıldı?','1921','1919','1922','1915',1],['Belirgin halkalarıyla bilinen gezegen hangisidir?','Satürn','Mars','Merkür','Venüs',1],['İnsan vücudunun en büyük organı hangisidir?','Deri','Karaciğer','Akciğer','Beyin',1],['Atatürk hangi şehirde doğdu?','Selanik','İstanbul','Manastır','Ankara',1],['Nobel Edebiyat Ödülü’nü kazanan Türk yazar kimdir?','Orhan Pamuk','Yaşar Kemal','Nazım Hikmet','Elif Şafak',1],['Dünyanın en büyük sıcak çölü hangisidir?','Sahra','Gobi','Kalahari','Atacama',1],['Yaz Olimpiyat Oyunları kaç yılda bir düzenlenir?','4','2','3','5',1],['Çanakkale Kara Savaşları hangi yıl yapıldı?','1915','1912','1918','1922',1],['Nutuk’u kim yazmıştır?','Mustafa Kemal Atatürk','İsmet İnönü','Mehmet Akif Ersoy','Ziya Gökalp',1],['Standart bir piyanoda kaç tuş vardır?','88','76','92','64',1],['Kapadokya’daki Göreme hangi ildedir?','Nevşehir','Kayseri','Niğde','Aksaray',1],['Efes Antik Kenti hangi ildedir?','İzmir','Aydın','Muğla','Denizli',1],['Güneş’e en yakın gezegen hangisidir?','Merkür','Venüs','Mars','Dünya',1],
+ ['Dünyanın en derin okyanus çukuru hangisidir?','Mariana Çukuru','Porto Riko Çukuru','Japon Çukuru','Tonga Çukuru',2],['Osmanlı Devleti’nin kurucusu kimdir?','Osman Bey','Orhan Bey','Ertuğrul Gazi','I. Murat',2],['Malazgirt Meydan Muharebesi hangi yıl yapıldı?','1071','1176','1243','1453',2],['Yetişkin bir insanın iskeletinde kaç kemik vardır?','206','180','230','250',2],['Kutup Yıldızı hangi takımyıldızındadır?','Küçük Ayı','Büyük Ayı','Orion','Kraliçe',2],['Rönesans hangi ülkede başlamıştır?','İtalya','Fransa','İngiltere','Almanya',2],['“Suç ve Ceza” romanının yazarı kimdir?','Dostoyevski','Tolstoy','Çehov','Victor Hugo',2],['Sümela Manastırı hangi ildedir?','Trabzon','Rize','Giresun','Artvin',2],['Nemrut Dağı’ndaki dev heykeller hangi ildedir?','Adıyaman','Malatya','Şanlıurfa','Diyarbakır',2],['Dünyanın ilk kadın savaş pilotu kabul edilen Türk kimdir?','Sabiha Gökçen','Halide Edip Adıvar','Afet İnan','Bedriye Tahir',2],['Kurtuluş Savaşı’nı bitiren Mudanya Ateşkesi hangi yıl imzalandı?','1922','1920','1923','1921',2],['Lale Devri hangi padişah döneminde yaşanmıştır?','III. Ahmet','II. Mahmut','IV. Murat','III. Selim',2],['Hangi ülke hem Avrupa’da hem Asya’da toprağı olan bir ülke değildir?','İtalya','Türkiye','Rusya','Kazakistan',2]];
+const SCI=[['Suyun kimyasal formülü nedir?','H₂O','CO₂','O₂','H₂O₂',0],['Bitkiler fotosentezde havadan hangi gazı alır?','Karbondioksit','Oksijen','Azot','Hidrojen',0],['Fotosentez sonucunda açığa çıkan gaz hangisidir?','Oksijen','Karbondioksit','Azot','Helyum',0],['İnsan kalbinde kaç oda (bölme) vardır?','4','2','3','6',0],['Suyun donma noktası kaç derecedir?','0 °C','−10 °C','4 °C','100 °C',0],['Bir mıknatısın kaç kutbu vardır?','2','1','3','4',0],['Doğadaki en sert madde hangisidir?','Elmas','Demir','Granit','Kuvars',0],['Ay’a ilk ayak basan insan kimdir?','Neil Armstrong','Yuri Gagarin','Buzz Aldrin','Michael Collins',0],['Güneş Sistemi’nde kaç gezegen vardır?','8','9','7','10',0],['Deniz seviyesinde su kaç derecede kaynar?','100 °C','90 °C','80 °C','120 °C',0],['Bir yunus hangi canlı grubundadır?','Memeli','Balık','Sürüngen','Kuş',0],
+ ['Elektrik akımının birimi nedir?','Amper','Volt','Ohm','Watt',1],['Kuvvetin birimi nedir?','Newton','Joule','Pascal','Watt',1],['Elektriksel gerilimin birimi nedir?','Volt','Amper','Ohm','Kelvin',1],['Atom çekirdeğindeki pozitif yüklü parçacık hangisidir?','Proton','Elektron','Nötron','Foton',1],['Negatif yüklü atom parçacığı hangisidir?','Elektron','Proton','Nötron','Pozitron',1],['Penisilini kim keşfetmiştir?','Alexander Fleming','Louis Pasteur','Marie Curie','Robert Koch',1],['Görelilik kuramını kim ortaya koymuştur?','Albert Einstein','Isaac Newton','Galileo Galilei','Nikola Tesla',1],['Kırmızı kan hücrelerine rengini veren protein nedir?','Hemoglobin','İnsülin','Keratin','Kolajen',1],['Bitki hücresinde fotosentezi yapan organel hangisidir?','Kloroplast','Mitokondri','Ribozom','Çekirdek',1],['Sıvının gaza dönüşmesine ne denir?','Buharlaşma','Yoğuşma','Erime','Donma',1],['Gazın sıvıya dönüşmesine ne denir?','Yoğuşma','Buharlaşma','Süblimleşme','Erime',1],['Işığın prizmada renklere ayrılması hangi olaydır?','Kırılma','Yansıma','Soğurulma','Kutuplanma',1],
+ ['Hücrenin “enerji santrali” olarak bilinen organel hangisidir?','Mitokondri','Kloroplast','Golgi','Lizozom',2],['İnsan vücudundaki en uzun kemik hangisidir?','Uyluk kemiği (femur)','Kaval kemiği','Kol kemiği','Omurga',2],['İnsanda kaç çift kromozom bulunur?','23','22','24','46',2],['Katının doğrudan gaza dönüşmesine ne denir?','Süblimleşme','Buharlaşma','Kırağılaşma','Yoğuşma',2],['pH değeri 7 olan bir çözelti nasıldır?','Nötr','Asidik','Bazik','Tuzlu',2],['Enerjinin SI birimi nedir?','Joule','Watt','Newton','Kalori',2],['Atom çekirdeğindeki yüksüz parçacık hangisidir?','Nötron','Proton','Elektron','Kuark',2],['Işık boşlukta saniyede yaklaşık kaç km yol alır?','300.000','30.000','3.000.000','150.000',2],['Periyodik tabloyu düzenleyen bilim insanı kimdir?','Mendeleyev','Lavoisier','Bohr','Dalton',2],['Yer kabuğunda en çok bulunan element hangisidir?','Oksijen','Silisyum','Demir','Alüminyum',2]];
+const ELM=[['Hidrojen','H',0],['Helyum','He',0],['Karbon','C',0],['Azot','N',0],['Oksijen','O',0],['Sodyum','Na',0],['Demir','Fe',0],['Altın','Au',0],['Gümüş','Ag',0],['Bakır','Cu',0],['Kalsiyum','Ca',0],['Klor','Cl',0],['Potasyum','K',0],['Magnezyum','Mg',0],['Alüminyum','Al',0],
+ ['Lityum','Li',1],['Neon','Ne',1],['Flor','F',1],['Fosfor','P',1],['Kükürt','S',1],['Silisyum','Si',1],['Argon','Ar',1],['Çinko','Zn',1],['Kurşun','Pb',1],['Cıva','Hg',1],['Kalay','Sn',1],['İyot','I',1],['Uranyum','U',1],['Nikel','Ni',1],['Platin','Pt',1],['Krom','Cr',1],['Bor','B',1],
+ ['Berilyum','Be',2],['Titanyum','Ti',2],['Mangan','Mn',2],['Kobalt','Co',2],['Arsenik','As',2],['Brom','Br',2],['Kripton','Kr',2],['Ksenon','Xe',2],['Radon','Rn',2],['Tungsten','W',2],['Baryum','Ba',2],['Sezyum','Cs',2],['Stronsiyum','Sr',2],['Selenyum','Se',2],['Galyum','Ga',2],['Germanyum','Ge',2],['Antimon','Sb',2],['Bizmut','Bi',2],['Plütonyum','Pu',2],['Radyum','Ra',2],['Vanadyum','V',2],['Zirkonyum','Zr',2],['Kadmiyum','Cd',2],['Rubidyum','Rb',2],['Skandiyum','Sc',2],['Molibden','Mo',2],['Paladyum','Pd',2],['Osmiyum','Os',2],['İridyum','Ir',2],['Toryum','Th',2]];
+const tierPick=(arr,lv,ti)=>{const own=arr.filter(x=>x[ti]===lv),low=arr.filter(x=>x[ti]<=lv);return Math.random()<.7&&own.length?pick(own):pick(low)};
+const noRep=()=>{const used=new Set();return(f)=>{let x,g=0;do{x=f()}while(used.has(JSON.stringify(x))&&g++<50);used.add(JSON.stringify(x));return x}};
+
+/* ================= KELİME ================= */
+const kbBuild=(box,onKey,extra)=>{box.innerHTML='';const map={};TRKB.forEach((r,ri)=>{const row=h('div');if(ri===2&&extra)row.append(extra[0]);[...r].forEach(ch=>{const b=h('button',null,ch);b.onclick=()=>onKey(ch);map[ch]=b;row.append(b)});if(ri===2&&extra)row.append(extra[1]);box.append(row)});return map};
+
+reg('Kelime','🪢','Adam Asmaca','Harf tahmin ederek gizli kelimeyi bul. Kolay/Orta: kategori ipucu verilir.',api=>{
+ const L0=[8,6,5][api.lv];let word,cat,gs,lives,wins=0,lock;const q=api.box('qq'),hEl=h('small'),wEl=h('div',{class:'word',style:'font-size:28px;letter-spacing:3px'}),lv=h('div',{style:'font-size:22px'});q.append(hEl,wEl,lv);const kb=api.box('kb');let km;
+ const pw=()=>{for(;;){const c=pick(Object.keys(WCAT)),w=pick(WCAT[c]),n=[...w].length;if(api.lv===0&&n>6)continue;if(api.lv===1&&(n<5||n>8))continue;if(api.lv===2&&n<7)continue;return[c,TRU(w)]}};
+ const next=()=>{[cat,word]=pw();gs=new Set();lives=L0;lock=false;km=kbBuild(kb,guess);draw()};
+ const draw=()=>{wEl.textContent=[...word].map(c=>gs.has(c)?c:'_').join(' ');hEl.innerHTML=api.lv<2?`Kategori: <b>${cat}</b>`:`${[...word].length} harfli kelime`;lv.textContent='❤️'.repeat(lives)+'🖤'.repeat(L0-lives);api.info('Bilinen: '+wins)};
+ const guess=ch=>{if(lock||gs.has(ch))return;gs.add(ch);const b=km[ch];if(word.includes(ch))b.className='g';else{b.className='x';lives--}draw();
+  if([...word].every(c=>gs.has(c))){lock=true;wins++;api.add(([...word].length*10+lives*10)*(api.lv+1));api.toast('✔ '+word);api.after(next,1100)}else if(lives<=0){lock=true;wEl.textContent=[...word].join(' ');wEl.style.color='#f87171';api.after(()=>api.end(`Kelime: ${word} • ${wins} kelime bildin`),1400)}};
+ api.onKey=k=>{const c=TRU(k);if(km[c])guess(c)};next();
+});
+
+reg('Kelime','🔤','Kelime Karıştır','Harfleri doğru sıraya dizerek karışık kelimeyi bul. Süre sınırlı, 3 can.',api=>{
+ const[lo,hi,T]=[[3,5,30],[6,7,40],[8,12,55]][api.lv];let word,cat,sc,used,ans,lives=3,timer,wins=0,lock=true;
+ const bar=api.box('tbar');bar.style.cssText='width:100%;max-width:520px';bar.append(h('i'));const q=api.box('qq'),ce=h('small'),ae=h('div',{class:'word',style:'font-size:28px'});q.append(ce,ae);const sl=api.box('slots');
+ api.toolbar([['⌫ Sil',()=>{if(lock||!ans.length)return;used[ans.pop()]=false;draw()}],['↺ Temizle',()=>{if(lock)return;ans=[];used=used.map(()=>false);draw()}],['⏭ Geç (−1 can)',()=>{if(!lock)fail()}]]);
+ const next=()=>{for(;;){cat=pick(Object.keys(WCAT));word=TRU(pick(WCAT[cat]));const n=[...word].length;if(n>=lo&&n<=hi)break}do{sc=shuf([...word])}while(sc.join('')===word);used=sc.map(()=>false);ans=[];timer=T;lock=false;draw()};
+ const draw=()=>{ce.textContent=`${api.lv<2?cat+' • ':''}${sc.length} harf`;ae.textContent=ans.map(i=>sc[i]).join('')+'·'.repeat(sc.length-ans.length);sl.innerHTML='';sc.forEach((ch,i)=>{const b=h('button',{class:used[i]?'u':''},ch);b.onclick=()=>{if(lock||used[i])return;used[i]=true;ans.push(i);draw();if(ans.length===sc.length)check()};sl.append(b)});api.info('❤️'.repeat(lives)+' • ✔'+wins)};
+ const check=()=>{const s=ans.map(i=>sc[i]).join('');if(s===word||ALLWU.has(s)){lock=true;wins++;api.add((sc.length*10+Math.ceil(timer))*(api.lv+1));ae.style.color='#4ade80';api.after(()=>{ae.style.color='';next()},800)}else{ae.style.color='#f87171';api.after(()=>{ae.style.color='';ans=[];used=used.map(()=>false);draw()},500)}};
+ const fail=()=>{lock=true;lives--;ae.textContent=word;ae.style.color='#fbbf24';api.info('❤️'.repeat(lives)+' • ✔'+wins);api.after(()=>{ae.style.color='';if(lives<=0)return api.end(`${wins} kelime buldun`);next()},1300)};
+ api.loop(dt=>{if(lock)return;timer-=dt;bar.firstChild.style.width=Math.max(0,timer/T*100)+'%';if(timer<=0)fail()});next();
+});
+
+reg('Kelime','🟩','Kelime Tahmin','5 harfli gizli kelimeyi bul. 🟩 harf doğru yerde, 🟨 kelimede var ama başka yerde. 3 kelime.',api=>{
+ const max=[8,6,5][api.lv];let secret,rows,cur,round=0,lock;const wd=api.box('wd'),kb=api.box('kb');let km;const sp=api.lv===0?api.note(''):null;
+ const ev=(g,s)=>{const r=Array(5).fill('x'),sa=[...s],ga=[...g];ga.forEach((c,i)=>{if(c===sa[i]){r[i]='g';sa[i]=null}});ga.forEach((c,i)=>{if(r[i]!=='g'){const j=sa.indexOf(c);if(j>=0){r[i]='y';sa[j]=null}}});return r};
+ const next=()=>{if(round>=3)return api.end('3 kelimeyi tamamladın');round++;secret=pick(W5);rows=[];cur='';lock=false;km=kbBuild(kb,key,[(()=>{const b=h('button',{class:'wide'},'⌫');b.onclick=()=>key('⌫');return b})(),(()=>{const b=h('button',{class:'wide'},'GİR');b.onclick=()=>key('↵');return b})()]);draw()};
+ const draw=()=>{wd.innerHTML='';for(let r=0;r<max;r++){const row=h('div');const g=r<rows.length?rows[r]:r===rows.length?cur:'';const e=r<rows.length?ev(rows[r],secret):null;for(let i=0;i<5;i++)row.append(h('span',{class:e?e[i]:''},[...g][i]||''));wd.append(row)}api.info(`Kelime ${round}/3 • Deneme ${rows.length}/${max}`)};
+ const key=k=>{if(lock)return;if(k==='⌫'){cur=[...cur].slice(0,-1).join('');return draw()}if(k==='↵'){if([...cur].length<5)return api.toast('5 harf yaz');rows.push(cur);const e=ev(cur,secret);[...cur].forEach((c,i)=>{const b=km[c];if(!b)return;if(e[i]==='g')b.className='g';else if(e[i]==='y'&&b.className!=='g')b.className='y';else if(!b.className)b.className='x'});cur='';draw();
+   if(rows.at(-1)===secret){lock=true;api.add((max-rows.length+1)*60*(api.lv+1));api.toast('🎉 Bildin: '+secret);api.after(next,1500)}else if(rows.length>=max){lock=true;api.toast('Kelime: '+secret);api.after(next,2000)}return}if([...cur].length<5){cur+=k;draw()}};
+ api.onKey=k=>{if(k==='Enter')return key('↵');if(k==='Backspace')return key('⌫');const c=TRU(k);if(km[c])key(c)};next();
+});
+
+reg('Kelime','🔡','Eksik Harf','Kelimedeki boşluklara gelecek harfleri bul.',api=>{
+ const AL=[...'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ'];
+ quiz(api,{t:[12,14,18],gen:lv=>{let w;do{w=[...TRU(pick(ALLW))]}while(w.length<[4,6,7][lv]);const k=lv+1,pos=shuf(w.map((_,i)=>i)).slice(0,k).sort((a,b)=>a-b),ans=pos.map(i=>w[i]).join(' '),o=new Set([ans]);let g=0;
+  while(o.size<4&&g++<200){const cand=pos.map(i=>Math.random()<.5&&k>1?w[i]:pick(AL)).join(' ');const full=w.map((c,i)=>pos.includes(i)?cand.split(' ')[pos.indexOf(i)]:c).join('');if(!ALLWU.has(full))o.add(cand)}
+  return{q:`<span style="letter-spacing:6px;font-size:34px">${w.map((c,i)=>pos.includes(i)?'<span style="color:#fbbf24">_</span>':c).join('')}</span>`,a:ans,opts:shuf([...o])}}});
+});
+
+reg('Kelime','🔎','Kelime Avı','Tablodaki gizli kelimeleri bul. Kelimenin ilk ve son harfine dokun.',api=>{
+ const n=[8,10,12][api.lv],k=[5,7,9][api.lv],D=[[[0,1],[1,0]],[[0,1],[1,0],[1,1],[-1,1]],[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]]][api.lv];
+ let G,words=[];for(let tries=0;tries<30;tries++){G=Array(n*n).fill('');words=[];for(const w0 of shuf(ALLW)){if(words.length>=k)break;const w=[...TRU(w0)];if(w.length<4||w.length>n)continue;let ok=false;for(let t=0;t<60&&!ok;t++){const[dr,dc]=pick(D),r=R(0,n-1),c=R(0,n-1),er=r+dr*(w.length-1),ec=c+dc*(w.length-1);if(er<0||er>=n||ec<0||ec>=n)continue;if(w.every((ch,i)=>{const x=G[(r+dr*i)*n+c+dc*i];return!x||x===ch})){w.forEach((ch,i)=>G[(r+dr*i)*n+c+dc*i]=ch);ok=true;words.push(w.join(''))}}}if(words.length>=k)break}
+ const AL='ABCÇDEFGĞHIİKLMNOÖPRSŞTUÜVYZ';G=G.map(x=>x||AL[R(0,AL.length-1)]);
+ const fl=api.box('found');const {cells}=api.grid(n,n,'ws');let a=-1,found=new Set();const t0=Date.now();
+ const drawF=()=>{fl.innerHTML='';words.forEach(w=>fl.append(h('span',{class:found.has(w)?'ok':''},w)));api.info(`${found.size}/${words.length}`)};
+ cells.forEach((c,i)=>{c.textContent=G[i];c.onclick=()=>{if(a<0){a=i;c.classList.add('sel');return}const r1=Math.floor(a/n),c1=a%n,r2=Math.floor(i/n),c2=i%n,dr=Math.sign(r2-r1),dc=Math.sign(c2-c1),len=Math.max(Math.abs(r2-r1),Math.abs(c2-c1))+1;cells[a].classList.remove('sel');
+  if(a!==i&&(r1===r2||c1===c2||Math.abs(r2-r1)===Math.abs(c2-c1))){const idx=[...Array(len)].map((_,t)=>(r1+dr*t)*n+c1+dc*t),s=idx.map(j=>G[j]).join(''),rv=[...s].reverse().join('');const w=words.find(x=>!found.has(x)&&(x===s||x===rv));if(w){found.add(w);idx.forEach(j=>cells[j].classList.add('f'));api.add(w.length*10*(api.lv+1));drawF();if(found.size===words.length){api.add(Math.max(0,300*(api.lv+1)-Math.floor((Date.now()-t0)/1000)));api.end('Tüm kelimeleri buldun! 🔎')}}else api.toast('Kelime değil')}a=-1}});
+ drawF();api.note('Örn: ilk harfe dokun, sonra son harfe dokun');
+});
+
+reg('Kelime','🤝','Eş Anlamlı','Verilen kelimenin eş anlamlısını seç.',api=>{
+ quiz(api,{t:[12,10,8],gen:()=>{const p=shuf(pick(SYN)),pool=SYN.flat().filter(x=>!SYN.find(s=>s.includes(p[0])&&s.includes(x)));return{q:`${TRU(p[0])}<small>Eş anlamlısı hangisi?</small>`,a:TRU(p[1]),opts:mcq(p[1],pool).map(TRU)}}});
+});
+
+reg('Kelime','↔️','Zıt Anlamlı','Verilen kelimenin zıt anlamlısını seç.',api=>{
+ quiz(api,{t:[12,10,8],gen:()=>{const p=shuf(pick(ANT)),pool=ANT.flat().filter(x=>!ANT.find(s=>s.includes(p[0])&&s.includes(x)));return{q:`${TRU(p[0])}<small>Zıt anlamlısı hangisi?</small>`,a:TRU(p[1]),opts:mcq(p[1],pool).map(TRU)}}});
+});
+
+reg('Kelime','⌨️','Hızlı Yazma','Ekrandaki kelimeleri olabildiğince hızlı yaz. 60 saniye.',api=>{
+ const[lo,hi]=[[3,5],[5,8],[8,14]][api.lv];let time=60,word,cnt=0,chars=0;const q=api.box('qq'),we=h('div',{style:'font-size:34px;letter-spacing:2px'}),sub=h('small',null,'Yazmaya başla');q.append(we,sub);
+ const inp=h('input',{class:'typ',autocomplete:'off',autocapitalize:'characters',spellcheck:'false',placeholder:'buraya yaz…'});api.el.append(inp);
+ const next=()=>{let w;do{w=TRU(pick(ALLW))}while([...w].length<lo||[...w].length>hi);if(api.lv===2&&Math.random()<.4){let w2;do{w2=TRU(pick(ALLW))}while([...w2].length>7);w=w+' '+w2}word=w;we.textContent=word;inp.value=''};
+ inp.addEventListener('input',()=>{const v=TRU(inp.value.trim());we.style.color=word.startsWith(v)?'':'#f87171';if(v===word){cnt++;chars+=[...word].length;api.add([...word].length*(api.lv+1)*2);sub.textContent=`✔ ${cnt} kelime`;next()}});
+ next();setTimeout(()=>inp.focus(),300);api.every(()=>{time--;api.info(`⏱ ${time} • ✔${cnt}`);if(time<=0){inp.blur();api.end(`${cnt} kelime, dakikada ${chars} harf`)}},1000);
+});
+
+reg('Kelime','🔠','Alfabetik Sırala','Kelimelere alfabe sırasına göre (A’dan Z’ye) dokun. 3 can.',api=>{
+ const k=[3,4,6][api.lv];let lives=3,round=0,okR=0,ws,pos,lock;const msg=api.note(''),box=api.box('wlist');
+ const next=()=>{round++;lock=false;let pool=shuf(ALLW);if(api.lv===2){const f=pick(pool)[0];const same=pool.filter(w=>w[0]===f);if(same.length>=k)pool=same}ws=pool.slice(0,k).map(TRU);const sorted=[...ws].sort((a,b)=>a.localeCompare(b,'tr'));pos=0;box.innerHTML='';msg.textContent='A’dan Z’ye sırayla dokun';
+  ws.forEach(w=>{const b=h('button',{class:'wl',style:'font-size:18px'},w);b.onclick=()=>{if(lock||b.disabled)return;if(w===sorted[pos]){b.classList.add('good');b.disabled=true;pos++;if(pos===k){lock=true;okR++;api.add(k*10*(api.lv+1));api.after(next,600)}}else{lock=true;b.classList.add('bad');lives--;msg.textContent='Doğru sıra: '+sorted.join(' → ');api.info(`Tur ${round} • ❤️${lives}`);api.after(()=>lives<=0?api.end(`${okR} turu doğru bitirdin`):next(),2000)}};box.append(b)});api.info(`Tur ${round} • ❤️${lives}`)};next();
+});
+
+reg('Kelime','📖','Tanım Bil','Tanımı verilen kelimeyi bul.',api=>{
+ const nr=noRep();quiz(api,{t:[15,12,9],rounds:15,lives:1e9,gen:()=>{const d=nr(()=>pick(DEF));return{q:`<span class="md">${d[0]}</span>`,a:TRU(d[1]),opts:mcq(d[1],DEF.map(x=>x[1]).filter(x=>x!==d[1])).map(TRU)}}});
+});
+
+/* ================= BİLGİ ================= */
+reg('Bilgi','🏙️','Başkentler','Ülkelerin başkentlerini bil. 15 soru.',api=>{
+ const nr=noRep();quiz(api,{t:[15,13,11],rounds:15,lives:1e9,gen:lv=>{const c=nr(()=>tierPick(CTRY,lv,4));const pool=CTRY.filter(x=>x[4]>=lv-1&&x[1]!==c[1]).map(x=>x[1]);return{q:`${flag(c[2])} ${c[0]}<small>Başkenti neresidir?</small>`,a:c[1],opts:mcq(c[1],pool)}}});
+});
+reg('Bilgi','🏳️','Bayraklar','Bayrağı gör, ülkeyi bil. 15 soru.',api=>{
+ const nr=noRep();quiz(api,{t:[15,12,10],rounds:15,lives:1e9,gen:lv=>{const c=nr(()=>tierPick(CTRY,lv,4));const pool=CTRY.filter(x=>(lv===2?x[3]===c[3]:x[4]<=lv+1)&&x[0]!==c[0]).map(x=>x[0]);return{q:`<span style="font-size:96px;line-height:1">${flag(c[2])}</span><small>Bu hangi ülkenin bayrağı?</small>`,a:c[0],opts:mcq(c[0],pool.length>=3?pool:CTRY.map(x=>x[0]).filter(x=>x!==c[0]))}}});
+});
+reg('Bilgi','🚗','Plaka Kodları','Türkiye’nin 81 ilinin plaka kodlarını bil. 15 soru.',api=>{
+ const BIG=[1,6,7,16,21,25,26,27,33,34,35,38,41,42,55,61,63,65].map(x=>x-1),nr=noRep();
+ quiz(api,{t:[12,12,10],rounds:15,lives:1e9,gen:lv=>{const i=nr(()=>lv===0?pick(BIG):R(0,80)),p=String(i+1).padStart(2,'0');if(lv<2&&(lv===0||Math.random()<.5))return{q:`<span style="font-size:52px;background:#f8fafc;color:#111;border:3px solid #1d4ed8;border-radius:10px;padding:2px 18px;font-family:monospace">${p}</span><small>Bu plaka hangi ilin?</small>`,a:ILLER[i],opts:mcq(ILLER[i],ILLER.filter((_,j)=>j!==i))};
+  const o=new Set([i+1]);while(o.size<4){const v=i+1+R(-6,6);if(v>=1&&v<=81)o.add(v)}return{q:`${ILLER[i]}<small>Plaka kodu kaçtır?</small>`,a:p,opts:shuf([...o]).map(v=>String(v).padStart(2,'0'))}}});
+});
+reg('Bilgi','🧠','Genel Kültür','Tarih, coğrafya, sanat ve daha fazlası. 15 soru.',api=>{
+ const nr=noRep();quiz(api,{t:[20,18,15],rounds:15,lives:1e9,gen:lv=>{const x=nr(()=>tierPick(GK,lv,5));return{q:`<span class="md">${x[0]}</span>`,a:x[1],opts:shuf(x.slice(1,5)),cls:x.slice(1,5).some(s=>s.length>14)?'one':''}}});
+});
+reg('Bilgi','🗺️','Kıtalar','Ülke hangi kıtada? 15 soru.',api=>{
+ const K=['Avrupa','Asya','Afrika','Kuzey Amerika','Güney Amerika','Okyanusya'],nr=noRep();quiz(api,{t:[12,10,8],rounds:15,lives:1e9,gen:lv=>{const c=nr(()=>tierPick(CTRY,lv,4));return{q:`${c[0]}<small>Hangi kıtada?</small>`,a:c[3],opts:mcq(c[3],K.filter(k=>k!==c[3]))}}});
+});
+reg('Bilgi','🔬','Bilim Soruları','Fizik, kimya ve biyoloji soruları. 15 soru.',api=>{
+ const nr=noRep();quiz(api,{t:[20,18,15],rounds:15,lives:1e9,gen:lv=>{const x=nr(()=>tierPick(SCI,lv,5));return{q:`<span class="md">${x[0]}</span>`,a:x[1],opts:shuf(x.slice(1,5)),cls:x.slice(1,5).some(s=>s.length>14)?'one':''}}});
+});
+reg('Bilgi','🧭','Bölge Bil','Türkiye’nin illeri hangi coğrafi bölgede? 15 soru.',api=>{
+ const B=Object.keys(BOLGE),M={};B.forEach(b=>BOLGE[b].split(' ').forEach(il=>M[il]=b));const nr=noRep();
+ quiz(api,{t:[12,10,8],rounds:15,lives:1e9,gen:lv=>{const il=nr(()=>pick(ILLER)),b=M[il];let pool=B.filter(x=>x!==b);return{q:`${il}<small>Hangi bölgede?</small>`,a:b,opts:lv===0?mcq(b,pool,3):mcq(b,pool,4),cls:lv===0?'one':''}}});
+});
+reg('Bilgi','⚗️','Element Sembolleri','Kimyasal elementlerin sembollerini bil. 15 soru.',api=>{
+ const nr=noRep();quiz(api,{t:[12,10,8],rounds:15,lives:1e9,gen:lv=>{const e=nr(()=>tierPick(ELM,lv,2)),pool=ELM.filter(x=>x!==e&&x[2]<=lv+1);if(Math.random()<.5)return{q:`${e[0]}<small>Sembolü nedir?</small>`,a:e[1],opts:mcq(e[1],pool.map(x=>x[1]))};return{q:`<span class="lg">${e[1]}</span><small>Hangi elementin sembolü?</small>`,a:e[0],opts:mcq(e[0],pool.map(x=>x[0]))}}});
+});
+
+/* ================= KART & ŞANS ================= */
+const SUITS=['♠','♥','♦','♣'],RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const newDeck=()=>shuf(SUITS.flatMap(s=>RANKS.map(r=>({r,s}))));
+const cardEl=(c,back,cls='')=>back?h('div',{class:'card bk '+cls}):h('div',{class:'card '+cls+(c.s==='♥'||c.s==='♦'?' r':'')},h('div',null,c.r),h('small',null,c.s));
+
+reg('Kart & Şans','🂡','Blackjack (21)','21’e en yakın ol ama geçme! 10 el oynanır, 100 fişle başlarsın.',api=>{
+ const payBJ=[2,1.5,1.2][api.lv],h17=api.lv===2;let chips=100,hand=0,deck=newDeck(),P,D,st='idle',bet=10;
+ const val=a=>{let s=0,ac=0;a.forEach(c=>{if(c.r==='A'){ac++;s+=11}else s+=['J','Q','K'].includes(c.r)?10:+c.r});while(s>21&&ac){s-=10;ac--}return s};
+ const soft=a=>{let s=0,ac=0;a.forEach(c=>{if(c.r==='A'){ac++;s+=11}else s+=['J','Q','K'].includes(c.r)?10:+c.r});while(s>21&&ac){s-=10;ac--}return ac>0};
+ const dr=()=>{if(deck.length<10)deck=newDeck();return deck.pop()};
+ api.box('lbl').textContent='Krupiye';const dE=api.box('cards'),dV=api.box('note');api.box('lbl').textContent='Sen';const pE=api.box('cards'),pV=api.box('note');const msg=api.box('big');msg.style.fontSize='20px';
+ const tb=api.toolbar([['🃏 Kart Çek',()=>hit()],['✋ Dur',()=>stand()],['💰 İkiye Katla',()=>dbl()],['▶ Yeni El',()=>deal()]]);
+ const draw=()=>{dE.innerHTML='';D.forEach((c,i)=>dE.append(cardEl(c,st==='play'&&i===1)));pE.innerHTML='';P.forEach(c=>pE.append(cardEl(c)));dV.textContent=st==='play'?'?':val(D);pV.textContent=val(P);
+  tb[0].style.display=tb[1].style.display=st==='play'?'':'none';tb[2].style.display=st==='play'&&P.length===2&&chips>=bet?'':'none';tb[3].style.display=st==='done'?'':'none';api.score(chips);api.info(`El ${hand}/10 • Bahis ${bet}`)};
+ const deal=()=>{if(hand>=10||chips<10)return api.end(chips<10?'Fişlerin bitti':`10 el sonunda ${chips} fiş`);hand++;bet=10;chips-=bet;P=[dr(),dr()];D=[dr(),dr()];st='play';msg.textContent='';draw();if(val(P)===21)stand(true)};
+ const hit=()=>{if(st!=='play')return;P.push(dr());draw();if(val(P)>21)fin('lose','Battın! 21’i geçtin');else if(val(P)===21)stand()};
+ const dbl=()=>{if(st!=='play'||P.length!==2||chips<bet)return;chips-=bet;bet*=2;P.push(dr());if(val(P)>21){draw();fin('lose','Battın!')}else stand()};
+ const stand=(bj)=>{if(st!=='play')return;st='dealer';const pv=val(P),pbj=bj&&P.length===2;while(val(D)<17||(h17&&val(D)===17&&soft(D)))D.push(dr());const dv=val(D),dbj=D.length===2&&dv===21;
+  if(pbj&&!dbj)return fin('bj','BLACKJACK! 🎉');if(dbj&&!pbj)return fin('lose','Krupiye Blackjack yaptı');if(dv>21)return fin('win','Krupiye battı, kazandın!');if(pv>dv)return fin('win','Kazandın!');if(pv<dv)return fin('lose','Krupiye kazandı');fin('push','Berabere (bahis iade)')};
+ const fin=(r,t)=>{st='done';if(r==='win')chips+=bet*2;else if(r==='bj')chips+=bet+Math.round(bet*payBJ);else if(r==='push')chips+=bet;msg.textContent=t;msg.style.color=r==='lose'?'#f87171':r==='push'?'#94a3b8':'#4ade80';draw();if(hand>=10||chips<10)api.after(()=>api.end(chips<10?'Fişlerin bitti':`10 el sonunda ${chips} fiş`),1500)};
+ deal();
+});
+
+reg('Kart & Şans','🔼','Büyük mü Küçük mü','Sıradaki kart açıktakinden büyük mü küçük mü? Seriyi uzat. Kolayda olasılık ipucu var.',api=>{
+ const V=c=>RANKS.indexOf(c.r)===0?14:RANKS.indexOf(c.r)+1;let deck=newDeck(),cur=deck.pop(),lives=[3,2,1][api.lv],streak=0,best=0,lock=false;
+ const area=api.box('cards'),msg=api.note(''),hint=api.note('');const tb=api.toolbar([['⬆ Büyük',()=>g(1)],['⬇ Küçük',()=>g(-1)]]);tb.forEach(b=>b.style.cssText='font-size:20px;padding:16px 26px');
+ const draw=(nx)=>{area.innerHTML='';area.append(cardEl(cur));if(nx)area.append(cardEl(nx));else area.append(cardEl(null,true));api.info(`❤️${lives} • Seri ${streak} • Kalan ${deck.length}`);
+  if(api.lv===0){const v=V(cur),hi=deck.filter(c=>V(c)>v).length,lo=deck.filter(c=>V(c)<v).length,eq=deck.length-hi-lo;hint.textContent=`İpucu: Büyük %${Math.round(hi/deck.length*100)} • Küçük %${Math.round(lo/deck.length*100)} • Eşit %${Math.round(eq/deck.length*100)} (eşit = doğru sayılır)`}};
+ const g=d=>{if(lock)return;if(!deck.length)return api.end(`Deste bitti! En uzun seri: ${best}`);lock=true;const nx=deck.pop(),a=V(cur),b=V(nx);const ok=b===a?api.lv===0:(d>0?b>a:b<a);draw(nx);
+  if(ok){streak++;best=Math.max(best,streak);api.add((10+streak*2)*(api.lv+1));msg.textContent='✔ Doğru!'}else{lives--;streak=0;msg.textContent=b===a?'✖ Eşit çıktı':'✖ Yanlış'}
+  api.after(()=>{cur=nx;lock=false;if(lives<=0)return api.end(`En uzun seri: ${best}`);if(!deck.length)return api.end(`Deste bitti! En uzun seri: ${best}`);draw()},900)};draw();
+});
+
+reg('Kart & Şans','🎴','Pişti','Klasik Türk kart oyunu. Yerdeki kartla aynı kartı ya da Vale (J) atarak yerdekileri topla. Tek karta eşini atarsan PİŞTİ!',api=>{
+ let deck=newDeck(),pile=[],H=[[],[]],cap=[[],[]],pis=[0,0],last=-1,turn=0,lock=false;const seen={};RANKS.forEach(r=>seen[r]=0);
+ const pv=c=>c.r==='A'||c.r==='J'?1:(c.r==='2'&&c.s==='♣')?2:(c.r==='10'&&c.s==='♦')?3:0;
+ const score=p=>cap[p].reduce((a,c)=>a+pv(c),0)+pis[p];
+ pile=deck.splice(0,4);seen[pile.at(-1).r]++;const dealH=()=>{H[0]=deck.splice(0,4);H[1]=deck.splice(0,4)};dealH();
+ const aE=api.box('cards'),mid=api.box('note'),pE=api.box('pile'),inf=api.note(''),hE=api.box('cards');
+ const draw=()=>{aE.innerHTML='';H[1].forEach(()=>aE.append(cardEl(null,true)));pE.innerHTML='';pile.slice(-4).forEach((c,i,a)=>{const e=cardEl(c,i<a.length-1);e.style.left=i*6+'px';e.style.top=i*2+'px';pE.append(e)});if(!pile.length)pE.append(h('div',{class:'note',style:'padding-top:36px'},'boş'));
+  mid.textContent=`Yerde ${pile.length} kart • Destede ${deck.length}`;hE.innerHTML='';H[0].forEach((c,i)=>{const e=cardEl(c,false,'pl');e.onclick=()=>{if(turn===0&&!lock)play(0,i)};hE.append(e)});
+  inf.innerHTML=`Sen: <b>${score(0)}</b> puan, ${cap[0].length} kart, ${pis[0]} pişti &nbsp;|&nbsp; Bilg.: <b>${score(1)}</b> puan, ${cap[1].length} kart, ${pis[1]} pişti`;api.info(turn===0?'Sıra sende':'Bilgisayar…')};
+ const play=(p,i)=>{const c=H[p].splice(i,1)[0],top=pile.at(-1);seen[c.r]++;if(top&&(c.r===top.r||c.r==='J')){if(pile.length===1&&c.r===top.r){pis[p]+=c.r==='J'?20:10;api.toast((p?'Bilgisayar ':'')+'PİŞTİ! 🎉')}cap[p].push(...pile,c);pile=[];last=p}else pile.push(c);turn=1-p;
+  if(!H[0].length&&!H[1].length){if(deck.length)dealH();else return finish()}draw();if(turn===1){lock=true;api.after(()=>{lock=false;play(1,aiPick())},800)}};
+ const aiPick=()=>{const Hh=H[1],top=pile.at(-1);if(api.lv===0&&Math.random()<.5)return R(0,Hh.length-1);if(top){const m=Hh.findIndex(c=>c.r===top.r);if(m>=0)return m;const j=Hh.findIndex(c=>c.r==='J');const val=pile.reduce((a,c)=>a+pv(c),0);if(j>=0&&(pile.length>=3||val>0))return j}
+  const ids=Hh.map((_,i)=>i),nj=ids.filter(i=>Hh[i].r!=='J'),pool=nj.length?nj:ids;if(api.lv===2)return pool.reduce((a,i)=>seen[Hh[i].r]>seen[Hh[a].r]?i:a,pool[0]);return pool.reduce((a,i)=>pv(Hh[i])<pv(Hh[a])?i:a,pick(pool))};
+ const finish=()=>{if(pile.length&&last>=0){cap[last].push(...pile);pile=[]}const mc=cap[0].length>cap[1].length?0:cap[1].length>cap[0].length?1:-1;const s=[score(0)+(mc===0?3:0),score(1)+(mc===1?3:0)];turn=-1;draw();inf.innerHTML+=`<br>Çok kart bonusu: ${mc<0?'yok (eşit)':mc===0?'Sen +3':'Bilgisayar +3'}`;
+  api.score(s[0]*10+(s[0]>s[1]?300*(api.lv+1):0));api.end(s[0]>s[1]?`Kazandın! ${s[0]} – ${s[1]} 🎉`:s[0]<s[1]?`Kaybettin ${s[0]} – ${s[1]}`:`Berabere ${s[0]} – ${s[1]}`)};
+ draw();api.note('Puanlar: As 1, Vale 1, Sinek 2’li 2, Karo 10’lu 3, Pişti 10 (Vale ile 20), en çok kart 3.');
+});
+
+reg('Kart & Şans','🎲','Domuz Zarı','Zar at, puan biriktir. 1 gelirse o turdaki puanın yanar! Hedefe ilk ulaşan kazanır.',api=>{
+ const goal=[50,100,100][api.lv];let me=0,ai=0,tt=0,turn=0,lock=false;const F=['⚀','⚁','⚂','⚃','⚄','⚅'];
+ const q=api.box('qq'),dice=h('div',{class:'dice'},'🎲'),tE=h('div',{class:'md'}),sE=h('small');q.append(dice,tE,sE);const msg=api.note('');const tb=api.toolbar([['🎲 Zar At',()=>roll()],['✋ Dur (kaydet)',()=>hold()]]);tb.forEach(b=>b.style.cssText='font-size:18px;padding:15px 22px');
+ const draw=()=>{tE.textContent=`Bu tur: ${tt}`;sE.textContent=`Sen ${me} – ${ai} Bilg. • Hedef ${goal}`;tb.forEach(b=>b.disabled=turn!==0||lock);tb.forEach(b=>b.style.opacity=turn!==0||lock?.4:1);api.info(turn===0?'Sıra sende':'Bilgisayar…');api.score(me)};
+ const r6=(cb)=>{let k=0;lock=true;const t=api.every(()=>{dice.textContent=F[R(0,5)];if(++k>6){clearInterval(t);const v=R(1,6);dice.textContent=F[v-1];lock=false;cb(v)}},60)};
+ const roll=()=>{if(turn!==0||lock)return;r6(v=>{if(v===1){tt=0;msg.textContent='1 geldi! Bu turun puanı yandı 🔥';end(0)}else{tt+=v;msg.textContent=`+${v}`;if(me+tt>=goal)hold();else draw()}})};
+ const hold=()=>{if(turn!==0||lock)return;me+=tt;tt=0;msg.textContent='Puan kaydedildi';if(me>=goal)return win();end(0)};
+ const end=p=>{turn=1-p;tt=0;draw();if(turn===1)api.after(aiStep,900)};
+ const aiLim=()=>{if(api.lv===0)return 12;if(api.lv===1)return 20;const d=me-ai;if(goal-ai<=25)return goal-ai;return d>30?28:d>15?24:d<-20?16:20};
+ const aiStep=()=>{if(ai+tt>=goal||tt>=aiLim()){ai+=tt;msg.textContent=`Bilgisayar ${tt} puan kaydetti`;tt=0;if(ai>=goal)return win();return end(1)}r6(v=>{if(v===1){msg.textContent='Bilgisayara 1 geldi, puanı yandı!';tt=0;end(1)}else{tt+=v;msg.textContent=`Bilgisayar: +${v}`;draw();api.after(aiStep,700)}})};
+ const win=()=>{draw();if(me>=goal){api.score(me+250*(api.lv+1));api.end(`${me} – ${ai} kazandın! 🎉`)}else api.end(`Bilgisayar ${ai} – ${me} kazandı`)};
+ draw();
+});
+
+renderCats();renderList();
+
+</script>
+</body>
+</html>
