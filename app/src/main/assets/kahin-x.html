@@ -111,7 +111,7 @@ nav button{font-size:11px}
 <body>
 <header>
   <div class="hrow">
-    <div class="logo">KAHİN <i>X</i> <small class="note">v4.4</small> <span class="dot" id="ldot" title="Canlı akış"></span></div>
+    <div class="logo">KAHİN <i>X</i> <small class="note">v4.5</small> <span class="dot" id="ldot" title="Canlı akış"></span></div>
     <span class="note" id="lastT"></span>
     <div class="sp"></div>
     <label class="row note" title="Otomatik tarama">Oto <span class="sw"><input type="checkbox" id="autoT"><i></i></span></label>
@@ -151,7 +151,7 @@ nav button{font-size:11px}
 
 <script>
 'use strict';
-const VER='4.4';
+const VER='4.5';
 const NATIVE=window.KahinNative||null;   // Android uygulaması içinde çalışırken yerel köprü (bildirim, dosya, pil ayarı)
 /* ================= yardımcılar ================= */
 const $=s=>document.querySelector(s);
@@ -962,7 +962,7 @@ async function pretrain(silent){
 }
 
 /* ================= canlı akış: anlık fiyat + tasfiyeler (WebSocket) ================= */
-const LIVE={ws:null,open:false,got:0,last:0,retry:0,pi:0,px:{},pxs:{},liq:{},liqFeed:[],spikes:Array.isArray(S.spkLog)?S.spkLog:[],cd:{},lcd:{},since:0,err:'',win:300000};
+const LIVE={ws:null,open:false,got:0,last:0,retry:0,pi:0,px:{},pxs:{},liq:{},liqFeed:[],spikes:Array.isArray(S.spkLog)?S.spkLog:[],cd:{},lcd:{},since:0,err:'',win:300000,msort:'p'};
 for(const e of LIVE.spikes)if(e.type==='px'&&!e.fin&&Date.now()-e.t>1200000)e.fin=1;   // uygulama kapalıyken süresi dolanlar: sonuç bilinmiyor, karneye yazılmaz
 function spkSave(){S.spkLog=LIVE.spikes;save();}
 // Binance 2026-04'te vadeli WebSocket adreslerini /public, /market, /private olarak ayırdı; eski yol yedek olarak deneniyor
@@ -1024,7 +1024,39 @@ function spkStep(ev,c,now){
   if(ev.o5==null&&age>=300000)ev.o5=(c/ev.price-1)*100;
   if(!ev.rev&&age<900000){const span=(ev.ext-ev.p0)*d,back=(ev.ext-c)*d;
     if(span>0&&back/span>=0.5){ev.rev=now;ev.revP=(c/ev.ext-1)*100;ev.revF=back/span;onRev(ev,c);}}
-  if(age>=900000){ev.o15=(c/ev.price-1)*100;ev.fin=1;const sp=S.spk;sp.c15=(sp.c15||0)+1;if(ev.o15*d>0)sp.k15=(sp.k15||0)+1;if(ev.rev)sp.rv=(sp.rv||0)+1;spkSave();}
+  if(age>=900000){ev.o15=(c/ev.price-1)*100;ev.fin=1;const sp=S.spk;sp.c15=(sp.c15||0)+1;if(ev.o15*d>0)sp.k15=(sp.k15||0)+1;if(ev.rev)sp.rv=(sp.rv||0)+1;
+    if(ev.x&&ev.x.cls){const cs=sp.cls||(sp.cls={}),k=xKey(ev),o=cs[k]||(cs[k]={n:0,k:0});o.n++;if(ev.o15*d>0)o.k++;}spkSave();}
+}
+/* ---- röntgen: hareket yakalanınca OI ve agresif alıcı oranına bakılır; yeni para mı giriyor, yoksa karşı taraf mı kapatıyor ---- */
+const XCL={Pnew:'yeni alım giriyor',Psqz:'short kapanışı (sıkışma)',Pflat:'OI yatay',Dnew:'yeni short açılıyor',Dsqz:'long kapanışı / tasfiye',Dflat:'OI yatay'};
+const xKey=ev=>(ev.dir>0?'P':'D')+ev.x.cls;
+function xHist(ev){const o=ev.x&&ev.x.cls&&S.spk.cls&&S.spk.cls[xKey(ev)];return o&&o.n>=5?`bu tür geçmişte %${Math.round(o.k/o.n*100)} devam etti (${o.n} olay)`:'';}
+function xTxt(ev){
+  const x=ev.x;if(!x)return '';const o=[];
+  if(x.cls)o.push(XCL[xKey(ev)]);
+  if(x.oi!=null)o.push('OI '+fmtPct(x.oi,1));
+  if(x.buy!=null)o.push('agresif alıcı %'+Math.round(x.buy*100));
+  if(x.liq>0)o.push(fmtV(x.liq)+' $ '+(ev.dir>0?'short':'long')+' tasfiye');
+  const h=xHist(ev);if(h)o.push(h);
+  return o.join(' · ');
+}
+async function spkXray(ev){
+  try{
+    const s=ev.sym,[k,oiN,oiH]=await Promise.all([
+      api('/fapi/v1/klines',{symbol:s,interval:'1m',limit:6},1).then(pk).catch(()=>null),
+      api('/fapi/v1/openInterest',{symbol:s},1).catch(()=>null),
+      api('/futures/data/openInterestHist',{symbol:s,period:'5m',limit:4},1,BD).catch(()=>null)]);
+    const x={};
+    if(k&&k.length){let v=0,tb=0;for(const b of k.slice(-4)){v+=b.v;tb+=b.tb;}if(v>0)x.buy=tb/v;}
+    if(oiN&&Array.isArray(oiH)&&oiH.length){
+      const h=oiH.map(o=>({t:+o.timestamp,v:+o.sumOpenInterest})).sort((a,b)=>a.t-b.t);
+      const t0=ev.t-(Math.abs(ev.p5)>Math.abs(ev.p1)?300000:60000);   // hareketin başladığı an
+      let ref=h[0];for(const o of h)if(o.t<=t0)ref=o;
+      const cur=+oiN.openInterest;if(ref.v>0&&cur>0){x.oi=(cur/ref.v-1)*100;x.cls=x.oi>=0.5?'new':x.oi<=-0.5?'sqz':'flat';}
+    }
+    const lq=getLiq(s,300000);if(lq)x.liq=ev.dir>0?lq.S:lq.L;
+    if(x.buy!=null||x.oi!=null){ev.x=x;spkSave();if($('#v-live').classList.contains('on'))renderLive();}
+  }catch(e){}
 }
 function onRev(ev,c){
   spkSave();if(!S.set.revAlert)return;
@@ -1070,8 +1102,12 @@ function onSpike(ev){
   if(ev.quiet){if($('#v-live').classList.contains('on'))renderLive();return;}
   beep(ev.dir>0);try{navigator.vibrate&&navigator.vibrate(80);}catch(e){}
   toast('⚡ '+txt+(ev.pre&&ev.pre.flag?' · önceden işaretliydi':''),5000);
-  pushNote('⚡ '+txt,ev.pre?`Son taramada: ${ev.pre.dir>0?'LONG':ev.pre.dir<0?'SHORT':'BEKLE'} %${ev.pre.conf} · patlama %${ev.pre.ex}${ev.pre.flag?' · önceden işaretliydi':''}`:'Güncel tarama yoktu','spk'+ev.sym);
-  tg('⚡ KAHİN X: '+txt+(ev.pre?` | son taramada: ${ev.pre.dir>0?'LONG':ev.pre.dir<0?'SHORT':'BEKLE'} %${ev.pre.conf}, patlama %${ev.pre.ex}`:''));
+  // ses ve ekran uyarısı anında; bildirim/Telegram en çok 3 sn röntgeni bekler ki tek mesajda gelsin
+  Promise.race([ev.type==='px'?spkXray(ev):Promise.resolve(),sleep(3000)]).then(()=>{
+    const xt=xTxt(ev),pre=ev.pre?`Son taramada: ${ev.pre.dir>0?'LONG':ev.pre.dir<0?'SHORT':'BEKLE'} %${ev.pre.conf} · patlama %${ev.pre.ex}${ev.pre.flag?' · önceden işaretliydi':''}`:'Güncel tarama yoktu';
+    pushNote('⚡ '+txt,(xt?xt+'\n':'')+pre,'spk'+ev.sym);
+    tg('⚡ KAHİN X: '+txt+(xt?'\n'+xt:'')+'\n'+pre);
+  });
   if($('#v-live').classList.contains('on'))renderLive();
 }
 setInterval(()=>{   // bellek temizliği
@@ -1262,24 +1298,25 @@ function drawChart(){
 function spkState(e){
   if(e.type!=='px'||e.p0==null)return '';
   const ring=LIVE.px[e.sym],c=ring&&ring.length?ring[ring.length-1].c:null,d=e.dir,o=[];
+  if(e.x)o.push('🔬 '+esc(xTxt(e)));
   if(e.rev)o.push(`<b class="y">↩️ ${d>0?'pump geri verildi':'dump geri alındı'}</b> (${d>0?'zirveden':'dipten'} ${fmtPct(e.revP,1)}, ${ago(e.rev)})`);
   else if(!e.fin)o.push('<b class="g">sürüyor</b>');
   if(e.fin){if(e.o15!=null)o.push(`15 dk sonra <b class="${e.o15>0?'g':'r'}">${fmtPct(e.o15,1)}</b> ${e.o15*d>0?'(devam etti)':'(tersine döndü)'}`);}
   else if(c)o.push(`yakalandığından beri <b class="${c>=e.price?'g':'r'}">${fmtPct((c/e.price-1)*100,1)}</b>`);
-  return o.length?'<br><span class="note">'+o.join(' · ')+'</span>':'';
+  return o.length?'<br><span class="note">'+o.join('<br>')+'</span>':'';
 }
 const WINS=[[60000,'1 dk'],[300000,'5 dk'],[900000,'15 dk']];
 function moversHTML(){
   const win=LIVE.win,M=movers(win),lim=win<=60000?S.set.spike1:win<=300000?S.set.spike5:S.set.spike5*1.5;
   const row=m=>`<div class="ls" data-s="${m.sym}" style="cursor:pointer">${Math.abs(m.p)>=lim&&m.vx>=2?'⚡ ':''}<b>${base(m.sym)}</b> <b class="${m.p>0?'g':'r'}">${fmtPct(m.p)}</b><br><span class="note">hacim ${m.vx<10?m.vx.toFixed(1):m.vx.toFixed(0)}x · ${fmtP(m.price)}</span></div>`;
-  const up=M.filter(m=>m.p>0).sort((a,b)=>b.p-a.p).slice(0,8),dn=M.filter(m=>m.p<0).sort((a,b)=>a.p-b.p).slice(0,8);
+  const byV=LIVE.msort==='v',up=M.filter(m=>m.p>0).sort((a,b)=>byV?b.vx-a.vx:b.p-a.p).slice(0,8),dn=M.filter(m=>m.p<0).sort((a,b)=>byV?b.vx-a.vx:a.p-b.p).slice(0,8);
   const wait=LIVE.open?`Veri birikiyor: bu pencere için en az ${Math.ceil(win*0.8/60000)} dk canlı akış gerekir.`:'Canlı akış bağlı değil.';
   return `<div class="box"><h3>🔥 Şu an en hızlı hareket edenler</h3>
-   <div class="chips">${WINS.map(([w,t])=>`<button class="chip ${win===w?'on':''}" data-w="${w}">Son ${t}</button>`).join('')}</div>
+   <div class="chips">${WINS.map(([w,t])=>`<button class="chip ${win===w?'on':''}" data-w="${w}">Son ${t}</button>`).join('')}<button class="chip ${byV?'on':''}" data-ms="${byV?'p':'v'}">Hacme göre sırala</button></div>
    ${M.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
     <div><p class="note"><b class="g">🚀 Yükselenler (pump)</b></p>${up.map(row).join('')||'<p class="note">Yok</p>'}</div>
     <div><p class="note"><b class="r">💥 Düşenler (dump)</b></p>${dn.map(row).join('')||'<p class="note">Yok</p>'}</div></div>
-   <p class="note">Alarm eşiği beklenmeden, o anda en çok hareket eden coinler. “hacim Nx” = bu sürede dönen hacmin coinin 24 saatlik ortalamasına oranı; ⚡ = hem fiyat hem hacim olağandışı. Hacimsiz hareket çoğu zaman sürmez.</p>`:`<p class="note">${wait}</p>`}</div>`;
+   <p class="note">Alarm eşiği beklenmeden, o anda en çok hareket eden coinler. “hacim Nx” = bu sürede dönen hacmin coinin 24 saatlik ortalamasına oranı; ⚡ = hem fiyat hem hacim olağandışı. Hacimsiz hareket çoğu zaman sürmez. “Hacme göre sırala” fiyatı henüz az oynamış ama hacmi patlamış coinleri öne çıkarır; hareket çoğu zaman hacimle başlar.</p>`:`<p class="note">${wait}</p>`}</div>`;
 }
 function renderLive(){
   const el=$('#v-live');const lt=liqTot(3600e3),sp=S.spk,c15=sp.c15||0;
@@ -1295,6 +1332,8 @@ function renderLive(){
     <div class="st"><small>Yarısını geri veren</small><b>${c15?'%'+((sp.rv||0)/c15*100).toFixed(0):'—'}</b><small>${c15} olay</small></div>
    </div>
    <p class="note">Tüm coinlerin fiyatı saniyede bir izlenir. 1 dakikada %${S.set.spike1}+ ya da 5 dakikada %${S.set.spike5}+ hareket, hacim de normalin katlarına çıkmışsa burada görünür ve alarm çalar. “Önceden işaretlenme oranı”, ani hareket eden coinlerin kaçının son taramada patlama adayı olarak gösterildiğini sayar; programın “önceden görme” iddiasının gerçek karnesidir. Yakalanan her hareket 15 dakika izlenir: zirvesinden (ya da dibinden) hareketin yarısını geri verirse “pump bitti, dump başladı” uyarısı gelir; “15 dk sonra hâlâ aynı yönde” oranı, ani hareketin peşinden gitmenin geçmişte işe yarayıp yaramadığını gösterir.</p></div>
+  ${sp.cls&&Object.keys(sp.cls).length?`<div class="box"><h3>🔬 Hangi tür hareket devam ediyor?</h3>${Object.keys(XCL).filter(k=>sp.cls[k]).map(k=>{const o=sp.cls[k];return `<div class="ls">${k[0]==='P'?'🚀 Pump':'💥 Dump'} · ${XCL[k]} <span class="sp"></span><b>%${Math.round(o.k/o.n*100)}</b> devam etti <span class="note">(${o.n} olay)</span></div>`;}).join('')}
+   <p class="note">Her ani harekette açık pozisyona (OI) bakılır. Fiyat çıkarken OI de artıyorsa yeni para giriyordur; OI düşüyorsa yükseliş short kapatanlardan gelir ve yakıtı çabuk bitebilir. Bu tablo kendi kayıtlarından 15 dakika sonrasına bakarak hangisinin gerçekten sürdüğünü gösterir; az olayda yanıltıcıdır.</p></div>`:''}
   ${moversHTML()}
   <div class="box"><h3>Ani hareketler (pump / dump alarmları)</h3>${LIVE.spikes.map(e=>`<div class="ls" data-s="${e.sym}" style="cursor:pointer">${e.type==='px'?(e.dir>0?'🚀':'💥'):'🌊'} <b>${base(e.sym)}</b> ${e.type==='px'?`<b class="${e.dir>0?'g':'r'}">${fmtPct(Math.abs(e.p5)>Math.abs(e.p1)?e.p5:e.p1,1)}</b> · hacim ${e.vx.toFixed(0)}x`:`${e.side==='L'?'<b class="r">long</b>':'<b class="g">short</b>'} tasfiye dalgası <b>${fmtV(e.usd)} $</b>`} · ${fmtP(e.price)} <span class="note">${ago(e.t)}${e.after?(e.dir>0?' · dump’ın ardından':' · pump’ın ardından'):''}</span>${spkState(e)}<br>
     <span class="note">${e.pre?`Son taramada: ${e.pre.dir>0?'LONG':e.pre.dir<0?'SHORT':'BEKLE'} %${e.pre.conf} · patlama %${e.pre.ex} ${e.pre.flag?'· <b class="g">önceden işaretliydi ✓</b>':'· işaret yoktu'}${e.pre.tags.length?' · '+e.pre.tags.map(k=>TAGS[k].t).join(', '):''}`:'Güncel tarama yoktu'}</span></div>`).join('')||'<p class="note">Henüz ani hareket yakalanmadı. Sayfa açık kaldıkça burası dolar.</p>'}</div>
@@ -1461,7 +1500,7 @@ function renderSet(){
     <li><b>Tuzaklar:</b> Fiyat yükselirken OI düşüyorsa yükseliş short kapanışından gelir (boğa tuzağı). Fiyat çıkarken net akış satışsa biri mal dağıtıyordur (gizli dağıtım). Hacimsiz zirve/dip denemeleri sahte kırılım sayılır. Kalabalık bir yanda, büyük hesaplar öbür yandaysa uyarı verilir.</li>
     <li><b>Ani hareket adayları:</b> Ayrı bir model yalnızca “yakında büyük hareket olur mu” sorusuna bakar: sıkışma, OI birikimi, fonlama aşırılığı, tek taraflı akış ve fiyata yakın tasfiye yığınları.</li>
     <li><b>Tasfiye haritası:</b> OI’nin arttığı anlarda açılan pozisyonların 10x–100x kaldıraçla nerede tasfiye olacağı tahmin edilir. Fiyat bu yığınlara çekilme eğilimindedir; hedef seçiminde kullanılır.</li>
-    <li><b>Anlık radar:</b> Tüm coinlerin fiyatı ve tasfiyeleri canlı izlenir; taramalar arasında başlayan ani hareketler saniyeler içinde yakalanır. Anlık sekmesindeki tablo son 1/5/15 dakikada en çok yükselen ve düşen coinleri canlı sıralar; yakalanan her pump/dump 15 dakika izlenip geri dönerse ayrıca haber verilir.</li>
+    <li><b>Anlık radar:</b> Tüm coinlerin fiyatı ve tasfiyeleri canlı izlenir; taramalar arasında başlayan ani hareketler saniyeler içinde yakalanır. Anlık sekmesindeki tablo son 1/5/15 dakikada en çok yükselen ve düşen coinleri canlı sıralar; yakalanan her pump/dump 15 dakika izlenip geri dönerse ayrıca haber verilir. Her yakalamada açık pozisyon ve agresif alıcı oranı da çekilir (“röntgen”): hareketin yeni para girişinden mi, karşı tarafın kapanışından mı geldiği yazılır ve her türün geçmişte ne kadar sürdüğü ayrıca tutulur.</li>
     <li><b>Öğrenme:</b> Hızlı eğitim geçmiş günleri yeniden oynatıp ağırlıkları ayarlar. Sonra her canlı tahmin kaydedilir, ufuk dolunca gerçek fiyatla karşılaştırılır; yanıltan göstergenin ağırlığı düşer, tutan güçlenir.</li>
     <li><b>İşlem filtresi ve sanal hesap:</b> Yön tahmini tutsa bile işlem arada stop olabilir ya da komisyon kârı yiyebilir. İkinci bir model, geçmişte her işlemin hedefe mi stopa mı gittiğine ve masraf sonrası artıda kapanıp kapanmadığına bakarak “AL / PAS” der. Sanal hesap bu sinyalleri gerçek para olmadan, komisyon ve fonlama düşerek işletir; programın para kazandırıp kazandırmadığının asıl ölçüsü oradaki net sonuçtur.</li>
     <li><b>Dürüst uyarı:</b> Hiçbir program pump/dump’ı kesin bilemez. Bu araç olasılığı lehine çevirmeye çalışır; karnesini Öğrenme sekmesinde açıkça gösterir. Stop kullanmadan işlem açma.</li>
@@ -1478,6 +1517,7 @@ document.addEventListener('click',async e=>{
   if(t.id==='btGo'){showView('learn');pretrain();return;}
   if(t.id==='btB'){unlockAudio();pretrain();return;}
   if(t.dataset.w){LIVE.win=+t.dataset.w;renderLive();return;}
+  if(t.dataset.ms){LIVE.msort=t.dataset.ms;renderLive();return;}
   if(t.dataset.f){filt=t.dataset.f;renderFilters();renderList();return;}
   if(t.classList.contains('card')||(t.classList.contains('ls')&&t.dataset.s)){openDetail(t.dataset.s);return;}
   if(t.dataset.tf){curTF=t.dataset.tf;document.querySelectorAll('[data-tf]').forEach(b=>b.classList.toggle('on',b.dataset.tf===curTF));drawChart();return;}
